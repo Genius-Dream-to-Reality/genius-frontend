@@ -26,10 +26,10 @@ const Home = () => {
             backgroundImage: `url(${backgroundImage})`,
           }}
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-dark-purple/50 via-gray-900/70 to-black/80" />
+          <div className="absolute inset-0 bg-gradient-to-br from-dark-purple/50 via-black/70 to-black/80" />
         </div>
 
-        <div className="relative h-full container mx-auto px-4 flex flex-col justify-center max-w-4xl">
+        <div className="relative h-full container mx-auto px-4 flex flex-col justify-center max-w-4xl ">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

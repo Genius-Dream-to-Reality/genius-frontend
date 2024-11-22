@@ -2,6 +2,7 @@ import React from "react";
 import { FaFacebookF, FaInstagram, FaTwitter } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import Button from "../../shared/Button";
+import AppLogo from "../../shared/AppLogo";
 
 const SITEMAP = [
   {
@@ -30,13 +31,9 @@ export default function Footer() {
       <div className="footer-top container mx-auto">
         <div className="flex flex-col md:flex-row item-start md:item-center justify-start md:justify-around gap-10 md:gap-0">
           <div className="flex-1 basis-1/4 px-4">
-            <div className="logo flex md:flex-col gap-y-3 text-purple">
-              <p className="text-xl">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Eum
-                quos recusandae sequi quaerat sit quod sint laborum vero
-                tenetur?
-              </p>
-              <ul className="hidden md:flex space-x-4 mt-4">
+            <div className="logo flex md:flex-col gap-y-3 text-purple space-x-4">
+              <AppLogo className={"w-36 "} />
+              <ul className="hidden md:flex space-x-8 mt-4">
                 {/* Social Media Icons */}
                 {[
                   [<FaFacebookF />, "https://facebook.com"],
@@ -44,10 +41,7 @@ export default function Footer() {
                   [<FaTwitter />, "https://twitter.com"],
                 ].map(([icon, url], index) => (
                   <li key={index}>
-                    <Link
-                      to={url}
-                      className="text-purple hover:text-blue-500"
-                    >
+                    <Link to={url} className="text-purple hover:text-blue-500">
                       {icon}
                     </Link>
                   </li>
@@ -92,7 +86,11 @@ export default function Footer() {
                 type="email"
                 placeholder="  Email"
               />
-              <Button type="submit" variant={'primary'} className="rounded py-3">
+              <Button
+                type="submit"
+                variant={"primary"}
+                className="rounded py-3"
+              >
                 Subscribe
               </Button>
             </form>
@@ -101,7 +99,7 @@ export default function Footer() {
       </div>
       <div className="footer-bottom py-5">
         <h3 className="text-center font-bold text-gray-400 text-xs md:text-base">
-          Copyright &#169; 2024  Genius, Inc. Terms & Privacy 
+          Copyright &#169; 2024 Genius, Inc. Terms & Privacy
         </h3>
       </div>
     </footer>
