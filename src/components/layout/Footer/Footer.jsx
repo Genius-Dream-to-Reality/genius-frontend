@@ -1,40 +1,39 @@
 import React from "react";
 import { FaFacebookF, FaInstagram, FaTwitter } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import Button from "../../shared/Button";
+import AppLogo from "../../shared/AppLogo";
 
 const SITEMAP = [
   {
-    title: "Company",
+    title: "More on The Blog",
     links: [
-      { text: "About Us", href: "/about-us" },
-      { text: "Services", href: "/services" },
-      { text: "Contact Us", href: "/contact-us" },
-      { text: "Company", href: "/company" },
+      { text: "About Genius", href: "/" },
+      { text: "Contributors & Writers", href: "/" },
+      { text: "Write For Us", href: "/" },
+      { text: "Contact Us", href: "/" },
+      { text: "Privacy Policy", href: "/" },
     ],
   },
   {
-    title: "Resources",
+    title: "More on Genius",
     links: [
-      { text: "Terms of Use", href: "/terms-of-use" },
-      { text: "Privacy", href: "/privacy" },
-      { text: "Site Map", href: "/sitemap" },
+      { text: "The Team", href: "/" },
+      { text: "Jobs", href: "/" },
+      { text: "Press", href: "/" },
     ],
   },
 ];
 
 export default function Footer() {
   return (
-    <footer className="pt-20  bg-gradient-to-t from-transparent to-primary-purple">
+    <footer className="pt-20  bg-gradient-to-tr from-dark-purple to-black">
       <div className="footer-top container mx-auto">
         <div className="flex flex-col md:flex-row item-start md:item-center justify-start md:justify-around gap-10 md:gap-0">
-          <div className="flex-1 basis-1/2 px-4">
-            <div className="logo flex md:flex-col gap-y-3">
-              <p>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Eum
-                quos recusandae sequi quaerat sit quod sint laborum vero
-                tenetur?
-              </p>
-              <ul className="hidden md:flex space-x-4 mt-4">
+          <div className="flex-1 basis-1/4 px-4">
+            <div className="logo flex md:flex-col gap-y-3 text-purple space-x-4">
+              <AppLogo className={"w-36 "} />
+              <ul className="hidden md:flex space-x-8 mt-4">
                 {/* Social Media Icons */}
                 {[
                   [<FaFacebookF />, "https://facebook.com"],
@@ -42,10 +41,7 @@ export default function Footer() {
                   [<FaTwitter />, "https://twitter.com"],
                 ].map(([icon, url], index) => (
                   <li key={index}>
-                    <Link
-                      to={url}
-                      className="text-dark-purple hover:text-blue-500"
-                    >
+                    <Link to={url} className="text-purple hover:text-blue-500">
                       {icon}
                     </Link>
                   </li>
@@ -57,7 +53,7 @@ export default function Footer() {
             {SITEMAP.map(({ title, links }, key) => (
               <div key={key}>
                 <div className="footer-nav-section sm:mb-0 mb-6">
-                  <h4 className=" text-dark-purple text-2xl">{title}</h4>
+                  <h4 className=" text-purple text-2xl">{title}</h4>
                   <nav>
                     {links.map(({ text, href }, index) => (
                       <div
@@ -65,7 +61,7 @@ export default function Footer() {
                         key={index}
                       >
                         <Link
-                          className="text-gray-900 hover:text-black hover:underline"
+                          className="text-gray-400 hover:text-black hover:underline"
                           to={href}
                         >
                           {text}
@@ -78,28 +74,32 @@ export default function Footer() {
             ))}
           </div>
 
-          <div className="flex-1 flex flex-col gap-y-3 basis-1/2 px-4">
-            <h3 className="text-dark-purple text-2xl">Get in touch</h3>
-            <p>
+          <div className="flex-1 flex flex-col gap-y-3 basis-1/4 px-4">
+            <h3 className="text-purple text-2xl">Get in touch</h3>
+            <p className="text-purple">
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Eum quos
               recusandae sequi quaerat sit quod sint laborum vero tenetur?
             </p>
             <form className="inline-flex">
               <input
-                className="rounded-full w-full bg-gray-100 mr-5"
+                className="rounded w-full bg-gray-100 mr-5"
                 type="email"
-                placeholder="Email"
+                placeholder="  Email"
               />
-              <button type="submit" className="btn-primary">
+              <Button
+                type="submit"
+                variant={"primary"}
+                className="rounded py-3"
+              >
                 Subscribe
-              </button>
+              </Button>
             </form>
           </div>
         </div>
       </div>
       <div className="footer-bottom py-5">
-        <h3 className="text-center font-bold text-xs md:text-base">
-          Copyright &#169; 2024 Genius 
+        <h3 className="text-center font-bold text-gray-400 text-xs md:text-base">
+          Copyright &#169; 2024 Genius, Inc. Terms & Privacy
         </h3>
       </div>
     </footer>

@@ -5,7 +5,7 @@ import Button from "../../shared/Button";
 
 const Header = () => {
   return (
-    <header className=" flex justify-between items-center sm:h-40 max-h-24 z-20 bg-dark-purple px-4 shadow-2xl sticky shadow-black border-b-light-purple border-b border-spacing-6">
+    <header className=" flex justify-between items-center sm:h-40 max-h-24 z-20 bg-gradient-to-tr from-dark-purple to-black px-4 shadow-2xl sticky shadow-black   ">
       <div className="flex items-center space-x-4 ml-4 sm:ml-0 ">
         <AppLogo className={"w-36 "} />
       </div>
