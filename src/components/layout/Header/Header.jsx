@@ -1,49 +1,59 @@
 import React from "react";
+import { AppBar, Toolbar, Typography, Grid, Button, IconButton } from "@mui/material";
 import { FaCartPlus } from "react-icons/fa";
-import AppLogo from "../../shared/AppLogo";
-import Button from "../../shared/Button";
+import { ThemeProvider } from "@mui/material/styles";  
+import theme from "../../../theme"; 
+import useStyles from "../../../assets/css/style"; 
 
 const Header = () => {
+  const classes = useStyles(); 
+  const links = ["Explore", "About", "Contact"];
+
   return (
-    <header className=" flex justify-between items-center sm:h-40 max-h-24 z-20 bg-gradient-to-tr from-dark-purple to-black px-4 shadow-2xl sticky shadow-black   ">
-      <div className="flex items-center space-x-4 ml-4 sm:ml-0 ">
-        <AppLogo className={"w-36 "} />
-      </div>
-      <div className="flex items-center space-x-4 ">
-        <nav className="hidden sm:block">
-          <ul className="flex space-x-9 text-xl">
-            <li>
-              <a
-                href="#"
-                className="text-light-purple hover:text-primary-purple"
-              >
-                Home
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                className="text-light-purple hover:text-primary-purple"
-              >
-                About Us
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                className="text-light-purple hover:text-primary-purple"
-              >
-                Contact Us
-              </a>
-            </li>
-          </ul>
-        </nav>
-      </div>
-      <div className="flex items-center space-x-4 mr-24 ">
-        <FaCartPlus className="text-2xl text-white" />
-        <Button variant="primary">Login</Button>
-      </div>
-    </header>
+    <ThemeProvider theme={theme}>
+      <AppBar
+        position="static"
+        sx={{
+          backgroundColor: "transparent", 
+          boxShadow: "none", 
+          height: "80px",
+          justifyContent: "center",
+        }}
+      >
+        <Toolbar
+          sx={{
+            minHeight: "50px",
+            display: "flex",
+            alignItems: "center",
+            px: 2, 
+          }}
+        >
+          <Grid container alignItems="center" justifyContent="space-between">
+            <Grid item md={4} />
+            <Grid item xs={12} md={4} container justifyContent="center" spacing={4}>
+              {links.map((link, index) => (
+                <Grid item key={index}>
+                  <Typography
+                    component="a"
+                    href="#"
+                    className={classes.typoLink}
+                  >
+                    {link}
+                  </Typography>
+                </Grid>
+              ))}
+            </Grid>
+            <Grid item xs={12} md={4} container justifyContent="flex-end" alignItems="center" gap={1} >
+              <IconButton>
+                <FaCartPlus style={{ color: "#FFFFFF", fontSize: "20px" }} />
+              </IconButton>
+              <Button className={classes.button}>Login</Button>
+              <Button className={classes.button}>Register</Button>
+            </Grid>
+          </Grid>
+        </Toolbar>
+      </AppBar>
+    </ThemeProvider>
   );
 };
 

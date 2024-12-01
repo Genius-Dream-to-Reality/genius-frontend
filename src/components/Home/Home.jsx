@@ -1,23 +1,20 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import backgroundImage from "../images/Background.png";
-import personIcon from "../images/Background.png";
-import serviceIcon from "../images/Background.png";
-import finalizeIcon from "../images/Background.png";
-import Typography from "../components/shared/Typograpy";
+import backgroundImage from "../../assets/images/Background.png";
 import { FaArrowAltCircleRight, FaArrowDown } from "react-icons/fa";
-import why from "../images/why.png";
-import picking from "../images/picking.png";
-import finalized from "../images/finalized.png";
-import { FaArrowDownAZ } from "react-icons/fa6";
-import { SiDatefns } from "react-icons/si";
+import why from "../../assets/images/why.png";
+import picking from "../../assets/images/picking.png";
+import finalized from "../../assets/images/finalized.png";
 import { MdArrowDownward, MdDateRange } from "react-icons/md";
 import { BsArrowRight } from "react-icons/bs";
 import { motion } from "framer-motion";
+import Header from "../layout/Header/Header";
+import SideNavBar from "../layout/SideNavBar";
+import Footer from "../layout/Footer/Footer";
 
 const Home = () => {
   return (
     <div className=" min-h-screen ">
+
       {/* Hero Section */}
       <div className="relative h-screen w-full overflow-hidden">
         <div
@@ -29,7 +26,9 @@ const Home = () => {
           <div className="absolute inset-0 bg-gradient-to-br from-dark-purple/50 via-black/70 to-black/80" />
         </div>
 
+        <Header />
         <div className="relative h-full container mx-auto px-4 flex flex-col justify-center max-w-4xl ">
+          <SideNavBar />
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -255,6 +254,7 @@ const Home = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };
