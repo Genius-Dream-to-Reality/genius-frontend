@@ -2,12 +2,19 @@ import React from "react";
 import { AppBar, Toolbar, Typography, Grid, Button, IconButton } from "@mui/material";
 import { FaCartPlus } from "react-icons/fa";
 import { ThemeProvider } from "@mui/material/styles";  
+import { useNavigate } from "react-router-dom"; 
 import theme from "../../../theme"; 
 import useStyles from "../../../assets/css/style"; 
 
 const Header = () => {
   const classes = useStyles(); 
+  const navigate = useNavigate();
   const links = ["Explore", "About", "Contact"];
+
+
+  const handleRegisterClick = () => {
+    navigate("/register"); 
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -29,7 +36,7 @@ const Header = () => {
           }}
         >
           <Grid container alignItems="center" justifyContent="space-between">
-            <Grid item md={4} />
+            
             <Grid item xs={12} md={4} container justifyContent="center" spacing={4}>
               {links.map((link, index) => (
                 <Grid item key={index}>
@@ -47,8 +54,11 @@ const Header = () => {
               <IconButton>
                 <FaCartPlus style={{ color: "#FFFFFF", fontSize: "20px" }} />
               </IconButton>
-              <Button className={classes.button}>Login</Button>
-              <Button className={classes.button}>Register</Button>
+              <Button className={classes.button} 
+                onClick={handleRegisterClick}
+              >
+                Sign Up
+              </Button>
             </Grid>
           </Grid>
         </Toolbar>
