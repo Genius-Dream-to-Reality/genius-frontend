@@ -2,8 +2,8 @@ import React from "react";
 import { AppBar, Toolbar, Typography, Grid, Button, IconButton } from "@mui/material";
 import { FaCartPlus } from "react-icons/fa";
 import { ThemeProvider } from "@mui/material/styles";  
-import theme from "../../../theme"; 
-import useStyles from "../../../assets/css/style"; 
+import theme from "../../theme"; 
+import useStyles from "../../assets/css/style"; 
 
 const Header = () => {
   const classes = useStyles(); 
