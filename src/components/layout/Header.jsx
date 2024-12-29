@@ -13,7 +13,7 @@ const Header = () => {
 
 
   const handleRegisterClick = () => {
-    navigate("/register"); 
+    navigate("/register", { state: { userType: "vendor" } }); 
   };
 
   return (
