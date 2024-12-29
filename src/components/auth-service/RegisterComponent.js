@@ -4,6 +4,7 @@ import { ThemeProvider, Grid, Box, Typography, InputBase, Button, FormControlLab
 import theme from "../../theme";
 import Header from "../layout/Header";
 import authServiceImage from "../../assets/images/authService.jpg";
+import vendorRegister from "../../assets/images/why.png";
 import googleCalendar from "../../assets/images/google-calendar.png";
 import useStyles from "../../assets/css/style";
 import { CheckBox } from "@mui/icons-material";
@@ -75,7 +76,7 @@ const RegisterComponent = () => {
         <Grid item md={5}>
           <Box
             component="img"
-            src={authServiceImage}
+            src={userType === "vendor" ? vendorRegister : authServiceImage}
             alt="Register"
             sx={{
               width: "100%",
@@ -176,7 +177,18 @@ const RegisterComponent = () => {
                       color="primary"
                     />
                   }
-                  label="Do you agree to our Privacy and Policies?"
+                  label={
+                    <span style={{ fontSize: "14px" }}>
+                      Do you agree to our{" "}
+                      <span
+                        style={{ color: "blue", cursor: "pointer" }}
+                        onClick={() => console.log("Navigate to Privacy and Policies")}
+                      >
+                        Privacy and Policies
+                      </span>
+                      ?
+                    </span>
+                  }
                 />
               </Grid>
 
