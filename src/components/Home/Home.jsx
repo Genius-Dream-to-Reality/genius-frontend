@@ -7,9 +7,8 @@ import finalized from "../../assets/images/finalized.png";
 import { MdArrowDownward, MdDateRange } from "react-icons/md";
 import { BsArrowRight } from "react-icons/bs";
 import { motion } from "framer-motion";
-import Header from "../layout/Header/Header";
-import SideNavBar from "../layout/SideNavBar";
-import Footer from "../layout/Footer/Footer";
+import Header from "../layout/Header";
+import Footer from "../layout/Footer";
 
 const Home = () => {
   return (
@@ -28,7 +27,6 @@ const Home = () => {
 
         <Header />
         <div className="relative h-full container mx-auto px-4 flex flex-col justify-center max-w-4xl ">
-          <SideNavBar />
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
