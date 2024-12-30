@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import backgroundImage from "../../assets/images/Background.png";
 import { FaArrowAltCircleRight, FaArrowDown } from "react-icons/fa";
 import why from "../../assets/images/why.png";
@@ -11,6 +12,12 @@ import Header from "../layout/Header";
 import Footer from "../layout/Footer";
 
 const Home = () => {
+  const navigate = useNavigate();
+
+  const handleNavigation = () => {
+    navigate("/event-planning"); // Navigates to the EventPlanningComponent page
+  };
+
   return (
     <div className=" min-h-screen ">
 
@@ -97,8 +104,10 @@ const Home = () => {
                 </span>
               </button>
 
-              <button className="group px-6 py-3 flex items-center gap-2 text-white font-semibold hover:text-yellow-500 transition-colors duration-300">
-                Get Started
+              <button 
+                onClick={handleNavigation}
+                className="group px-6 py-3 flex items-center gap-2 text-white font-semibold hover:text-yellow-500 transition-colors duration-300">
+                  Get Started
                 <FaArrowAltCircleRight className="group-hover:translate-x-1 transition-transform duration-300" />
               </button>
             </motion.div>
