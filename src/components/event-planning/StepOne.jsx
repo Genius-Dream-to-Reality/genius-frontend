@@ -1,68 +1,38 @@
 import React from "react";
-import { Grid, TextField, Select, MenuItem, InputLabel, Box, FormControlLabel, Checkbox } from "@mui/material";
-import { CalendarToday, LocationOn } from "@mui/icons-material";
+import { Grid, Input, TextField } from "@mui/material";
+import { LocationOn } from "@mui/icons-material";
+import DropDownComponent from "../dropDowns/DropDownComponent";
 
 const StepOne = () => (
   <Grid container justifyContent="center" spacing={2}>
     <Grid item xs={12} sm={3}>
-      <InputLabel>Select Event Type</InputLabel>
-      <Select fullWidth>
-        <MenuItem value="wedding">Wedding</MenuItem>
-        <MenuItem value="birthday">Birthday</MenuItem>
-        <MenuItem value="conference">Conference</MenuItem>
-      </Select>
-    </Grid>
-    <Grid item xs={12} sm={3}>
-      <InputLabel>Select the Date</InputLabel>
-      <Box display="flex" alignItems="center" sx={{ backgroundColor: "#fff", color: "#000", borderRadius: 1, p: 1 }}>
-        <CalendarToday />
-        <TextField
-          type="date"
-          fullWidth
-          InputProps={{ disableUnderline: true }}
-          sx={{ ml: 2 }}
-        />
-      </Box>
-    </Grid>
-    <Grid item xs={12} sm={3}>
-      <InputLabel>Select Location</InputLabel>
-      <Box display="flex" alignItems="center" sx={{ backgroundColor: "#fff", color: "#000", borderRadius: 1, p: 1 }}>
-        <LocationOn />
-        <TextField
-          placeholder="Enter Location"
-          fullWidth
-          InputProps={{ disableUnderline: true }}
-          sx={{ ml: 2 }}
-        />
-      </Box>
+      <DropDownComponent />
     </Grid>
 
-    <Grid container justifyContent="center" spacing={2} mt={3}>
-    <Grid item xs={12} sm={8}>
+    <Grid item xs={12} sm={3}>
       <TextField
-        label="Give the Event a Name"
+        type="date"
         fullWidth
         variant="outlined"
-        sx={{ mb: 2, input: { color: "#fff" } }}
-      />
-      <TextField
-        label="Enter the Number of Participants"
-        fullWidth
-        variant="outlined"
-        sx={{ mb: 2, input: { color: "#fff" } }}
-      />
-      <TextField
-        label="Enter Your Budget Range"
-        fullWidth
-        variant="outlined"
-        sx={{ mb: 2, input: { color: "#fff" } }}
-      />
-      <FormControlLabel
-        control={<Checkbox sx={{ color: "#fff" }} />}
-        label="Do you want to limit to the above budget"
-        sx={{ color: "#fff" }}
+        InputProps={{ notched: false }}
+        sx={{ ml: 2 }}
       />
     </Grid>
+
+    <Grid item xs={12} sm={3}>
+      <Grid container alignItems="center" spacing={1} sx={{ padding: "10px 20px", border: "2px solid white", borderRadius: "5px", backgroundColor: "#2A204D" }}>
+        <Grid item xs={11}>
+          <Input
+            placeholder="Enter Location"
+            fullWidth
+            disableUnderline
+            sx={{ color: "white" }}
+          />
+        </Grid>
+        <Grid item xs={1}>
+          <LocationOn sx={{ color: "white" }} />
+        </Grid>
+      </Grid>
     </Grid>
   </Grid>
 );
