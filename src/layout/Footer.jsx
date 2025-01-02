@@ -1,8 +1,8 @@
 import React from "react";
 import { FaFacebookF, FaInstagram, FaTwitter } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import Button from "../shared/Button";
-import AppLogo from "../shared/AppLogo";
+import Button from "../components/shared/Button";
+import AppLogo from "../components/shared/AppLogo";
 
 const SITEMAP = [
   {

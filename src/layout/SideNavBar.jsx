@@ -1,7 +1,7 @@
 import React from "react";
 import { Grid, IconButton, Typography } from "@mui/material";
 import { Twitter, Instagram } from "@mui/icons-material";
-import AppLogo from "../shared/AppLogo";
+import AppLogo from "../components/shared/AppLogo";
 
 const SideNavBar = () => {
   return (

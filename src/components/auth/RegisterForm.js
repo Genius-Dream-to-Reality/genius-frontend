@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { ThemeProvider, Grid, Box, Typography, InputBase, Button, FormControlLabel } from "@mui/material";
-import theme from "../../theme";
-import Header from "../layout/Header";
+import theme from "../../styles/theme";
+import Header from "../../layout/Header";
 import authServiceImage from "../../assets/images/authService.jpg";
 import useStyles from "../../assets/css/style";
 import { CheckBox } from "@mui/icons-material";
-import SideNavBar from "../layout/SideNavBar";
+import SideNavBar from "../../layout/SideNavBar";
 
-const RegisterComponent = () => {
+const RegisterForm = () => {
   const classes = useStyles();
   const [formData, setFormData] = useState({
     firstName: "",
@@ -165,4 +165,4 @@ const RegisterComponent = () => {
   );
 };
 
-export default RegisterComponent;
+export default RegisterForm;
