@@ -1,10 +1,9 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
-import backgroundImage from "../../assets/images/Background.png";
+import backgroundImage from "../assets/images/Background.png";
 import { FaArrowAltCircleRight, FaArrowDown } from "react-icons/fa";
-import why from "../../assets/images/why.png";
-import picking from "../../assets/images/picking.png";
-import finalized from "../../assets/images/finalized.png";
+import why from "../assets/images/why.png";
+import picking from "../assets/images/picking.png";
+import finalized from "../assets/images/finalized.png";
 import { MdArrowDownward, MdDateRange } from "react-icons/md";
 import { BsArrowRight } from "react-icons/bs";
 import { motion } from "framer-motion";
@@ -12,12 +11,6 @@ import Header from "../layout/Header";
 import Footer from "../layout/Footer";
 
 const Home = () => {
-  const navigate = useNavigate();
-
-  const handleNavigation = () => {
-    navigate("/event-planning"); // Navigates to the EventPlanningComponent page
-  };
-
   return (
     <div className=" min-h-screen ">
 
@@ -104,10 +97,8 @@ const Home = () => {
                 </span>
               </button>
 
-              <button 
-                onClick={handleNavigation}
-                className="group px-6 py-3 flex items-center gap-2 text-white font-semibold hover:text-yellow-500 transition-colors duration-300">
-                  Get Started
+              <button className="group px-6 py-3 flex items-center gap-2 text-white font-semibold hover:text-yellow-500 transition-colors duration-300">
+                Get Started
                 <FaArrowAltCircleRight className="group-hover:translate-x-1 transition-transform duration-300" />
               </button>
             </motion.div>

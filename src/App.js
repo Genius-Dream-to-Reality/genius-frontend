@@ -1,11 +1,10 @@
 import React from "react";
 import { ThemeProvider,CssBaseline  } from "@mui/material";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import theme from './theme';
-import Home from "./components/Home/Home";
-import SelectEventType from "./components/Home/SelectEventType";
-import RegisterComponent from "./components/auth-service/RegisterComponent";
-import EventPlanningComponent from "./components/event-planning/EventPlanningComponent";
+import theme from './styles/theme';
+import Home from "./pages/HomePage";
+import SelectEventType from "./pages/SelectEventType";
+import RegisterComponent from "./components/auth/RegisterForm";
 
 function App() {
   return (

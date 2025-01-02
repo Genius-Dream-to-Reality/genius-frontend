@@ -3,8 +3,8 @@ import { AppBar, Toolbar, Typography, Grid, Button, IconButton } from "@mui/mate
 import { FaCartPlus } from "react-icons/fa";
 import { ThemeProvider } from "@mui/material/styles";  
 import { useNavigate } from "react-router-dom"; 
-import theme from "../../theme"; 
-import useStyles from "../../assets/css/style"; 
+import theme from "../styles/theme"; 
+import useStyles from "../assets/css/style"; 
 
 const Header = () => {
   const classes = useStyles(); 
@@ -13,7 +13,8 @@ const Header = () => {
 
 
   const handleRegisterClick = () => {
-    navigate("/register"); 
+    //To Do - Navigate to userType selector page. for now it direct to vendor registration.
+    navigate("/register", { state: { userType: "vendor" } }); 
   };
 
   return (

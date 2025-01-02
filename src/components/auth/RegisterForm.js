@@ -1,14 +1,20 @@
 import React, { useState } from "react";
+import { useLocation } from "react-router-dom";
 import { ThemeProvider, Grid, Box, Typography, InputBase, Button, FormControlLabel } from "@mui/material";
-import theme from "../../theme";
-import Header from "../layout/Header";
+import theme from "../../styles/theme";
+import Header from "../../layout/Header";
 import authServiceImage from "../../assets/images/authService.jpg";
+import vendorRegister from "../../assets/images/why.png";
+import googleCalendar from "../../assets/images/google-calendar.png";
 import useStyles from "../../assets/css/style";
 import { CheckBox } from "@mui/icons-material";
-import SideNavBar from "../layout/SideNavBar";
+import SideNavBar from "../../layout/SideNavBar";
 
-const RegisterComponent = () => {
+const RegisterForm = () => {
   const classes = useStyles();
+  const location = useLocation();
+  const { userType } = location.state || {};
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -66,11 +72,11 @@ const RegisterComponent = () => {
   return (
     <ThemeProvider theme={theme}>
       <Grid container>
-        <SideNavBar/>
+        <SideNavBar />
         <Grid item md={5}>
           <Box
             component="img"
-            src={authServiceImage}
+            src={userType === "vendor" ? vendorRegister : authServiceImage}
             alt="Register"
             sx={{
               width: "100%",
@@ -84,7 +90,7 @@ const RegisterComponent = () => {
           <Header />
           <Grid item xs={12} md={12} style={{ textAlign: "center", paddingTop: "40px" }}>
             <Typography style={{ fontSize: "32px" }}>
-              Register as an Event Planner
+              Register as {userType === "vendor" ? "a Vendor" : "an Event Planner"}
             </Typography>
           </Grid>
 
@@ -115,6 +121,51 @@ const RegisterComponent = () => {
                 </Grid>
               ))}
 
+              {userType === "vendor" && (
+                <>
+                  <Grid container
+                    justifyContent="center"
+                    alignItems="center"
+                    style={{ marginTop: "20px" }}
+                  >
+                    <Grid item>
+                      <Typography style={{ fontSize: "13px", textAlign: "center" }}>
+                        Please authorize Genius to access your Google Calendar before proceeding. <br />
+                        More info..
+                      </Typography>
+                    </Grid>
+
+                    <Grid item style={{ marginTop: "20px" }}>
+                      <Button
+                        variant="contained"
+                        style={{
+                          backgroundColor: "#4C3A74",
+                          color: "#FFFFFF",
+                          padding: "10px 20px",
+                          fontSize: "14px",
+                          borderRadius: "8px",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "10px",
+                          textTransform: "none"
+                        }}
+                        onClick={() => console.log("Link Google Calendar")}
+                      >
+                        Link Google Calendar
+                        <img
+                          src={googleCalendar}
+                          alt="Google Calendar Icon"
+                          style={{
+                            width: "20px",
+                            height: "20px",
+                          }}
+                        />
+                      </Button>
+                    </Grid>
+                  </Grid>
+                </>
+              )}
+
               {/* Terms and Conditions Checkbox */}
               <Grid item container xs={12} justifyContent="center" style={{ marginTop: "20px", marginBottom: "10px" }}>
                 <FormControlLabel
@@ -126,7 +177,18 @@ const RegisterComponent = () => {
                       color="primary"
                     />
                   }
-                  label="Do you agree to our Privacy and Policies?"
+                  label={
+                    <span style={{ fontSize: "14px" }}>
+                      Do you agree to our{" "}
+                      <span
+                        style={{ color: "blue", cursor: "pointer" }}
+                        onClick={() => console.log("Navigate to Privacy and Policies")}
+                      >
+                        Privacy and Policies
+                      </span>
+                      ?
+                    </span>
+                  }
                 />
               </Grid>
 
@@ -165,4 +227,4 @@ const RegisterComponent = () => {
   );
 };
 
-export default RegisterComponent;
+export default RegisterForm;
