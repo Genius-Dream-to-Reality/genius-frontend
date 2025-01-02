@@ -13,7 +13,8 @@ const Header = () => {
 
 
   const handleRegisterClick = () => {
-    navigate("/register"); 
+    //To Do - Navigate to userType selector page. for now it direct to vendor registration.
+    navigate("/register", { state: { userType: "vendor" } }); 
   };
 
   return (
