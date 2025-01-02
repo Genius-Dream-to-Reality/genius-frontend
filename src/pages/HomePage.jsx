@@ -1,9 +1,9 @@
 import React from "react";
-import backgroundImage from "../../assets/images/Background.png";
+import backgroundImage from "../assets/images/Background.png";
 import { FaArrowAltCircleRight, FaArrowDown } from "react-icons/fa";
-import why from "../../assets/images/why.png";
-import picking from "../../assets/images/picking.png";
-import finalized from "../../assets/images/finalized.png";
+import why from "../assets/images/why.png";
+import picking from "../assets/images/picking.png";
+import finalized from "../assets/images/finalized.png";
 import { MdArrowDownward, MdDateRange } from "react-icons/md";
 import { BsArrowRight } from "react-icons/bs";
 import { motion } from "framer-motion";

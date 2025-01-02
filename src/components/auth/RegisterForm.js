@@ -1,16 +1,16 @@
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { ThemeProvider, Grid, Box, Typography, InputBase, Button, FormControlLabel } from "@mui/material";
-import theme from "../../theme";
-import Header from "../layout/Header";
+import theme from "../../styles/theme";
+import Header from "../../layout/Header";
 import authServiceImage from "../../assets/images/authService.jpg";
 import vendorRegister from "../../assets/images/why.png";
 import googleCalendar from "../../assets/images/google-calendar.png";
 import useStyles from "../../assets/css/style";
 import { CheckBox } from "@mui/icons-material";
-import SideNavBar from "../layout/SideNavBar";
+import SideNavBar from "../../layout/SideNavBar";
 
-const RegisterComponent = () => {
+const RegisterForm = () => {
   const classes = useStyles();
   const location = useLocation();
   const { userType } = location.state || {};
@@ -227,4 +227,4 @@ const RegisterComponent = () => {
   );
 };
 
-export default RegisterComponent;
+export default RegisterForm;
