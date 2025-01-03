@@ -1,44 +1,60 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import backgroundImage from "../assets/images/Background.png";
 import { FaArrowAltCircleRight, FaArrowDown } from "react-icons/fa";
 import why from "../assets/images/why.png";
 import picking from "../assets/images/picking.png";
 import finalized from "../assets/images/finalized.png";
-import { MdArrowDownward, MdDateRange } from "react-icons/md";
+import { MdDateRange } from "react-icons/md";
 import { BsArrowRight } from "react-icons/bs";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Header from "../layout/Header";
 import Footer from "../layout/Footer";
 
 const Home = () => {
   const navigate = useNavigate();
+  const images = [backgroundImage, why, picking, finalized];
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % images.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [images.length]);
 
   const handleNavigation = () => {
     navigate("/event-planning");
   };
 
   return (
-    <div className=" min-h-screen ">
-
-      {/* Hero Section */}
+    <div className="min-h-screen">
+      {/* Carousal section */}
       <div className="relative h-screen w-full overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: `url(${backgroundImage})`,
-          }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-br from-dark-purple/50 via-black/70 to-black/80" />
-        </div>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentIndex}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1 }}
+            className="absolute inset-0"
+          >
+            <div
+              className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+              style={{ backgroundImage: `url(${images[currentIndex]})` }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-dark-purple/50 via-black/70 to-black/80" />
+            </div>
+          </motion.div>
+        </AnimatePresence>
 
         <Header />
-        <div className="relative h-full container mx-auto px-4 flex flex-col justify-center max-w-4xl ">
+        <div className="relative pt-16 container mx-auto px-4 flex flex-col justify-center max-w-4xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className=" "
           >
             <motion.div
               initial={{ width: 0, opacity: 0 }}
@@ -66,23 +82,6 @@ const Home = () => {
             </motion.h1>
 
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.6 }}
-              className="flex items-center gap-4 mb-12"
-            >
-              <span className="text-white font-semibold text-2xl">
-                Scroll Down
-              </span>
-              <motion.div
-                animate={{ y: [0, 10, 0] }}
-                transition={{ repeat: Infinity, duration: 1.5 }}
-              >
-                <MdArrowDownward className="text-3xl text-yellow-500" />
-              </motion.div>
-            </motion.div>
-
-            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.8 }}
@@ -106,12 +105,25 @@ const Home = () => {
 
               <button
                 onClick={handleNavigation}
-                className="group px-6 py-3 flex items-center gap-2 text-white font-semibold hover:text-yellow-500 transition-colors duration-300">
+                className="group px-6 py-3 flex items-center gap-2 text-white font-semibold hover:text-yellow-500 transition-colors duration-300"
+              >
                 Get Started
                 <FaArrowAltCircleRight className="group-hover:translate-x-1 transition-transform duration-300" />
               </button>
             </motion.div>
           </motion.div>
+        </div>
+
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-2">
+          {images.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentIndex(index)}
+              className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                currentIndex === index ? "w-8 bg-yellow-500" : "bg-white/50"
+              }`}
+            />
+          ))}
         </div>
       </div>
 
