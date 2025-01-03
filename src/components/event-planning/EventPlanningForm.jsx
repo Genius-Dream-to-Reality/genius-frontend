@@ -1,81 +1,116 @@
 import React, { useState } from "react";
-import { Box, Grid, Button, Typography } from "@mui/material";
+import { Grid, Button, Typography } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../styles/theme";
-import SideNavBar from "../../layout/SideNavBar";
-import Header from "../../layout/Header";
 import StepOne from "./StepOne";
 // import StepTwo from "./StepTwo";
 // import StepThree from "./StepThree";
+
+const STEPS = [
+  { text: "Initial Setup" },
+  { text: "Pick Services" },
+  { text: "Finalize" },
+];
 
 const EventPlanningForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
 
   const handleNext = () => {
-    if (currentStep < 3) {
-      setCurrentStep(currentStep + 1);
-    }
+    if (currentStep < 3) setCurrentStep(currentStep + 1);
+  };
+
+  const handleBack = () => {
+    if (currentStep > 1) setCurrentStep(currentStep - 1);
   };
 
   return (
     <ThemeProvider theme={theme}>
-      <Grid container>
-        <SideNavBar />
-        <Grid item md={5}></Grid>
-        <Grid item md={7}><Header /></Grid>
+      <Grid container style={{ textAlign: "center", marginTop: "60px" }}>
+        <Grid item xs={1} md={4}></Grid>
+        {STEPS.map((step, index) => (
+          <React.Fragment key={index}>
+            <Grid item xs={2} md={1}>
+              <Grid container direction="column" alignItems="center">
+                <Circle
+                  number={index + 1}
+                  active={currentStep === index + 1}
+                  completed={currentStep > index + 1}
+                />
+                <Typography
+                  style={{
+                    fontSize: "12px",
+                    paddingTop: "15px",
+                    color: currentStep === index + 1 ? "#2A7CED" : "#8F8F8F",
+                  }}
+                >
+                  {step.text}
+                </Typography>
+              </Grid>
+            </Grid>
+            {index !== STEPS.length - 1 && (
+              <Grid item xs={2} md={1}>
+                <hr style={{ marginTop: "32px", opacity: 0.12 }} />
+              </Grid>
+            )}
+          </React.Fragment>
+        ))}
+        <Grid item xs={1} md={3}></Grid>
       </Grid>
 
-
-        {/* Step Indicators */}
-        <Grid container justifyContent="center" mb={4}>
-          <Grid item xs={12} sm={8}>
-            <Box display="flex" justifyContent="space-around" alignItems="center">
-              {[1, 2, 3].map((step) => (
-                <Box key={step} textAlign="center">
-                  <Box
-                    sx={{
-                      width: 50,
-                      height: 50,
-                      borderRadius: "50%",
-                      backgroundColor: currentStep === step ? "#9f79cf" : "#fff",
-                      color: currentStep === step ? "#fff" : "#000",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    {step}
-                  </Box>
-                  <Typography mt={1}>
-                    {step === 1 && "Initial Setup"}
-                    {step === 2 && "Pick Services"}
-                    {step === 3 && "Finalize"}
-                  </Typography>
-                </Box>
-              ))}
-            </Box>
-          </Grid>
-        </Grid>
-
-        {/* Render the relevant form fields */}
+      <Grid item xs={12} md={12} style={{ marginTop: "20px" }}>
         {currentStep === 1 && <StepOne />}
         {/* {currentStep === 2 && <StepTwo />}
         {currentStep === 3 && <StepThree />} */}
+      </Grid>
 
-        {/* Next Button */}
-        <Grid container justifyContent="center" mt={3}>
+      <Grid container spacing={5} style={{ paddingTop: "20px" }}>
+        <Grid item xs={10} md={10} style={{ display: "flex", justifyContent: "flex-end" }}>
+          {currentStep > 1 && (
+            <Button
+              onClick={handleBack}
+              variant="contained"
+              style={{ boxShadow: "none", marginRight: "10px" }}
+            >
+              Back
+            </Button>
+          )}
           <Button
+            onClick={currentStep === 3 ? () => alert("Done!") : handleNext}
             variant="contained"
-            color="primary"
-            size="large"
-            sx={{ px: 4 }}
-            onClick={handleNext}
+            style={{ boxShadow: "none", height: "40px" }}
           >
-            {currentStep < 3 ? "Next" : "Finish"}
+            {currentStep < 3 ? "Next" : "Done"}
           </Button>
         </Grid>
-      
+      </Grid>
     </ThemeProvider>
+  );
+};
+
+const Circle = ({ number, active, completed }) => {
+  const paddedNumber = number.toString().padStart(2, "0");
+  return (
+    <div
+      style={{
+        borderRadius: "50%",
+        width: "65px",
+        height: "65px",
+        backgroundColor: completed ? "#2A7CED" : "#FFFFFF",
+        border: active ? "2px solid #2A7CED" : "0.25px solid #8F8F8F",
+        textAlign: "center",
+        paddingTop: "10px",
+      }}
+    >
+      <h5
+        style={{
+          paddingTop: "10px",
+          fontSize: "16px",
+          color: active ? "#2A7CED" : completed ? "#FFFFFF" : "#8F8F8F",
+        }}
+      >
+        {paddedNumber}
+      </h5>
+    </div>
   );
 };
 

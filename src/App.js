@@ -5,6 +5,7 @@ import theme from './styles/theme';
 import Home from "./pages/HomePage";
 import SelectEventType from "./pages/SelectEventType";
 import RegisterComponent from "./components/auth/RegisterForm";
+import EventPlanningForm from "./components/event-planning/EventPlanningForm";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
             <Route index element={<Home />} />
             <Route path="select-event" element={<SelectEventType />} />
             <Route path="register" element={<RegisterComponent />} />
+            <Route path="event-planning" element={<EventPlanningForm/>} />
         </Routes>
       </Router>
     </ThemeProvider>
