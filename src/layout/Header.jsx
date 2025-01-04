@@ -18,7 +18,7 @@ import {
 import { FaCartPlus } from "react-icons/fa";
 import { Menu } from "lucide-react";
 import { ThemeProvider } from "@mui/material/styles";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,7 +28,6 @@ import {
   DropdownMenuTrigger,
 } from "../components/shared/DropdownMenu";
 import { User } from "lucide-react";
-import theme from "../styles/theme";
 import useStyles from "../assets/css/style";
 import AppLogo from "../components/shared/AppLogo";
 
@@ -36,19 +35,24 @@ const Header = () => {
   const classes = useStyles();
   const navigate = useNavigate();
   const theme = useTheme();
+  const location = useLocation();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const hideLogoRoutes = ["/register", "/choose-type"];
+  const isHideLogoRoute = hideLogoRoutes.includes(location.pathname);
+
+  const shouldShowLogo = !isHideLogoRoute || (isHideLogoRoute && isMobile);
 
   const links = ["Explore", "About Us", "Contact Us"];
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [user, setUser] = useState({
+  const [user] = useState({
     name: "John Doe",
     email: "john@example.com",
   });
 
   const handleRegisterClick = () => {
-    navigate("/register", { state: { userType: "vendor" } });
+    navigate("/choose-type", { state: { userType: "vendor" } });
     setDrawerOpen(false);
   };
 
@@ -131,7 +135,7 @@ const Header = () => {
               onClick={handleLoginClick}
               sx={{
                 marginBottom: "10px",
-                backgroundColor: '#2e1d5a',
+                backgroundColor: "#2e1d5a",
                 color: "#fff",
                 "&:hover": {
                   backgroundColor: theme.palette.primary.dark,
@@ -145,8 +149,8 @@ const Header = () => {
               variant="outlined"
               onClick={handleRegisterClick}
               sx={{
-                borderColor: '#2e1d5a',
-                color: '#2e1d5a',
+                borderColor: "#2e1d5a",
+                color: "#2e1d5a",
                 "&:hover": {
                   borderColor: theme.palette.primary.dark,
                   backgroundColor: "rgba(0, 0, 0, 0.04)",
@@ -159,15 +163,14 @@ const Header = () => {
         )}
 
         {isAuthenticated && (
-          <Box sx={{ padding: "0 20px", marginTop: "20px",  }}>
-            
+          <Box sx={{ padding: "0 20px", marginTop: "20px" }}>
             <Button
               fullWidth
               variant="contained"
               onClick={handleLogout}
               sx={{
                 marginBottom: "10px",
-                backgroundColor: '#2e1d5a',
+                backgroundColor: "#2e1d5a",
                 color: "#fff",
                 "&:hover": {
                   backgroundColor: theme.palette.primary.dark,
@@ -203,9 +206,11 @@ const Header = () => {
         >
           <Grid container alignItems="center" justifyContent="space-between">
             {/* Logo Section */}
-            <Grid item xs={6} md={2} container alignItems="center">
-              <AppLogo size="lg" />
-            </Grid>
+            {shouldShowLogo && (
+              <Grid item xs={6} md={2} container alignItems="center">
+                <AppLogo size="lg" />
+              </Grid>
+            )}
 
             {/* Navigation Links - Hidden on Mobile */}
             {!isMobile && (
