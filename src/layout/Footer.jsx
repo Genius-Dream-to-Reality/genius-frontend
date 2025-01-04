@@ -32,7 +32,7 @@ export default function Footer() {
         <div className="flex flex-col md:flex-row item-start md:item-center justify-start md:justify-around gap-10 md:gap-0">
           <div className="flex-1 basis-1/4 px-4">
             <div className="logo flex md:flex-col gap-y-3 text-purple space-x-4">
-              <AppLogo className={"w-36 "} />
+              <AppLogo size="lg" />
               <ul className="hidden md:flex space-x-8 mt-4">
                 {/* Social Media Icons */}
                 {[
@@ -41,7 +41,7 @@ export default function Footer() {
                   [<FaTwitter />, "https://twitter.com"],
                 ].map(([icon, url], index) => (
                   <li key={index}>
-                    <Link to={url} className="text-purple hover:text-blue-500">
+                    <Link to={url} className="text-white hover:text-blue-500">
                       {icon}
                     </Link>
                   </li>
@@ -61,7 +61,7 @@ export default function Footer() {
                         key={index}
                       >
                         <Link
-                          className="text-gray-400 hover:text-black hover:underline"
+                          className="text-gray-300 hover:text-gray-400 hover:underline"
                           to={href}
                         >
                           {text}
@@ -77,8 +77,9 @@ export default function Footer() {
           <div className="flex-1 flex flex-col gap-y-3 basis-1/4 px-4">
             <h3 className="text-purple text-2xl">Get in touch</h3>
             <p className="text-purple">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Eum quos
-              recusandae sequi quaerat sit quod sint laborum vero tenetur?
+              Stay updated on the latest event planning tips, industry trends,
+              and exclusive offers. Subscribe now and unlock a world of
+              inspiration for your next event!
             </p>
             <form className="inline-flex">
               <input
@@ -98,7 +99,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="footer-bottom py-5">
-        <h3 className="text-center font-bold text-gray-400 text-xs md:text-base">
+        <h3 className="text-center font-bold text-gray-200 text-xs md:text-base">
           Copyright &#169; 2024 Genius, Inc. Terms & Privacy
         </h3>
       </div>
