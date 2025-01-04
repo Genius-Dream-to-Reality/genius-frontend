@@ -4,6 +4,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../styles/theme";
 import StepOne from "./StepOne";
 import StepTwo from "./StepTwo";
+import StepThree from "./StepThree";
 import Header from "../../layout/Header";
 
 const STEPS = [
@@ -14,6 +15,54 @@ const STEPS = [
 
 const VendorAccountForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
+  const [stepOneData, setStepOneData] = useState({
+    serviceName: "",
+    description: "",
+    selectedEventType: "",
+    selectedServiceType: "",
+    locations: ["Gampaha", "Colombo", "Kalutara"],
+    eventTypes: ["Wedding", "Birthday", "Opening Ceremony"],
+    documents: {
+      identification: null,
+      signature: null,
+    },
+  });
+
+  const [packagesData, setPackagesData] = useState({
+    basic: {
+      price: "",
+      description: "",
+      packageItems: [],
+      participants: "",
+      staffs: "",
+      hasAC: false,
+      hasBuffet: false,
+      rooms: "",
+      images: [],
+    },
+    standard: {
+      price: "",
+      description: "",
+      packageItems: [],
+      participants: "",
+      staffs: "",
+      hasAC: false,
+      hasBuffet: false,
+      rooms: "",
+      images: [],
+    },
+    premium: {
+      price: "",
+      description: "",
+      packageItems: [],
+      participants: "",
+      staffs: "",
+      hasAC: false,
+      hasBuffet: false,
+      rooms: "",
+      images: [],
+    },
+  });
 
   const handleNext = () => {
     if (currentStep < 3) setCurrentStep(currentStep + 1);
@@ -23,18 +72,38 @@ const VendorAccountForm = () => {
     if (currentStep > 1) setCurrentStep(currentStep - 1);
   };
 
+  const handleStepOneUpdate = (newData) => {
+    setStepOneData(newData);
+  };
+
+  const handlePackagesUpdate = (newPackages) => {
+    setPackagesData(newPackages);
+  };
+  const handleSubmit = () => {
+    const finalData = {
+      initialSetup: stepOneData,
+      packages: packagesData,
+    };
+    console.log("Final Form Data:", finalData);
+    // call the API
+    alert("Form submitted successfully!");
+  };
+
   const renderStepContent = () => {
     switch (currentStep) {
       case 1:
-        return <StepOne />;
-      case 2:
-        return <StepTwo />;
-      case 3:
         return (
-          <Typography style={{ textAlign: "center", marginTop: "60px" }}>
-            {/* Congratulations!  */}
-          </Typography>
+          <StepOne formData={stepOneData} onFormUpdate={handleStepOneUpdate} />
         );
+      case 2:
+        return (
+          <StepTwo
+            packages={packagesData}
+            onPackagesUpdate={handlePackagesUpdate}
+          />
+        );
+      case 3:
+        return <StepThree initialSetup={stepOneData} packages={packagesData} />;
       default:
         return null;
     }
@@ -107,7 +176,7 @@ const VendorAccountForm = () => {
             </Button>
           )}
           <Button
-            onClick={currentStep === 3 ? () => alert("Done!") : handleNext}
+            onClick={currentStep === 3 ? handleSubmit : handleNext}
             variant="contained"
             style={{
               boxShadow: "none",

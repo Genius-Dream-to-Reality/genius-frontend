@@ -14,7 +14,6 @@ import {
 import { LocationOn, Upload, Create } from "@mui/icons-material";
 import { styled } from "@mui/material/styles";
 
-// Styled components
 const StyledTextField = styled(TextField)({
   "& .MuiInputBase-input": {
     color: "#fff",
@@ -78,20 +77,7 @@ const UploadBox = styled(Box)(({ theme }) => ({
   },
 }));
 
-const StepOne = () => {
-  const [formData, setFormData] = useState({
-    serviceName: "",
-    description: "",
-    selectedEventType: "",
-    selectedServiceType: "",
-    locations: ["Gampaha", "Colombo", "Kalutara"],
-    eventTypes: ["Wedding", "Birthday", "Opening Ceremony"],
-    documents: {
-      identification: null,
-      signature: null,
-    },
-  });
-
+const StepOne = ({ formData, onFormUpdate }) => {
   const serviceTypes = [
     "Wedding",
     "Birthday Party",
@@ -129,56 +115,56 @@ const StepOne = () => {
   ];
 
   const handleInputChange = (field, value) => {
-    setFormData((prev) => ({
-      ...prev,
+    onFormUpdate({
+      ...formData,
       [field]: value,
-    }));
+    });
   };
 
   const handleRemoveLocation = (location) => {
-    setFormData((prev) => ({
-      ...prev,
-      locations: prev.locations.filter((loc) => loc !== location),
-    }));
+    onFormUpdate({
+      ...formData,
+      locations: formData.locations.filter((loc) => loc !== location),
+    });
   };
 
   const handleRemoveEventType = (eventType) => {
-    setFormData((prev) => ({
-      ...prev,
-      eventTypes: prev.eventTypes.filter((type) => type !== eventType),
-    }));
+    onFormUpdate({
+      ...formData,
+      eventTypes: formData.eventTypes.filter((type) => type !== eventType),
+    });
   };
 
   const handleAddLocation = (event) => {
     const location = event.target.value;
     if (!formData.locations.includes(location)) {
-      setFormData((prev) => ({
-        ...prev,
-        locations: [...prev.locations, location],
-      }));
+      onFormUpdate({
+        ...formData,
+        locations: [...formData.locations, location],
+      });
     }
   };
 
   const handleAddEventType = (event) => {
     const eventType = event.target.value;
     if (!formData.eventTypes.includes(eventType)) {
-      setFormData((prev) => ({
-        ...prev,
-        eventTypes: [...prev.eventTypes, eventType],
-      }));
+      onFormUpdate({
+        ...formData,
+        eventTypes: [...formData.eventTypes, eventType],
+      });
     }
   };
 
   const handleFileUpload = (type, event) => {
     const file = event.target.files[0];
     if (file) {
-      setFormData((prev) => ({
-        ...prev,
+      onFormUpdate({
+        ...formData,
         documents: {
-          ...prev.documents,
+          ...formData.documents,
           [type]: file,
         },
-      }));
+      });
     }
   };
 

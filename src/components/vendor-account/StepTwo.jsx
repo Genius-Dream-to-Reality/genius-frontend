@@ -60,64 +60,28 @@ const ImagePreviewBox = styled(Box)({
   },
 });
 
-const StepTwo = () => {
-  const [packages, setPackages] = useState({
-    basic: {
-      price: "",
-      description: "",
-      packageItems: [],
-      participants: "",
-      staffs: "",
-      hasAC: false,
-      hasBuffet: false,
-      rooms: "",
-      images: [],
-    },
-    standard: {
-      price: "",
-      description: "",
-      packageItems: [],
-      participants: "",
-      staffs: "",
-      hasAC: false,
-      hasBuffet: false,
-      rooms: "",
-      images: [],
-    },
-    premium: {
-      price: "",
-      description: "",
-      packageItems: [],
-      participants: "",
-      staffs: "",
-      hasAC: false,
-      hasBuffet: false,
-      rooms: "",
-      images: [],
-    },
-  });
-
+const StepTwo = ({ packages, onPackagesUpdate }) => {
   const handleChange = (packageType, field, value) => {
-    setPackages((prev) => ({
-      ...prev,
+    onPackagesUpdate({
+      ...packages,
       [packageType]: {
-        ...prev[packageType],
+        ...packages[packageType],
         [field]: value,
       },
-    }));
+    });
   };
 
   const handleImageUpload = (packageType, event) => {
     const files = Array.from(event.target.files);
     const newImages = files.map((file) => URL.createObjectURL(file));
 
-    setPackages((prev) => ({
-      ...prev,
+    onPackagesUpdate({
+      ...packages,
       [packageType]: {
-        ...prev[packageType],
-        images: [...prev[packageType].images, ...newImages].slice(0, 4),
+        ...packages[packageType],
+        images: [...packages[packageType].images, ...newImages].slice(0, 4),
       },
-    }));
+    });
   };
 
   const renderPackage = (type, title) => (
