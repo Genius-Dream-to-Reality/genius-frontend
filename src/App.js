@@ -7,6 +7,7 @@ import SelectEventType from "./pages/SelectEventType";
 import RegisterComponent from "./components/auth/RegisterForm";
 import UserTypeSelection from "./components/auth/UserTypeSelection";
 import EventPlanningForm from "./components/event-planning/EventPlanningForm";
+import VendorAccountForm from "./components/vendor-account/VendorAccountForm";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
             <Route path="choose-type" element={<UserTypeSelection />} />
             <Route path="register" element={<RegisterComponent />} />
             <Route path="event-planning" element={<EventPlanningForm/>} />
+            <Route path="vendor-account" element={<VendorAccountForm/>} />
         </Routes>
       </Router>
     </ThemeProvider>

@@ -270,7 +270,7 @@ const Header = () => {
                         </div>
                       </DropdownMenuLabel>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={() => navigate("/profile")}>
+                      <DropdownMenuItem onClick={() => navigate("/vendor-account")}>
                         Profile
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => navigate("/orders")}>
