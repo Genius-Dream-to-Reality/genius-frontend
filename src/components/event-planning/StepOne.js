@@ -1,33 +1,33 @@
 import React, { useState } from "react";
-import {
-  Grid,
-  Input,
-  Box,
-  FormControlLabel,
-  Checkbox,
-  Typography,
-  InputBase,
-} from "@mui/material";
-import { LocationOn } from "@mui/icons-material";
+import { Grid, FormControlLabel, Checkbox, Typography, InputBase } from "@mui/material";
 import DropDown from "../common/DropDown";
 import DatePicker from "../common/DatePicker";
 import useStyles from "../../assets/css/style";
 
-const StepOne = () => {
+const StepOne = ({ onStepOneDataChange }) => {
   const classes = useStyles();
-  const [location, setLocation] = useState("");
+  const [selectedDistrict, setSelectedDistrict] = useState("Select Location District");
   const [selectedEventType, setSelectedEventType] = useState("Select Event Type");
   const [selectedDate, setSelectedDate] = useState(null);
-
   const [eventName, setEventName] = useState("");
   const [budgetRange, setBudgetRange] = useState("");
   const [numberOfParticipants, setNumberOfParticipants] = useState("");
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "eventName") setEventName(value);
     if (name === "budgetRange") setBudgetRange(value);
     if (name === "numberOfParticipants") setNumberOfParticipants(value);
+
+    onStepOneDataChange({
+      eventName,
+      budgetRange,
+      numberOfParticipants,
+      selectedDistrict,
+      selectedEventType,
+      selectedDate,
+    });
   };
 
   const eventTypes = [
@@ -36,6 +36,14 @@ const StepOne = () => {
     "Trade Show", "Fundraiser", "Corporate Meeting", "Webinar",
     "Team Building", "Award Ceremony", "Exhibition", "Bridal Shower",
     "Baby Shower", "Charity Event", "Sports Event",
+  ];
+
+  const districts = [
+    "Colombo", "Gampaha", "Kalutara", "Kandy", "Matale", "Nuwara Eliya",
+    "Galle", "Matara", "Hambantota", "Jaffna", "Kilinochchi", "Mannar",
+    "Vavuniya", "Mullaitivu", "Batticaloa", "Ampara", "Trincomalee",
+    "Kurunegala", "Puttalam", "Anuradhapura", "Polonnaruwa", "Badulla",
+    "Moneragala", "Ratnapura", "Kegalle"
   ];
 
   return (
@@ -55,30 +63,20 @@ const StepOne = () => {
           <DatePicker
             selectedDate={selectedDate}
             setSelectedDate={setSelectedDate}
-          />
+          /> 
         </Grid>
 
         <Grid item xs={12} sm={3}>
-          <Box className={classes.BoxButton} padding="11px 20px">
-            <Input
-              value={location}
-              placeholder="Enter the Location"
-              onChange={(e) => setLocation(e.target.value)}
-              disableUnderline
-              sx={{
-                flex: 1,
-                color: "white",
-                fontSize: "14px",
-              }}
-            />
-            <LocationOn sx={{ color: "white", marginLeft: "8px" }} />
-          </Box>
+          <DropDown
+            items={districts}
+            selectedItem={selectedDistrict}
+            setSelectedItem={setSelectedDistrict}
+          />
         </Grid>
       </Grid>
 
-      <Grid container spacing={2}
-        style={{ marginBottom: "10px", padding: "80px 400px 10px 300px" }}
-      >
+
+      <Grid container spacing={2} style={{ marginBottom: "10px", padding: "80px 400px 10px 300px" }}>
         <Grid item xs={12} md={4}>
           <Typography className={classes.typo}>
             Enter a Name for the Event:
@@ -144,3 +142,19 @@ const StepOne = () => {
 };
 
 export default StepOne;
+
+
+export const formatDateString = (inputDate) => {
+  const date = new Date(inputDate);
+
+  const padZero = (num) => num.toString().padStart(2, '0');
+
+  const year = date.getFullYear();
+  const month = padZero(date.getMonth() + 1);
+  const day = padZero(date.getDate());
+  const hours = padZero(date.getHours());
+  const minutes = padZero(date.getMinutes());
+  const seconds = padZero(date.getSeconds());
+
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+};

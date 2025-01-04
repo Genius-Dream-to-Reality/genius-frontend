@@ -47,6 +47,7 @@ const useStyles = makeStyles((theme) => ({
     border: "2px solid white",
     borderRadius: "5px",
     color: "white",
+    padding: "11px 20px"
   },
   DropDown: {
     position: "absolute",
