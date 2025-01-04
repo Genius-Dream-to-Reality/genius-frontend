@@ -1,6 +1,14 @@
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
-import { ThemeProvider, Grid, Box, Typography, InputBase, Button, FormControlLabel } from "@mui/material";
+import {
+  ThemeProvider,
+  Grid,
+  Box,
+  Typography,
+  InputBase,
+  Button,
+  FormControlLabel,
+} from "@mui/material";
 import theme from "../../styles/theme";
 import Header from "../../layout/Header";
 import authServiceImage from "../../assets/images/authService.jpg";
@@ -88,25 +96,57 @@ const RegisterForm = () => {
 
         <Grid item md={7}>
           <Header />
-          <Grid item xs={12} md={12} style={{ textAlign: "center", paddingTop: "40px" }}>
+          <Grid
+            item
+            xs={12}
+            md={12}
+            style={{ textAlign: "center", paddingTop: "40px" }}
+          >
             <Typography style={{ fontSize: "32px" }}>
-              Register as {userType === "vendor" ? "a Vendor" : "an Event Planner"}
+              Register as{" "}
+              {userType === "vendor" ? "a Vendor" : "an Event Planner"}
             </Typography>
           </Grid>
 
           <form onSubmit={handleSubmit}>
             <Grid container className={classes.formContent}>
-              {["firstName", "lastName", "email", "mobileNumber", "password", "confirmPassword"].map((field, index) => (
-                <Grid item container xs={12} md={12} alignItems="center" spacing={2} style={{ marginBottom: "10px" }} key={index}>
+              {[
+                "firstName",
+                "lastName",
+                "email",
+                "mobileNumber",
+                "password",
+                "confirmPassword",
+              ].map((field, index) => (
+                <Grid
+                  item
+                  container
+                  xs={12}
+                  md={12}
+                  alignItems="center"
+                  spacing={2}
+                  style={{ marginBottom: "10px" }}
+                  key={index}
+                >
                   <Grid item xs={12} md={4}>
-                    <Typography className={classes.typo} style={{ fontSize: "14px" }}>
-                      {field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1')}:
+                    <Typography
+                      className={classes.typo}
+                      style={{ fontSize: "14px" }}
+                    >
+                      {field.charAt(0).toUpperCase() +
+                        field.slice(1).replace(/([A-Z])/g, " $1")}
+                      :
                     </Typography>
                   </Grid>
                   <Grid item xs={12} md={8}>
                     <InputBase
                       className={classes.formInput}
-                      type={field.includes("password") || field.includes("confirmPassword") ? "password" : "text"}
+                      type={
+                        field.includes("password") ||
+                        field.includes("confirmPassword")
+                          ? "password"
+                          : "text"
+                      }
                       name={field}
                       value={formData[field]}
                       onChange={handleChange}
@@ -123,14 +163,18 @@ const RegisterForm = () => {
 
               {userType === "vendor" && (
                 <>
-                  <Grid container
+                  <Grid
+                    container
                     justifyContent="center"
                     alignItems="center"
                     style={{ marginTop: "20px" }}
                   >
                     <Grid item>
-                      <Typography style={{ fontSize: "13px", textAlign: "center" }}>
-                        Please authorize Genius to access your Google Calendar before proceeding. <br />
+                      <Typography
+                        style={{ fontSize: "13px", textAlign: "center" }}
+                      >
+                        Please authorize Genius to access your Google Calendar
+                        before proceeding. <br />
                         More info..
                       </Typography>
                     </Grid>
@@ -147,7 +191,7 @@ const RegisterForm = () => {
                           display: "flex",
                           alignItems: "center",
                           gap: "10px",
-                          textTransform: "none"
+                          textTransform: "none",
                         }}
                         onClick={() => console.log("Link Google Calendar")}
                       >
@@ -167,7 +211,13 @@ const RegisterForm = () => {
               )}
 
               {/* Terms and Conditions Checkbox */}
-              <Grid item container xs={12} justifyContent="center" style={{ marginTop: "20px", marginBottom: "10px" }}>
+              <Grid
+                item
+                container
+                xs={12}
+                justifyContent="center"
+                style={{ marginTop: "20px", marginBottom: "10px" }}
+              >
                 <FormControlLabel
                   control={
                     <CheckBox
@@ -182,7 +232,9 @@ const RegisterForm = () => {
                       Do you agree to our{" "}
                       <span
                         style={{ color: "blue", cursor: "pointer" }}
-                        onClick={() => console.log("Navigate to Privacy and Policies")}
+                        onClick={() =>
+                          console.log("Navigate to Privacy and Policies")
+                        }
                       >
                         Privacy and Policies
                       </span>
@@ -194,9 +246,10 @@ const RegisterForm = () => {
 
               {/* Submit Button */}
               <Grid item container xs={12} justifyContent="center">
-                <Button type="submit"
+                <Button
+                  type="submit"
                   className={classes.submitButton}
-                // onClick={handleRegisterClick}
+                  // onClick={handleRegisterClick}
                 >
                   Register
                 </Button>
@@ -205,17 +258,24 @@ const RegisterForm = () => {
           </form>
 
           {/* Login Section (Button and Text on the Same Line) */}
-          <Grid container spacing={1} alignItems="center" justifyContent="center" style={{ marginTop: "30px" }}>
+          <Grid
+            container
+            spacing={1}
+            alignItems="center"
+            justifyContent="center"
+            style={{ marginTop: "30px" }}
+          >
             <Grid item>
               <Typography className={classes.typo} style={{ fontSize: "14px" }}>
                 Do you have an account?
               </Typography>
             </Grid>
             <Grid item>
-              <Button type="submit"
+              <Button
+                type="submit"
                 className={classes.submitButton}
                 style={{ backgroundColor: "#B07207" }}
-              // onClick={handleRegisterClick}
+                // onClick={handleRegisterClick}
               >
                 Login
               </Button>
