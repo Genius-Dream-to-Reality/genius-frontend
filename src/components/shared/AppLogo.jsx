@@ -1,13 +1,23 @@
 import React from "react";
-import logo from "../../assets/images/logo.png";
 import { Link } from "react-router-dom";
+import logo from "../../assets/images/logo.png";
 
+const AppLogo = ({ className, size = "normal" }) => {
+  const sizeClasses = {
+    sm: "h-6",
+    normal: "h-8",
+    lg: "h-36"
+  };
 
-export default function AppLogo({ className, logoSize }) {
-    const sizeClass = logoSize || "normal"; // Using custom height value directly
-    return (
-        <Link href={"/"} className={`${className || ""}`}>
-            <img className={`${sizeClass} w-auto text-red`} src={logo} alt="" />{" "}
-        </Link>
-    );
-}
+  return (
+    <Link to="/" className={`${className || ""}`}>
+      <img 
+        className={`${sizeClasses[size]} w-auto pt-8`} 
+        src={logo}
+        alt="Company Logo" 
+      />
+    </Link>
+  );
+};
+
+export default AppLogo;

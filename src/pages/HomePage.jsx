@@ -181,7 +181,7 @@ const Home = () => {
         <div className=" text-white py-24 overflow-hidden ">
           <div className="container">
             <div className="flex flex-col lg:flex-row items-center gap-12">
-              <div className="w-full lg:w-1/2">
+              <div className="w-full lg:w-1/2 order-2 md:order-1">
                 <div className="relative">
                   <div className="absolute -z-10 w-64 h-64 bg-yellow-500/10 rounded-full blur-3xl top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></div>
 
@@ -194,7 +194,7 @@ const Home = () => {
                   </div>
                 </div>
               </div>
-              <div className="w-full lg:w-1/2 relative">
+              <div className="w-full lg:w-1/2 relative  order-1 md:order-2">
                 <div className="absolute -left-8 -top-40 text-[200px] font-bold text-yellow-500/10">
                   02
                 </div>
