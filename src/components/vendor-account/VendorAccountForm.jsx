@@ -3,6 +3,7 @@ import { Grid, Button, Typography } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../styles/theme";
 import StepOne from "./StepOne";
+import StepTwo from "./StepTwo";
 import Header from "../../layout/Header";
 
 const STEPS = [
@@ -22,10 +23,31 @@ const VendorAccountForm = () => {
     if (currentStep > 1) setCurrentStep(currentStep - 1);
   };
 
+  const renderStepContent = () => {
+    switch (currentStep) {
+      case 1:
+        return <StepOne />;
+      case 2:
+        return <StepTwo />;
+      case 3:
+        return (
+          <Typography style={{ textAlign: "center", marginTop: "60px" }}>
+            {/* Congratulations!  */}
+          </Typography>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <ThemeProvider theme={theme}>
-        <Header />
-      <Grid container justifyContent="center" style={{ textAlign: "center", marginTop: "60px"  }}>
+      <Header />
+      <Grid
+        container
+        justifyContent="center"
+        style={{ textAlign: "center", marginTop: "60px" }}
+      >
         {STEPS.map((step, index) => (
           <React.Fragment key={index}>
             <Grid item xs={2} md={1}>
@@ -56,15 +78,20 @@ const VendorAccountForm = () => {
       </Grid>
 
       <Grid item xs={12} md={12} style={{ marginTop: "20px" }}>
-        {currentStep === 1 && <StepOne />}
+        {renderStepContent()}
       </Grid>
 
-      <Grid container  style={{ paddingTop: "20px" }}>
+      <Grid container style={{ paddingTop: "20px" }}>
         <Grid
           item
           xs={10}
           md={12}
-          style={{ display: "flex", justifyContent: "flex-end" , paddingRight: "30px", paddingBottom: "30px" }}
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            paddingRight: "30px",
+            paddingBottom: "30px",
+          }}
         >
           {currentStep > 1 && (
             <Button
