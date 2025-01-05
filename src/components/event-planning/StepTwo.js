@@ -27,13 +27,7 @@ const StepTwo = () => {
     };
 
     return (
-        <Grid
-            container
-            justifyContent="center"
-            alignItems="center"
-            spacing={2}
-            style={{ marginBottom: "10px", padding: "30px 150px 0px 150px" }}
-        >
+        <Grid container justifyContent="center" spacing={2} sx={{ padding: { xs: "30px 10px", sm: "30px 80px" } }}>
             <Grid item xs={12} sm={3}>
                 <DropDown
                     items={eventServices}

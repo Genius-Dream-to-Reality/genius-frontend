@@ -13,12 +13,22 @@ const StepOne = ({ onStepOneDataChange }) => {
   const [budgetRange, setBudgetRange] = useState("");
   const [numberOfParticipants, setNumberOfParticipants] = useState("");
 
-
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === "eventName") setEventName(value);
-    if (name === "budgetRange") setBudgetRange(value);
-    if (name === "numberOfParticipants") setNumberOfParticipants(value);
+
+    switch (name) {
+      case "eventName":
+        setEventName(value);
+        break;
+      case "budgetRange":
+        setBudgetRange(value);
+        break;
+      case "numberOfParticipants":
+        setNumberOfParticipants(value);
+        break;
+      default:
+        break;
+    }
 
     onStepOneDataChange({
       eventName,
@@ -48,9 +58,8 @@ const StepOne = ({ onStepOneDataChange }) => {
 
   return (
     <>
-      <Grid container justifyContent="center" spacing={2}
-        style={{ marginBottom: "10px", padding: "30px 150px 0px 150px" }}
-      >
+      {/* Location, Event Type, and Date Pickers */}
+      <Grid container justifyContent="center" spacing={2} sx={{ padding: { xs: "30px 10px", sm: "30px 80px" } }}>
         <Grid item xs={12} sm={3}>
           <DropDown
             items={eventTypes}
@@ -58,14 +67,12 @@ const StepOne = ({ onStepOneDataChange }) => {
             setSelectedItem={setSelectedEventType}
           />
         </Grid>
-
         <Grid item xs={12} sm={3}>
           <DatePicker
             selectedDate={selectedDate}
             setSelectedDate={setSelectedDate}
-          /> 
+          />
         </Grid>
-
         <Grid item xs={12} sm={3}>
           <DropDown
             items={districts}
@@ -75,60 +82,37 @@ const StepOne = ({ onStepOneDataChange }) => {
         </Grid>
       </Grid>
 
-
-      <Grid container spacing={2} style={{ marginBottom: "10px", padding: "80px 400px 10px 300px" }}>
-        <Grid item xs={12} md={4}>
-          <Typography className={classes.typo}>
-            Enter a Name for the Event:
-          </Typography>
-        </Grid>
-        <Grid item xs={12} md={8}>
-          <InputBase
-            className={classes.formInput}
-            type="text"
-            name="eventName"
-            value={eventName}
-            onChange={handleChange}
-            required
-          />
-        </Grid>
-
-        <Grid item xs={12} md={4}>
-          <Typography className={classes.typo}>
-            Enter the Number of Participants:
-          </Typography>
-        </Grid>
-        <Grid item xs={12} md={8}>
-          <InputBase
-            className={classes.formInput}
-            type="text"
-            name="numberOfParticipants"
-            value={numberOfParticipants}
-            onChange={handleChange}
-            required
-          />
-        </Grid>
-
-        <Grid item xs={12} md={4}>
-          <Typography className={classes.typo}>
-            Enter Your Budget Range:
-          </Typography>
-        </Grid>
-        <Grid item xs={12} md={8}>
-          <InputBase
-            className={classes.formInput}
-            type="text"
-            name="budgetRange"
-            value={budgetRange}
-            onChange={handleChange}
-            required
-          />
+      {/* Event Details Section */}
+      <Grid container justifyContent="center" spacing={2} sx={{ padding: { xs: "30px 10px", sm: "30px 80px" } }}>
+        <Grid item xs={12} md={10}>
+          {[
+            { label: "Enter a Name for the Event:", value: eventName, name: "eventName" },
+            { label: "Enter the Number of Participants:", value: numberOfParticipants, name: "numberOfParticipants" },
+            { label: "Enter Your Budget Range:", value: budgetRange, name: "budgetRange" },
+          ].map((field, index) => (
+            <Grid container spacing={2} alignItems="center" key={index}>
+              <Grid item xs={12} md={4}>
+                <Typography className={classes.typo} sx={{ paddingTop: index !== 0 ? "30px" : 0 }}>
+                  {field.label}
+                </Typography>
+              </Grid>
+              <Grid item xs={12} md={8}>
+                <InputBase
+                  className={classes.formInput}
+                  type="text"
+                  name={field.name}
+                  value={field.value}
+                  onChange={handleChange}
+                  required
+                />
+              </Grid>
+            </Grid>
+          ))}
         </Grid>
       </Grid>
 
-      <Grid container justifyContent="center" spacing={2} mt={3}
-        style={{ padding: "0px 80px" }}
-      >
+      {/* Checkbox for Budget Limitation */}
+      <Grid container justifyContent="center" spacing={2} mt={3} sx={{ paddingLeft: { xs: "20px" } }}>
         <Grid item xs={12} sm={8}>
           <FormControlLabel
             control={<Checkbox sx={{ color: "#fff" }} />}
@@ -142,7 +126,6 @@ const StepOne = ({ onStepOneDataChange }) => {
 };
 
 export default StepOne;
-
 
 export const formatDateString = (inputDate) => {
   const date = new Date(inputDate);
