@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
     fontSize: "14px"
   },
   formContent: {
-    padding: "40px 200px 0px 200px",
+    padding: "40px 150px 0px 150px",
     textAlign: "left",
   },
   formInput: {
@@ -67,21 +67,7 @@ const useStyles = makeStyles((theme) => ({
     cursor: "pointer",
     backgroundColor: "transparent",
     fontSize: "14px"
-  },
-  submitButton: {
-    fontSize: "12px",
-    textTransform: "none",
-    padding: "5px 10px",
-    backgroundColor: "transparent",
-    border: "1px solid",
-    borderColor: "gray",
-    color: "#FFFFFF",
-    "&:hover": {
-      backgroundColor: "#9575CD",
-      borderColor: "#9575CD",
-    },
-  },
-
+  }
 }));
 
 export default useStyles;
