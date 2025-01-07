@@ -1,5 +1,3 @@
-/** @type {import('tailwindcss').Config} */
-
 module.exports = {
   content: ["./src/**/*.{html,js,jsx,ts,tsx}", "./public/**/*.{html}"],
   theme: {
@@ -10,6 +8,9 @@ module.exports = {
         "primary-purple": "#D4BEE4",
         "light-purple": "#EEEEEE",
       },
+
+    
+
       container: {
         center: true,
         padding: {
