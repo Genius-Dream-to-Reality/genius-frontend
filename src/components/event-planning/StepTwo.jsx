@@ -9,12 +9,13 @@ import {
 import { Search } from "@mui/icons-material";
 import DropDown from "../common/DropDown";
 import useStyles from "../../assets/css/style";
-import ServiceProvidersCard from "../common/ServiceProviderCard";
+import ServiceCard from "../common/ServiceProviderCard";
 
 const StepTwo = () => {
     const classes = useStyles();
     const [selectedService, setSelectedService] = useState("");
     const [searchValue, setSearchValue] = useState("");
+    const [addedServiceProviders, setAddedServiceProviders] = useState([]); 
 
     const eventServices = [
         "Decoration", "Music Teams", "Catering", "Photography",
@@ -26,6 +27,11 @@ const StepTwo = () => {
 
     const handleSearchChange = (e) => {
         setSearchValue(e.target.value);
+    };
+
+    const handleAddServiceProvider = (serviceProvider) => {
+        // setAddedServiceProviders((prev) => [...prev, serviceProvider]);
+        console.log("Need to develop!!!")
     };
 
     return (
@@ -61,17 +67,10 @@ const StepTwo = () => {
 
             {/* Second Section: Service Providers Card */}
             <Grid item xs={12}>
-                <Box
-                    sx={{
-                        backgroundColor: "white",
-                        borderRadius: "8px",
-                        padding: "20px",
-                        marginBottom: "20px",
-                    }}
-                >
+                <Box sx={{ backgroundColor: "white", borderRadius: "8px", padding: "20px", marginBottom: "20px" }}>
                     <Box
                         sx={{
-                            backgroundColor: "rgba(175, 154, 13, 0.91)",
+                            backgroundColor: "rgba(96, 84, 3, 0.91)",
                             color: "#fff",
                             padding: "10px",
                             borderRadius: "8px",
@@ -81,24 +80,18 @@ const StepTwo = () => {
                     >
                         <Typography variant="h6">The Closest Service Providers for You</Typography>
                     </Box>
-                    <ServiceProvidersCard />
-                    <ServiceProvidersCard />
+                    {/* todo: adding service providers should done by admin */}
+                    <ServiceCard onAdd={handleAddServiceProvider} />
+                    <ServiceCard onAdd={handleAddServiceProvider} />
                 </Box>
             </Grid>
 
-            {/* Third Section: Another Service Providers Card */}
+            {/* Third Section: Added Service Providers */}
             <Grid item xs={12}>
+                <Box sx={{ backgroundColor: "white", borderRadius: "8px", padding: "20px", marginBottom: "20px" }}>
                 <Box
-                    sx={{
-                        backgroundColor: "white",
-                        borderRadius: "8px",
-                        padding: "20px",
-                        marginBottom: "20px",
-                    }}
-                >
-                    <Box
                         sx={{
-                            backgroundColor: "rgba(175, 154, 13, 0.91)",
+                            backgroundColor: "rgba(96, 84, 3, 0.91)",
                             color: "#fff",
                             padding: "10px",
                             borderRadius: "8px",
@@ -106,10 +99,15 @@ const StepTwo = () => {
                             marginBottom: "20px",
                         }}
                     >
-                        <Typography variant="h6">The Closest Service Providers for You</Typography>
+                        <Typography variant="h6">Your Added Service Providers</Typography>
                     </Box>
-                    <ServiceProvidersCard />
-                    <ServiceProvidersCard />
+                    {addedServiceProviders.length > 0 ? (
+                        addedServiceProviders.map((service, index) => (
+                            <ServiceCard key={index} onAdd={() => {}} /> 
+                        ))
+                    ) : (
+                        <Typography>No service providers added yet.</Typography>
+                    )}
                 </Box>
             </Grid>
         </Grid>

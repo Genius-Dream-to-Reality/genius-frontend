@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types'; // Import PropTypes for prop validation
+import PropTypes from 'prop-types'; 
 import { Box, Card, CardContent, CardMedia, Button, Typography, Rating, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import serviceCard from "../../assets/images/ServiceCard.jpg";
@@ -16,47 +16,41 @@ const buttonStyle = {
     marginTop: "20px",
 };
 
-const ServiceCard = ({ onClose }) => (
-    <Card sx={{ display: 'flex', width: '100%', position: 'relative' }}>
-        {/* Close Icon in the top-right corner */}
-        <IconButton
-            onClick={onClose}
-            sx={{ position: 'absolute', top: 10, right: 10, color: 'black' }}
-        >
-            <CloseIcon />
-        </IconButton>
+const ServiceCard = ({ onClose, onAdd }) => {
+    const handleAddClick = () => {
+        //todo
+        console.log("Need to develop!!!")
+    };
 
-        {/* Service Card Image */}
-        <CardMedia
-            component="img"
-            alt="service provider"
-            height="200"
-            image={serviceCard}
-            sx={{ width: 200 }}
-        />
-
-        {/* Content Section */}
-        <CardContent sx={{ flex: 1, textAlign: 'left' }}>
-            {/* Header Section: Name and Rating */}
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                <Typography variant="h6" color="black" component="div">
-                    Elegant Wedding Hall
+    return (
+        <Card sx={{ display: 'flex', width: '100%', position: 'relative' }}>
+            <IconButton
+                onClick={onClose}
+                sx={{ position: 'absolute', top: 10, right: 10, color: 'black' }}
+            >
+                <CloseIcon />
+            </IconButton>
+            <CardMedia
+                component="img"
+                alt="service provider"
+                height="200"
+                image={serviceCard}
+                sx={{ width: 200 }}
+            />
+            <CardContent sx={{ flex: 1, textAlign: 'left' }}>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                    <Typography variant="h6" color="black" component="div">
+                        Elegant Wedding Hall
+                    </Typography>
+                    <Rating name="read-only" value={4} readOnly />
+                </Box>
+                <Typography variant="body2" color="textSecondary" paragraph sx={{ marginTop: 2 }}>
+                    An elegant venue for your dream wedding. This spacious hall offers a charming atmosphere.
                 </Typography>
-                <Rating name="read-only" value={4} readOnly />
-            </Box>
-
-            {/* Description */}
-            <Typography variant="body2" color="textSecondary" paragraph sx={{ marginTop: 2 }}>
-                An elegant venue for your dream wedding. This spacious hall offers a charming atmosphere, perfect for any ceremony or celebration.
-            </Typography>
-
-            {/* Price */}
-            <Typography variant="h6" color="black" sx={{ marginTop: 2 }}>
-                Rs. $1,500
-            </Typography>
-
-            {/* Action Buttons */}
-            <Box sx={{ display: 'flex', gap: 2, marginTop: 2 }}>
+                <Typography variant="h6" color="black" sx={{ marginTop: 2 }}>
+                    Rs. $1,500
+                </Typography>
+                <Box sx={{ display: 'flex', gap: 2, marginTop: 2 }}>
                 <Button sx={buttonStyle} style={{ backgroundColor: "#4C3A74", display: 'flex', alignItems: 'center' }}>
                     Premiums
                     <svg width="17" height="24" viewBox="0 0 17 24" fill="none" xmlns="http://www.w3.org/2000/svg" sx={{ marginLeft: '10px' }}>
@@ -70,14 +64,14 @@ const ServiceCard = ({ onClose }) => (
                         <path d="M11 13H5V11H11V5H13V11H19V13H13V19H11V13Z" fill="white" />
                     </svg>
                 </Button>
-            </Box>
-
-        </CardContent>
-    </Card>
-);
+                </Box>
+            </CardContent>
+        </Card>
+    );
+};
 
 ServiceCard.propTypes = {
-    onClose: PropTypes.func.isRequired, // Ensuring onClose is a required function
+    onClose: PropTypes.func.isRequired, 
 };
 
 const FullWidthWeddingHallCard = () => {
@@ -97,7 +91,7 @@ const FullWidthWeddingHallCard = () => {
                 textAlign: "center",
                 marginBottom: "20px",
                 width: '100%',
-                display: showCard ? 'block' : 'none', // Hide the entire Box when the card is closed
+                display: showCard ? 'block' : 'none', 
             }}
         >
             {showCard && <ServiceCard onClose={handleCloseCard} />}
