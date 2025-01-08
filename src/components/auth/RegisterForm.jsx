@@ -17,7 +17,7 @@ import authServiceImage from "../../assets/images/authService.jpg";
 import googleCalendar from "../../assets/images/google-calendar.png";
 import useStyles from "../../assets/css/style";
 import SideNavBar from "../../layout/SideNavBar";
-import AppLogo from "../../components/shared/AppLogo";
+import AppLogo from "../shared/AppLogo";
 
 const RegisterForm = () => {
   const classes = useStyles();

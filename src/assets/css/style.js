@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
   formInput: {
     width: '100%',
     height: "38px",
-    borderBottom: "1px solid #7E57C2",
+    borderBottom: "1px solid rgba(255, 255, 255, 0.5)",
     padding: "0 15px",
     fontSize: "13px",
     fontFamily: 'Poppins',
@@ -47,6 +47,7 @@ const useStyles = makeStyles((theme) => ({
     border: "2px solid white",
     borderRadius: "5px",
     color: "white",
+    padding: "11px 20px"
   },
   DropDown: {
     position: "absolute",
