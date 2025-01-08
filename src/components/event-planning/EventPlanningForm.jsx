@@ -104,7 +104,7 @@ const EventPlanningForm = () => {
     setOpenFinalizingPopup(true);
     setTimeout(() => {
       setOpenFinalizingPopup(false);
-      navigate("/register");
+      navigate("/eventplaning-completed");
     }, 4000);
   };
 
