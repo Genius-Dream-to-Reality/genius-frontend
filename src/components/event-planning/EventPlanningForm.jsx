@@ -1,5 +1,16 @@
 import React, { useState } from "react";
-import { Grid, Button, Typography } from "@mui/material";
+import {
+  Grid,
+  Button,
+  Typography,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  InputBase,
+  CircularProgress,
+  Box,
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../styles/theme";
 import Circle from "../common/Circle";
@@ -14,6 +25,42 @@ const STEPS = [
   { text: "Finalize" },
 ];
 
+const DIALOG_FIELDS = [
+  { label: "Number of Services:", value: "50" },
+  { label: "Total Budget:", value: "Rs. 50,000" },
+  { label: "Down Payment:", value: "Rs. 5,000" },
+];
+
+const dialogStyles = {
+  dialogPaper: {
+    backgroundColor: "#201439",
+    borderRadius: "16px",
+    padding: "20px",
+  },
+  dialogContent: {
+    backgroundColor: "#403557",
+    color: "white",
+    borderRadius: "16px",
+    padding: "20px",
+  },
+  title: {
+    fontSize: "30px",
+    textAlign: "center",
+    marginBottom: "20px",
+  },
+  button: {
+    height: "40px",
+    width: "130px",
+    color: "#FFFFFF",
+    padding: "8px 20px",
+    fontSize: "14px",
+    borderRadius: "8px",
+    textTransform: "none",
+    display: "flex",
+    alignItems: "center"
+  }
+};
+
 const EventPlanningForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [stepOneData, setStepOneData] = useState({
@@ -25,9 +72,17 @@ const EventPlanningForm = () => {
     selectedDate: null,
   });
 
+  const [openPopup, setOpenPopup] = useState(false);
+  const [openFinalizingPopup, setOpenFinalizingPopup] = useState(false);
+  const [popupMessage, setPopupMessage] = useState(
+    "Do you want to finalize this plan?"
+  );
+
+  const navigate = useNavigate();
+
   const handleNext = () => {
     if (currentStep < 3) {
-      console.log("Entered Data from Step One:", stepOneData); // Log entered data when Next is clicked
+      console.log("Entered Data from Step One:", stepOneData);
       setCurrentStep(currentStep + 1);
     }
   };
@@ -42,6 +97,43 @@ const EventPlanningForm = () => {
       ...newData,
     }));
   };
+
+  const handleConfirm = () => {
+    setOpenPopup(false);
+    setPopupMessage("Finalizing...");
+    setOpenFinalizingPopup(true);
+    setTimeout(() => {
+      setOpenFinalizingPopup(false);
+      navigate("/register");
+    }, 4000);
+  };
+
+  const handleDecline = () => {
+    setOpenPopup(false);
+  };
+
+  const renderDialogFields = () =>
+    DIALOG_FIELDS.map((field, index) => (
+      <Grid
+        container
+        direction="row"
+        spacing={2}
+        alignItems="center"
+        key={index}
+        sx={{ marginTop: index !== 0 ? "5px" : 0 }}
+      >
+        <Grid item xs={5}>
+          <Typography>{field.label}</Typography>
+        </Grid>
+        <Grid item xs={7}>
+          <InputBase
+            style={{ color: "white", width: "100%" }}
+            value={field.value}
+            readOnly
+          />
+        </Grid>
+      </Grid>
+    ));
 
   return (
     <ThemeProvider theme={theme}>
@@ -62,7 +154,7 @@ const EventPlanningForm = () => {
                     completed={currentStep > index + 1}
                   />
                   <Typography
-                    style={{
+                    sx={{
                       fontSize: "12px",
                       paddingTop: "15px",
                       color: currentStep === index + 1 ? "#fff" : "#8F8F8F",
@@ -101,17 +193,10 @@ const EventPlanningForm = () => {
               <Button
                 onClick={handleBack}
                 variant="contained"
+                sx={dialogStyles.button}
                 style={{
                   backgroundColor: "white",
                   color: "black",
-                  height: "40px",
-                  width: "130px",
-                  padding: "8px 20px",
-                  fontSize: "14px",
-                  borderRadius: "8px",
-                  textTransform: "none",
-                  display: "flex",
-                  alignItems: "center",
                 }}
               >
                 <svg width="28" height="17" viewBox="0 0 28 17" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: "8px" }}>
@@ -127,18 +212,12 @@ const EventPlanningForm = () => {
 
           <Grid item xs={5} style={{ display: "flex", justifyContent: "flex-end" }}>
             <Button
-              onClick={currentStep === 3 ? () => alert("Done!") : handleNext}
+              onClick={
+                currentStep === 3 ? () => setOpenPopup(true) : handleNext
+              }
               variant="contained"
-              style={{
-                height: "40px",
-                width: "130px",
-                backgroundColor: "#B07207",
-                color: "#FFFFFF",
-                padding: "8px 20px",
-                fontSize: "14px",
-                borderRadius: "8px",
-                textTransform: "none",
-              }}
+              sx={dialogStyles.button}
+              style={{ backgroundColor: "#B07207" }}
             >
               {currentStep < 3 ? "Next" : "Done"}
               <svg width="28" height="17" viewBox="0 0 28 17" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginLeft: "8px" }}>
@@ -149,6 +228,64 @@ const EventPlanningForm = () => {
           </Grid>
         </Grid>
       </Grid>
+
+      {/* Confirmation Popup */}
+      <Dialog
+        open={openPopup}
+        onClose={handleDecline}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{ sx: dialogStyles.dialogPaper }}
+      >
+        <DialogContent sx={dialogStyles.dialogContent}>
+          <Typography sx={dialogStyles.title}>{popupMessage}</Typography>
+          <Grid container justifyContent="center" spacing={2}>
+            <Grid item xs={12} md={9}>
+              {renderDialogFields()}
+            </Grid>
+          </Grid>
+          <DialogActions sx={{ justifyContent: "center", marginTop: "40px" }}>
+            <Button
+              onClick={handleDecline}
+              sx={dialogStyles.button}
+              style={{ backgroundColor: "red" }}
+            >
+              Decline
+            </Button>
+            <Button
+              onClick={handleConfirm}
+              sx={dialogStyles.button}
+              style={{ backgroundColor: "green" }}
+            >
+              Confirm
+            </Button>
+          </DialogActions>
+        </DialogContent>
+      </Dialog>
+
+      {/* Finalizing Popup */}
+      {openFinalizingPopup && (
+        <Dialog
+          open={openFinalizingPopup}
+          maxWidth="sm"
+          fullWidth
+          PaperProps={{ sx: dialogStyles.dialogPaper }}
+        >
+          <DialogContent sx={dialogStyles.dialogContent}>
+            <Box sx={{ display: 'flex' , justifyContent:"center" }}>
+              <CircularProgress />
+            </Box>
+            <Typography sx={dialogStyles.title}>{popupMessage}</Typography>
+            <Grid container justifyContent="center" spacing={2}>
+              <Grid item xs={12} md={9} sx={{ textAlign: "center" }}>
+                Please wait for a moment <br />
+                until all the agreements are generated and vendors are notified
+              </Grid>
+            </Grid>
+          </DialogContent>
+        </Dialog>
+      )}
+
     </ThemeProvider>
   );
 };
