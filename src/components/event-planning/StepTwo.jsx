@@ -4,10 +4,12 @@ import {
     InputBase,
     IconButton,
     Box,
+    Typography,
 } from "@mui/material";
 import { Search } from "@mui/icons-material";
 import DropDown from "../common/DropDown";
 import useStyles from "../../assets/css/style";
+import ServiceProvidersCard from "../common/ServiceProviderCard";
 
 const StepTwo = () => {
     const classes = useStyles();
@@ -27,8 +29,9 @@ const StepTwo = () => {
     };
 
     return (
-        <Grid container justifyContent="center" spacing={2} sx={{ padding: { xs: "30px 10px", sm: "30px 80px" } }}>
-            <Grid item xs={12} sm={3}>
+        <Grid container direction="column" justifyContent="center" spacing={4} sx={{ padding: { xs: "30px 10px", sm: "30px 80px" } }}>
+            {/* First Section: Dropdown and Search */}
+            <Grid item xs={3} sm={3} justifyContent="center">
                 <DropDown
                     label="Select the Service"
                     items={eventServices}
@@ -55,10 +58,62 @@ const StepTwo = () => {
                     </IconButton>
                 </Box>
             </Grid>
+
+            {/* Second Section: Service Providers Card */}
+            <Grid item xs={12}>
+                <Box
+                    sx={{
+                        backgroundColor: "white",
+                        borderRadius: "8px",
+                        padding: "20px",
+                        marginBottom: "20px",
+                    }}
+                >
+                    <Box
+                        sx={{
+                            backgroundColor: "rgba(175, 154, 13, 0.91)",
+                            color: "#fff",
+                            padding: "10px",
+                            borderRadius: "8px",
+                            textAlign: "center",
+                            marginBottom: "20px",
+                        }}
+                    >
+                        <Typography variant="h6">The Closest Service Providers for You</Typography>
+                    </Box>
+                    <ServiceProvidersCard />
+                    <ServiceProvidersCard />
+                </Box>
+            </Grid>
+
+            {/* Third Section: Another Service Providers Card */}
+            <Grid item xs={12}>
+                <Box
+                    sx={{
+                        backgroundColor: "white",
+                        borderRadius: "8px",
+                        padding: "20px",
+                        marginBottom: "20px",
+                    }}
+                >
+                    <Box
+                        sx={{
+                            backgroundColor: "rgba(175, 154, 13, 0.91)",
+                            color: "#fff",
+                            padding: "10px",
+                            borderRadius: "8px",
+                            textAlign: "center",
+                            marginBottom: "20px",
+                        }}
+                    >
+                        <Typography variant="h6">The Closest Service Providers for You</Typography>
+                    </Box>
+                    <ServiceProvidersCard />
+                    <ServiceProvidersCard />
+                </Box>
+            </Grid>
         </Grid>
     );
 };
 
 export default StepTwo;
-
-
