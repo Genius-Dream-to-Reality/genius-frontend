@@ -47,14 +47,13 @@ const EventPlanningForm = () => {
     <ThemeProvider theme={theme}>
       <Grid container>
         <Header />
-
-        {/* Circular Steps */}
-        <Grid container style={{ textAlign: "center", marginTop: "60px", justifyContent: "center" }}>
+        <Grid
+          container
+          justifyContent="center"
+          style={{ textAlign: "center", marginTop: "60px" }}
+        >
           {STEPS.map((step, index) => (
             <React.Fragment key={index}>
-              <Grid item xs={2} md={1}>
-                <hr style={{ marginTop: "32px", opacity: 0.12 }} />
-              </Grid>
               <Grid item xs={2} md={1}>
                 <Grid container direction="column" alignItems="center">
                   <Circle
@@ -66,14 +65,13 @@ const EventPlanningForm = () => {
                     style={{
                       fontSize: "12px",
                       paddingTop: "15px",
-                      color: currentStep === index + 1 ? "#7E57C2" : "white",
+                      color: currentStep === index + 1 ? "#fff" : "#8F8F8F",
                     }}
                   >
                     {step.text}
                   </Typography>
                 </Grid>
               </Grid>
-
               {index !== STEPS.length - 1 && (
                 <Grid item xs={2} md={1}>
                   <hr style={{ marginTop: "32px", opacity: 0.12 }} />
@@ -81,9 +79,6 @@ const EventPlanningForm = () => {
               )}
             </React.Fragment>
           ))}
-          <Grid item xs={2} md={1}>
-            <hr style={{ marginTop: "32px", opacity: 0.12 }} />
-          </Grid>
         </Grid>
 
 
@@ -100,7 +95,7 @@ const EventPlanningForm = () => {
 
 
         {/* Next and Back Buttons */}
-        <Grid container sx={{ padding: {xs: "20px 16px",  sm: "20px 200px" },justifyContent: "space-between"}}>
+        <Grid container sx={{ padding: { xs: "20px 16px", sm: "20px 200px" }, justifyContent: "space-between" }}>
           <Grid item xs={5} style={{ display: "flex", justifyContent: "flex-start" }}>
             {currentStep > 1 && (
               <Button
