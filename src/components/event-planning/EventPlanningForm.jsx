@@ -9,9 +9,9 @@ import {
   InputBase,
   CircularProgress,
   Box,
+  ThemeProvider
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../styles/theme";
 import Circle from "../common/Circle";
 import StepOne from "./StepOne";

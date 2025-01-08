@@ -12,8 +12,7 @@ const EventPlanningCompletion = () => {
     };
 
     const handleViewEvent = () => {
-        console.log("handle download!") //todo
-        // navigate("/register");
+        navigate("/view-plan");
     };
 
     const styles = {

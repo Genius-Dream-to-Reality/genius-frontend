@@ -11,6 +11,7 @@ import VendorAccountForm from "./components/vendor-account/VendorAccountForm";
 import RegisterOTP from "./components/auth/RegisterOTP";
 import RegisterCompleted from "./components/auth/RegisterCompleted";
 import EventPlanningCompletion from "./components/event-planning/EvenPlanningCompletion";
+import ViewPlan from "./components/event-planning/ViewPlan";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
             <Route path="register-otp" element={<RegisterOTP />} />
             <Route path="register-completed" element={<RegisterCompleted />} />
             <Route path="eventplaning-completed" element={<EventPlanningCompletion />} />
+            <Route path="view-plan" element={<ViewPlan />} />
         </Routes>
       </Router>
     </ThemeProvider>
