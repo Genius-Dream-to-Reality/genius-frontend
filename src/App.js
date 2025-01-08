@@ -8,6 +8,8 @@ import RegisterComponent from "./components/auth/RegisterForm";
 import UserTypeSelection from "./components/auth/UserTypeSelection";
 import EventPlanningForm from "./components/event-planning/EventPlanningForm";
 import VendorAccountForm from "./components/vendor-account/VendorAccountForm";
+import RegisterOTP from "./components/auth/RegisterOTP";
+import RegisterCompleted from "./components/auth/RegisterCompleted";
 
 function App() {
   return (
@@ -21,6 +23,8 @@ function App() {
             <Route path="register" element={<RegisterComponent />} />
             <Route path="event-planning" element={<EventPlanningForm/>} />
             <Route path="vendor-account" element={<VendorAccountForm/>} />
+            <Route path="register-otp" element={<RegisterOTP />} />
+            <Route path="register-completed" element={<RegisterCompleted />} />
         </Routes>
       </Router>
     </ThemeProvider>
