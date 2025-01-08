@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid, Typography, Box, Input, InputBase } from "@mui/material";
+import { Grid, Typography, Box, InputBase, FormControlLabel, Checkbox } from "@mui/material";
 import { LocationOn, CalendarToday } from "@mui/icons-material";
 import useStyles from "../../assets/css/style";
 
@@ -14,7 +14,7 @@ const DetailInput = ({ label, value, icon }) => (
             padding: "11px 20px"
         }}
     >
-        <Input
+        <InputBase
             value={label ? `${label}: ${value}` : value}
             readOnly
             disableUnderline
@@ -32,13 +32,14 @@ const StepThree = ({ eventType, date, location, noOfParticipants, budgetRange })
     const classes = useStyles();
 
     return (
-        <Grid container spacing={4} sx={{ marginBottom: 4 }}>
+        <>
+            {/* Title Section */}
             <Grid
                 container
                 direction="column"
                 justifyContent="center"
                 alignItems="center"
-                style={{ marginBottom: "35px" }}
+                sx={{ marginBottom: "35px", padding: { xs: "30px 10px", sm: "30px 80px" } }}
             >
                 <Typography
                     sx={{
@@ -58,7 +59,7 @@ const StepThree = ({ eventType, date, location, noOfParticipants, budgetRange })
             </Grid>
 
             {/* Event Details Section */}
-            <Grid container justifyContent="center" spacing={2} sx={{ padding: "30px 80px" }}>
+            <Grid container justifyContent="center" spacing={2}>
                 <Grid item xs={12} sm={3}>
                     <DetailInput label="Event Type" value={eventType} />
                 </Grid>
@@ -70,38 +71,62 @@ const StepThree = ({ eventType, date, location, noOfParticipants, budgetRange })
                 </Grid>
             </Grid>
 
+            {/* Additional Information Section */}
             <Grid
                 container
                 justifyContent="center"
                 spacing={2}
                 sx={{ padding: { xs: "30px 10px", sm: "30px 80px" } }}
             >
-                <Grid container item xs={12} alignItems="center" spacing={2}>
-                    <Grid item xs={4} md={4}>
-                        <Typography className={classes.typo}>Number of Participants:</Typography>
-                    </Grid>
-                    <Grid item xs={8} md={8}>
-                        <InputBase
-                            className={classes.formInput}
-                            readOnly
-                            value={noOfParticipants}
-                        />
-                    </Grid>
-                </Grid>
-                <Grid container item xs={12} alignItems="center" spacing={2}>
-                    <Grid item xs={4} md={4}>
-                        <Typography className={classes.typo}>Initial Budget Range:</Typography>
-                    </Grid>
-                    <Grid item xs={8} md={8}>
-                        <InputBase
-                            className={classes.formInput}
-                            readOnly
-                            value={`Rs. ${budgetRange}`}
-                        />
-                    </Grid>
+                <Grid item xs={12} md={9}>
+                    {[{
+                        label: "Number of Participants:",
+                        value: noOfParticipants
+                    }, {
+                        label: "Initial Budget Range:",
+                        value: `Rs. ${budgetRange}`
+                    }].map((field, index) => (
+                        <Grid
+                            container
+                            direction="row"
+                            spacing={2}
+                            alignItems="center"
+                            key={index}
+                            sx={{ marginTop: index !== 0 ? "5px" : 0 }}
+                        >
+                            <Grid item xs={4}>
+                                <Typography className={classes.typo}>{field.label}</Typography>
+                            </Grid>
+                            <Grid item xs={8}>
+                                <InputBase
+                                    className={classes.formInput}
+                                    value={field.value}
+                                    readOnly
+                                />
+                            </Grid>
+                        </Grid>
+                    ))}
                 </Grid>
             </Grid>
-        </Grid>
+
+            {/* todo: view added service providers */}
+
+            {/* Checkbox for Budget Limitation */}
+            <Grid
+                container
+                justifyContent="center"
+                spacing={2}
+                sx={{ padding: { xs: "30px 10px", sm: "30px 80px" } }}
+            >
+                <Grid item xs={12} md={8}>
+                    <FormControlLabel
+                        control={<Checkbox sx={{ color: "#fff" }} />}
+                        label="Do you agree to our terms and conditions?"
+                        sx={{ color: "#fff" }}
+                    />
+                </Grid>
+            </Grid>
+        </>
     );
 };
 
