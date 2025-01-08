@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { Grid, FormControlLabel, Checkbox, Typography, InputBase } from "@mui/material";
 import DropDown from "../common/DropDown";
-import DatePicker from "../common/DatePicker";
+import DateTimePickerComponent from "../common/DatePicker";
 import useStyles from "../../assets/css/style";
 
 const StepOne = ({ onStepOneDataChange }) => {
   const classes = useStyles();
-  const [selectedDistrict, setSelectedDistrict] = useState("Select Location District");
-  const [selectedEventType, setSelectedEventType] = useState("Select Event Type");
+  const [selectedDistrict, setSelectedDistrict] = useState("");
+  const [selectedEventType, setSelectedEventType] = useState("");
   const [selectedDate, setSelectedDate] = useState(null);
   const [eventName, setEventName] = useState("");
   const [budgetRange, setBudgetRange] = useState("");
@@ -62,19 +62,21 @@ const StepOne = ({ onStepOneDataChange }) => {
       <Grid container justifyContent="center" spacing={2} sx={{ padding: { xs: "30px 10px", sm: "30px 80px" } }}>
         <Grid item xs={12} sm={3}>
           <DropDown
+            label="Select Event Type"
             items={eventTypes}
             selectedItem={selectedEventType}
             setSelectedItem={setSelectedEventType}
           />
         </Grid>
         <Grid item xs={12} sm={3}>
-          <DatePicker
+          <DateTimePickerComponent
             selectedDate={selectedDate}
             setSelectedDate={setSelectedDate}
           />
         </Grid>
         <Grid item xs={12} sm={3}>
           <DropDown
+            label="Select Location District"
             items={districts}
             selectedItem={selectedDistrict}
             setSelectedItem={setSelectedDistrict}
@@ -83,20 +85,30 @@ const StepOne = ({ onStepOneDataChange }) => {
       </Grid>
 
       {/* Event Details Section */}
-      <Grid container justifyContent="center" spacing={2} sx={{ padding: { xs: "30px 10px", sm: "30px 80px" } }}>
-        <Grid item xs={12} md={10}>
+      <Grid
+        container
+        justifyContent="center"
+        spacing={2}
+        sx={{ padding: { xs: "30px 10px", sm: "30px 80px" } }}
+      >
+        <Grid item xs={12} md={9}>
           {[
             { label: "Enter a Name for the Event:", value: eventName, name: "eventName" },
             { label: "Enter the Number of Participants:", value: numberOfParticipants, name: "numberOfParticipants" },
             { label: "Enter Your Budget Range:", value: budgetRange, name: "budgetRange" },
           ].map((field, index) => (
-            <Grid container spacing={2} alignItems="center" key={index}>
-              <Grid item xs={12} md={4}>
-                <Typography className={classes.typo} sx={{ paddingTop: index !== 0 ? "30px" : 0 }}>
-                  {field.label}
-                </Typography>
+            <Grid
+              container
+              direction="row"
+              spacing={2}
+              alignItems="center"
+              key={index}
+              sx={{ marginTop: index !== 0 ? "5px" : 0 }}
+            >
+              <Grid item xs={4}>
+                <Typography className={classes.typo}>{field.label}</Typography>
               </Grid>
-              <Grid item xs={12} md={8}>
+              <Grid item xs={8}>
                 <InputBase
                   className={classes.formInput}
                   type="text"
@@ -112,8 +124,13 @@ const StepOne = ({ onStepOneDataChange }) => {
       </Grid>
 
       {/* Checkbox for Budget Limitation */}
-      <Grid container justifyContent="center" spacing={2} mt={3} sx={{ paddingLeft: { xs: "20px" } }}>
-        <Grid item xs={12} sm={8}>
+      <Grid
+        container
+        justifyContent="center"
+        spacing={2}
+        sx={{ padding: { xs: "30px 10px", sm: "30px 80px" } }}
+      >
+        <Grid item xs={12} md={8}>
           <FormControlLabel
             control={<Checkbox sx={{ color: "#fff" }} />}
             label="Do you want to limit to the above budget?"

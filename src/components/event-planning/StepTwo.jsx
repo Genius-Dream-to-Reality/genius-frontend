@@ -11,7 +11,7 @@ import useStyles from "../../assets/css/style";
 
 const StepTwo = () => {
     const classes = useStyles();
-    const [selectedService, setSelectedService] = useState("Select a Service");
+    const [selectedService, setSelectedService] = useState("");
     const [searchValue, setSearchValue] = useState("");
 
     const eventServices = [
@@ -30,6 +30,7 @@ const StepTwo = () => {
         <Grid container justifyContent="center" spacing={2} sx={{ padding: { xs: "30px 10px", sm: "30px 80px" } }}>
             <Grid item xs={12} sm={3}>
                 <DropDown
+                    label="Select the Service"
                     items={eventServices}
                     selectedItem={selectedService}
                     setSelectedItem={setSelectedService}
