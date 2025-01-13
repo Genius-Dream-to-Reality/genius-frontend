@@ -12,6 +12,7 @@ import RegisterOTP from "./components/auth/RegisterOTP";
 import RegisterCompleted from "./components/auth/RegisterCompleted";
 import EventPlanningCompletion from "./components/event-planning/EvenPlanningCompletion";
 import ViewPlan from "./components/event-planning/ViewPlan";
+import LoginForm from "./components/auth/LoginForm";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
             <Route index element={<Home />} />
             <Route path="select-event" element={<SelectEventType />} />
             <Route path="choose-type" element={<UserTypeSelection />} />
+            <Route path="login" element={<LoginForm />} />
             <Route path="register" element={<RegisterComponent />} />
             <Route path="event-planning" element={<EventPlanningForm/>} />
             <Route path="vendor-account" element={<VendorAccountForm/>} />
