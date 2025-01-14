@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   ThemeProvider,
   Grid,
@@ -7,14 +7,15 @@ import {
   Typography,
   InputBase,
   Button,
-  FormControlLabel,
   useMediaQuery,
-  Checkbox,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+  styled,
 } from "@mui/material";
 import theme from "../../styles/theme";
 import Header from "../../layout/Header";
 import authServiceImage from "../../assets/images/authService.jpg";
-import googleCalendar from "../../assets/images/google-calendar.png";
 import useStyles from "../../assets/css/style";
 import SideNavBar from "../../layout/SideNavBar";
 import AppLogo from "../shared/AppLogo";
@@ -22,29 +23,64 @@ import AppLogo from "../shared/AppLogo";
 const LoginForm = () => {
   const classes = useStyles();
   const navigate = useNavigate();
-  const location = useLocation();
-  const { userType } = location.state || {};
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
- 
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    acceptTerms: false,
+    type: "",
+  });
+
+  const [errors, setErrors] = useState({
+    email: "",
+    password: "",
+    type: "",
   });
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === "checkbox" ? checked : value,
-    });
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value.trimStart(),
+    }));
   };
 
+  const handleTypeChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      type: e.target.value,
+    }));
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.email) {
+      newErrors.email = "Email is required.";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Invalid email address.";
+    }
+
+    if (!formData.password) {
+      newErrors.password = "Password is required.";
+    } else if (formData.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters.";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (validateForm()) {
+      console.log("Form submitted:", formData);
+    }
+  };
 
   return (
     <ThemeProvider theme={theme}>
-       <Grid container>
-       {!isMobile && (
+      <Grid container>
+        {!isMobile && (
           <Grid item md={5} sx={{ position: "relative" }}>
             <Box
               component="img"
@@ -70,7 +106,6 @@ const LoginForm = () => {
           </Grid>
         )}
 
-     
         <Grid item md={7}>
           <Header />
           <Grid
@@ -79,105 +114,129 @@ const LoginForm = () => {
             md={12}
             style={{ textAlign: "center", paddingTop: "40px" }}
           >
-            <Typography style={styles.sectionHeading}>
-             Login
-            </Typography>
+            <Typography style={styles.sectionHeading}>Login</Typography>
           </Grid>
 
-          <form >
-            <Grid container className={classes.formContent}>
-              {[
-                "email",
-                "password",
-              ].map((field, index) => (
+          <form onSubmit={handleSubmit}>
+            <Grid container className={classes.formContent} spacing={2}>
+              {/* Type Selection */}
+              <Grid item container xs={12} spacing={1} alignItems="center">
+                <Grid item xs={4}>
+                  <Typography
+                    className={classes.typo}
+                    style={{
+                      fontSize: "14px",
+                      textAlign: "left",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    Type:
+                  </Typography>
+                </Grid>
+                <Grid item xs={8}>
+                  <RadioGroup
+                    row
+                    value={formData.type}
+                    onChange={handleTypeChange}
+                  >
+                    <FormControlLabel
+                      value="Event Planner"
+                      control={<CustomRadio />}
+                      label="Event Planner"
+                    />
+                    <FormControlLabel
+                      value="Vendor"
+                      control={<CustomRadio />}
+                      label="Vendor"
+                    />
+                  </RadioGroup>
+                </Grid>
+              </Grid>
+
+              {/* Email and Password Fields */}
+              {["email", "password"].map((field, index) => (
                 <Grid
                   item
                   container
                   xs={12}
-                  md={12}
-                  direction="row"
                   alignItems="center"
                   spacing={1}
-                  style={{ marginBottom: "10px" }}
                   key={index}
                 >
-                  {/* Field Name */}
-                  <Grid item xs={4} md={4}>
+                  <Grid item xs={4}>
                     <Typography
                       className={classes.typo}
-                      style={{ fontSize: "14px", textAlign: "left", whiteSpace: "nowrap" }}
+                      style={{
+                        fontSize: "14px",
+                        textAlign: "left",
+                        whiteSpace: "nowrap",
+                      }}
                     >
-                      {field.charAt(0).toUpperCase() +
-                        field.slice(1).replace(/([A-Z])/g, " $1")}
-                      :
+                      {field === "email" ? "Your Email" : "Password"}:
                     </Typography>
                   </Grid>
 
-                  {/* Input Field */}
-                  <Grid item xs={8} md={8}>
+                  <Grid item xs={8}>
                     <InputBase
+                      aria-label={field}
                       className={classes.formInput}
                       fullWidth
-                      type={
-                        field.includes("password") || field.includes("confirmPassword")
-                          ? "password"
-                          : "text"
-                      }
+                      type={field.includes("password") ? "password" : "text"}
                       name={field}
                       value={formData[field]}
                       onChange={handleChange}
                       required
                     />
-                    {/* {errors[field] && (
-                      <Typography style={{ color: "red", fontSize: "12px" }}>
+                    {errors[field] && (
+                      <Typography style={styles.errorText}>
                         {errors[field]}
                       </Typography>
-                    )} */}
+                    )}
                   </Grid>
                 </Grid>
               ))}
 
-
               {/* Submit Button */}
               <Grid item container xs={12} justifyContent="center">
-                <Button type="submit" style={styles.button}>
+                <Button type="submit"
+                  onClick={() => navigate("/")}
+                  style={styles.button}
+                >
                   Login
                 </Button>
               </Grid>
             </Grid>
+
+            {/* Registration Link */}
             <Grid
-            container
-            spacing={1}
-            alignItems="center"
-            justifyContent="center"
-            style={{ marginTop: "40px", marginBottom: "40px" }}
-          >
-            <Grid item>
-              <Typography style={{ fontSize: "14px" }}>
-                Don't you have an account?
-              </Typography>
+              container
+              spacing={1}
+              alignItems="center"
+              justifyContent="center"
+              style={{ marginTop: "120px" }}
+            >
+              <Grid item>
+                <Typography style={{ fontSize: "14px" }}>
+                  Don’t have an account?
+                </Typography>
+              </Grid>
+              <Grid item>
+                <Button
+                  onClick={() => navigate("/register")}
+                  style={styles.linkButton}
+                >
+                  Register
+                </Button>
+              </Grid>
             </Grid>
-            <Grid item>
-              <Button
-                onClick={() => navigate("/login")}
-                style={styles.linkButton}
-              >
-                Register
-              </Button>
-            </Grid>
-          </Grid>
           </form>
         </Grid>
-
-       
-     
-         </Grid>
+      </Grid>
     </ThemeProvider>
   );
 };
 
 export default LoginForm;
-
 
 export const styles = {
   button: {
@@ -189,7 +248,7 @@ export const styles = {
     width: "220px",
     textTransform: "none",
     border: "2px solid #a0a5ee",
-    marginTop: "20px"
+    marginTop: "20px",
   },
   linkButton: {
     backgroundColor: "#B07207",
@@ -197,17 +256,6 @@ export const styles = {
     padding: "8px 20px",
     fontSize: "14px",
     borderRadius: "8px",
-    textTransform: "none",
-  },
-  googleButton: {
-    backgroundColor: "#4C3A74",
-    color: "#FFFFFF",
-    padding: "10px 20px",
-    fontSize: "14px",
-    borderRadius: "8px",
-    display: "flex",
-    alignItems: "center",
-    gap: "10px",
     textTransform: "none",
   },
   errorText: {
@@ -219,3 +267,13 @@ export const styles = {
     marginBottom: "25px",
   },
 };
+
+const CustomRadio = styled(Radio)(({ theme }) => ({
+  color: "white",
+  "&.Mui-checked": {
+    color: "#B07207",
+  },
+  "&:hover": {
+    backgroundColor: "transparent",
+  },
+}));
