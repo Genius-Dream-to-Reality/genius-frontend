@@ -8,6 +8,7 @@ import RegisterComponent from "./components/auth/RegisterForm";
 import UserTypeSelection from "./components/auth/UserTypeSelection";
 import EventPlanningForm from "./components/event-planning/EventPlanningForm";
 import VendorAccountForm from "./components/vendor-account/VendorAccountForm";
+import Callback from "./components/auth/Callback";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
             <Route path="select-event" element={<SelectEventType />} />
             <Route path="choose-type" element={<UserTypeSelection />} />
             <Route path="register" element={<RegisterComponent />} />
+            <Route path="auth/callback" element={<Callback />} />
             <Route path="event-planning" element={<EventPlanningForm/>} />
             <Route path="vendor-account" element={<VendorAccountForm/>} />
         </Routes>
