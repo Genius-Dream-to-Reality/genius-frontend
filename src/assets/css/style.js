@@ -22,13 +22,13 @@ const useStyles = makeStyles((theme) => ({
     fontSize: "14px"
   },
   formContent: {
-    padding: "40px 200px 0px 200px",
+    padding: "40px 150px 0px 150px",
     textAlign: "left",
   },
   formInput: {
     width: '100%',
     height: "38px",
-    borderBottom: "1px solid #7E57C2",
+    borderBottom: "1px solid rgba(255, 255, 255, 0.5)",
     padding: "0 15px",
     fontSize: "13px",
     fontFamily: 'Poppins',
@@ -47,6 +47,7 @@ const useStyles = makeStyles((theme) => ({
     border: "2px solid white",
     borderRadius: "5px",
     color: "white",
+    padding: "11px 20px"
   },
   DropDown: {
     position: "absolute",
@@ -67,21 +68,7 @@ const useStyles = makeStyles((theme) => ({
     cursor: "pointer",
     backgroundColor: "transparent",
     fontSize: "14px"
-  },
-  submitButton: {
-    fontSize: "12px",
-    textTransform: "none",
-    padding: "5px 10px",
-    backgroundColor: "transparent",
-    border: "1px solid",
-    borderColor: "gray",
-    color: "#FFFFFF",
-    "&:hover": {
-      backgroundColor: "#9575CD",
-      borderColor: "#9575CD",
-    },
-  },
-
+  }
 }));
 
 export default useStyles;

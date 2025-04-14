@@ -1,10 +1,23 @@
 import React, { useState } from "react";
-import { Grid, Button, Typography } from "@mui/material";
-import { ThemeProvider } from "@mui/material/styles";
+import {
+  Grid,
+  Button,
+  Typography,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  InputBase,
+  CircularProgress,
+  Box,
+  ThemeProvider
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import theme from "../../styles/theme";
+import Circle from "../common/Circle";
 import StepOne from "./StepOne";
-// import StepTwo from "./StepTwo";
-// import StepThree from "./StepThree";
+import StepTwo from "./StepTwo";
+import StepThree from "./StepThree";
+import Header from "../../layout/Header";
 
 const STEPS = [
   { text: "Initial Setup" },
@@ -12,105 +25,268 @@ const STEPS = [
   { text: "Finalize" },
 ];
 
+const DIALOG_FIELDS = [
+  { label: "Number of Services:", value: "50" },
+  { label: "Total Budget:", value: "Rs. 50,000" },
+  { label: "Down Payment:", value: "Rs. 5,000" },
+];
+
+const dialogStyles = {
+  dialogPaper: {
+    backgroundColor: "#201439",
+    borderRadius: "16px",
+    padding: "20px",
+  },
+  dialogContent: {
+    backgroundColor: "#403557",
+    color: "white",
+    borderRadius: "16px",
+    padding: "20px",
+  },
+  title: {
+    fontSize: "30px",
+    textAlign: "center",
+    marginBottom: "20px",
+  },
+  button: {
+    height: "40px",
+    width: "130px",
+    color: "#FFFFFF",
+    padding: "8px 20px",
+    fontSize: "14px",
+    borderRadius: "8px",
+    textTransform: "none",
+    display: "flex",
+    alignItems: "center"
+  }
+};
+
 const EventPlanningForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
+  const [stepOneData, setStepOneData] = useState({
+    eventName: "",
+    budgetRange: "",
+    numberOfParticipants: "",
+    selectedDistrict: "Select Location District",
+    selectedEventType: "Select Event Type",
+    selectedDate: null,
+  });
+
+  const [openPopup, setOpenPopup] = useState(false);
+  const [openFinalizingPopup, setOpenFinalizingPopup] = useState(false);
+  const [popupMessage, setPopupMessage] = useState(
+    "Do you want to finalize this plan?"
+  );
+
+  const navigate = useNavigate();
 
   const handleNext = () => {
-    if (currentStep < 3) setCurrentStep(currentStep + 1);
+    if (currentStep < 3) {
+      console.log("Entered Data from Step One:", stepOneData);
+      setCurrentStep(currentStep + 1);
+    }
   };
 
   const handleBack = () => {
     if (currentStep > 1) setCurrentStep(currentStep - 1);
   };
 
-  return (
-    <ThemeProvider theme={theme}>
-      <Grid container style={{ textAlign: "center", marginTop: "60px" }}>
-        <Grid item xs={1} md={4}></Grid>
-        {STEPS.map((step, index) => (
-          <React.Fragment key={index}>
-            <Grid item xs={2} md={1}>
-              <Grid container direction="column" alignItems="center">
-                <Circle
-                  number={index + 1}
-                  active={currentStep === index + 1}
-                  completed={currentStep > index + 1}
-                />
-                <Typography
-                  style={{
-                    fontSize: "12px",
-                    paddingTop: "15px",
-                    color: currentStep === index + 1 ? "#2A7CED" : "#8F8F8F",
-                  }}
-                >
-                  {step.text}
-                </Typography>
-              </Grid>
-            </Grid>
-            {index !== STEPS.length - 1 && (
-              <Grid item xs={2} md={1}>
-                <hr style={{ marginTop: "32px", opacity: 0.12 }} />
-              </Grid>
-            )}
-          </React.Fragment>
-        ))}
-        <Grid item xs={1} md={3}></Grid>
-      </Grid>
+  const handleStepOneDataChange = (newData) => {
+    setStepOneData((prevData) => ({
+      ...prevData,
+      ...newData,
+    }));
+  };
 
-      <Grid item xs={12} md={12} style={{ marginTop: "20px" }}>
-        {currentStep === 1 && <StepOne />}
-        {/* {currentStep === 2 && <StepTwo />}
-        {currentStep === 3 && <StepThree />} */}
-      </Grid>
+  const handleConfirm = () => {
+    setOpenPopup(false);
+    setPopupMessage("Finalizing...");
+    setOpenFinalizingPopup(true);
+    setTimeout(() => {
+      setOpenFinalizingPopup(false);
+      navigate("/eventplaning-completed");
+    }, 4000);
+  };
 
-      <Grid container spacing={5} style={{ paddingTop: "20px" }}>
-        <Grid item xs={10} md={10} style={{ display: "flex", justifyContent: "flex-end" }}>
-          {currentStep > 1 && (
-            <Button
-              onClick={handleBack}
-              variant="contained"
-              style={{ boxShadow: "none", marginRight: "10px" }}
-            >
-              Back
-            </Button>
-          )}
-          <Button
-            onClick={currentStep === 3 ? () => alert("Done!") : handleNext}
-            variant="contained"
-            style={{ boxShadow: "none", height: "40px" }}
-          >
-            {currentStep < 3 ? "Next" : "Done"}
-          </Button>
+  const handleDecline = () => {
+    setOpenPopup(false);
+  };
+
+  const renderDialogFields = () =>
+    DIALOG_FIELDS.map((field, index) => (
+      <Grid
+        container
+        direction="row"
+        spacing={2}
+        alignItems="center"
+        key={index}
+        sx={{ marginTop: index !== 0 ? "5px" : 0 }}
+      >
+        <Grid item xs={5}>
+          <Typography>{field.label}</Typography>
+        </Grid>
+        <Grid item xs={7}>
+          <InputBase
+            style={{ color: "white", width: "100%" }}
+            value={field.value}
+            readOnly
+          />
         </Grid>
       </Grid>
-    </ThemeProvider>
-  );
-};
+    ));
 
-const Circle = ({ number, active, completed }) => {
-  const paddedNumber = number.toString().padStart(2, "0");
   return (
-    <div
-      style={{
-        borderRadius: "50%",
-        width: "65px",
-        height: "65px",
-        backgroundColor: completed ? "#2A7CED" : "#FFFFFF",
-        border: active ? "2px solid #2A7CED" : "0.25px solid #8F8F8F",
-        textAlign: "center",
-        paddingTop: "10px",
-      }}
-    >
-      <h5
-        style={{
-          paddingTop: "10px",
-          fontSize: "16px",
-          color: active ? "#2A7CED" : completed ? "#FFFFFF" : "#8F8F8F",
-        }}
+    <ThemeProvider theme={theme}>
+      <Grid container>
+        <Header />
+        <Grid
+          container
+          justifyContent="center"
+          style={{ textAlign: "center", marginTop: "60px" }}
+        >
+          {STEPS.map((step, index) => (
+            <React.Fragment key={index}>
+              <Grid item xs={2} md={1}>
+                <Grid container direction="column" alignItems="center">
+                  <Circle
+                    number={index + 1}
+                    active={currentStep === index + 1}
+                    completed={currentStep > index + 1}
+                  />
+                  <Typography
+                    sx={{
+                      fontSize: "12px",
+                      paddingTop: "15px",
+                      color: currentStep === index + 1 ? "#fff" : "#8F8F8F",
+                    }}
+                  >
+                    {step.text}
+                  </Typography>
+                </Grid>
+              </Grid>
+              {index !== STEPS.length - 1 && (
+                <Grid item xs={2} md={1}>
+                  <hr style={{ marginTop: "32px", opacity: 0.12 }} />
+                </Grid>
+              )}
+            </React.Fragment>
+          ))}
+        </Grid>
+
+
+        {/* Rendering Steps */}
+        <Grid item xs={12} md={12} style={{ marginTop: "40px" }}>
+          {currentStep === 1 && (
+            <StepOne
+              onStepOneDataChange={handleStepOneDataChange}
+            />
+          )}
+          {currentStep === 2 && <StepTwo />}
+          {currentStep === 3 && <StepThree />}
+        </Grid>
+
+
+        {/* Next and Back Buttons */}
+        <Grid container sx={{ padding: { xs: "20px 16px", sm: "20px 200px" }, justifyContent: "space-between" }}>
+          <Grid item xs={5} style={{ display: "flex", justifyContent: "flex-start" }}>
+            {currentStep > 1 && (
+              <Button
+                onClick={handleBack}
+                variant="contained"
+                sx={dialogStyles.button}
+                style={{
+                  backgroundColor: "white",
+                  color: "black",
+                }}
+              >
+                <svg width="28" height="17" viewBox="0 0 28 17" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: "8px" }}>
+                  <path
+                    d="M9.21042 -1.14441e-05L10.8338 1.43262L4.40946 7.11233H27.6313V9.14443H4.40946L10.8453 14.814L9.21042 16.2568L-4.57764e-05 8.12838L9.21042 -1.14441e-05Z"
+                    fill="black"
+                  />
+                </svg>
+                Back
+              </Button>
+            )}
+          </Grid>
+
+          <Grid item xs={5} style={{ display: "flex", justifyContent: "flex-end" }}>
+            <Button
+              onClick={
+                currentStep === 3 ? () => setOpenPopup(true) : handleNext
+              }
+              variant="contained"
+              sx={dialogStyles.button}
+              style={{ backgroundColor: "#B07207" }}
+            >
+              {currentStep < 3 ? "Next" : "Done"}
+              <svg width="28" height="17" viewBox="0 0 28 17" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginLeft: "8px" }}>
+                <path d="M18.4209 4.95911e-05L16.7976 1.43268L23.2219 7.11239H0L0 9.14449H23.2219L16.7861 14.814L18.4209 16.2568L27.6314 8.12844L18.4209 4.95911e-05Z" fill="white" />
+              </svg>
+
+            </Button>
+          </Grid>
+        </Grid>
+      </Grid>
+
+      {/* Confirmation Popup */}
+      <Dialog
+        open={openPopup}
+        onClose={handleDecline}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{ sx: dialogStyles.dialogPaper }}
       >
-        {paddedNumber}
-      </h5>
-    </div>
+        <DialogContent sx={dialogStyles.dialogContent}>
+          <Typography sx={dialogStyles.title}>{popupMessage}</Typography>
+          <Grid container justifyContent="center" spacing={2}>
+            <Grid item xs={12} md={9}>
+              {renderDialogFields()}
+            </Grid>
+          </Grid>
+          <DialogActions sx={{ justifyContent: "center", marginTop: "40px" }}>
+            <Button
+              onClick={handleDecline}
+              sx={dialogStyles.button}
+              style={{ backgroundColor: "red" }}
+            >
+              Decline
+            </Button>
+            <Button
+              onClick={handleConfirm}
+              sx={dialogStyles.button}
+              style={{ backgroundColor: "green" }}
+            >
+              Confirm
+            </Button>
+          </DialogActions>
+        </DialogContent>
+      </Dialog>
+
+      {/* Finalizing Popup */}
+      {openFinalizingPopup && (
+        <Dialog
+          open={openFinalizingPopup}
+          maxWidth="sm"
+          fullWidth
+          PaperProps={{ sx: dialogStyles.dialogPaper }}
+        >
+          <DialogContent sx={dialogStyles.dialogContent}>
+            <Box sx={{ display: 'flex' , justifyContent:"center" }}>
+              <CircularProgress />
+            </Box>
+            <Typography sx={dialogStyles.title}>{popupMessage}</Typography>
+            <Grid container justifyContent="center" spacing={2}>
+              <Grid item xs={12} md={9} sx={{ textAlign: "center" }}>
+                Please wait for a moment <br />
+                until all the agreements are generated and vendors are notified
+              </Grid>
+            </Grid>
+          </DialogContent>
+        </Dialog>
+      )}
+
+    </ThemeProvider>
   );
 };
 
