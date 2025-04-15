@@ -13,6 +13,7 @@ import RegisterCompleted from "./components/auth/RegisterCompleted";
 import EventPlanningCompletion from "./components/event-planning/EvenPlanningCompletion";
 import ViewPlan from "./components/event-planning/ViewPlan";
 import LoginForm from "./components/auth/LoginForm";
+import Callback from "./components/auth/Callback";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
             <Route path="choose-type" element={<UserTypeSelection />} />
             <Route path="login" element={<LoginForm />} />
             <Route path="register" element={<RegisterComponent />} />
+            <Route path="auth/callback" element={<Callback />} />
             <Route path="event-planning" element={<EventPlanningForm/>} />
             <Route path="vendor-account" element={<VendorAccountForm/>} />
             <Route path="register-otp" element={<RegisterOTP />} />

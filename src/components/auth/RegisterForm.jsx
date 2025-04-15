@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import {
   ThemeProvider,
   Grid,
@@ -8,23 +8,36 @@ import {
   InputBase,
   Button,
   FormControlLabel,
-  useMediaQuery,
-  Checkbox,
 } from "@mui/material";
 import theme from "../../styles/theme";
 import Header from "../../layout/Header";
 import authServiceImage from "../../assets/images/authService.jpg";
+import vendorRegister from "../../assets/images/why.png";
 import googleCalendar from "../../assets/images/google-calendar.png";
 import useStyles from "../../assets/css/style";
+import { Checkbox } from "@mui/material";
 import SideNavBar from "../../layout/SideNavBar";
-import AppLogo from "../shared/AppLogo";
+import { customerRegistration, vendorRegistration } from "../../utils/auth";
+import { useNavigate } from "react-router-dom";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const RegisterForm = () => {
+  const redirect_uri = process.env.REACT_APP_GOOGLE_CALENDER_REDIRECT_URI;
+  const client_id = process.env.REACT_APP_GOOGLE_CALENDER_CLIENT_ID;
   const classes = useStyles();
-  const navigate = useNavigate();
   const location = useLocation();
-  const { userType } = location.state || {};
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const { userType, from, oauthData } = location.state || {};
+  const [message, setMessage] = useState("");
+  const [isError, setIsError] = useState(false);
+  const [isGoogleCalendarLinked, setIsGoogleCalendarLinked] = useState(false);
+  const navigate = useNavigate();
+
+  const [calendarId, setCalendarId] = useState(null);
+  const [accessToken, setAccessToken] = useState(null);
+  const [refreshToken, setRefreshToken] = useState(null);
+  const [tokenExpiry, setTokenExpiry] = useState(null);
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -41,12 +54,44 @@ const RegisterForm = () => {
     mobileNumber: "",
   });
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
+  useEffect(() => {
+    const savedForm = localStorage.getItem("registerFormData");
+
+    if (savedForm) {
+      setFormData(JSON.parse(savedForm));
+    }
+    if (from === "callback") {
+      //console.log("Auth Code from callbackpage: ", oauthData);
+
+      if (oauthData) {
+        try {
+          setCalendarId(oauthData.calendarId);
+          setAccessToken(oauthData.accessToken);
+          setRefreshToken(oauthData.refreshToken);
+          setTokenExpiry(oauthData.tokenExpiry);
+          //console.log("AccessToken: ", accessToken);
+          setIsGoogleCalendarLinked(true);
+        } catch (err) {
+          console.error("Failed to parse authObject:", err);
+        }
+      } else {
+        console.log("No auth code found in local storage.");
+      }
+    }
+  }, [from]);
+
+  const handleChange = (event) => {
+    const { name, value, checked, type } = event.target;
+    setFormData((prevData) => ({
+      ...prevData,
       [name]: type === "checkbox" ? checked : value,
-    });
+    }));
+  };
+
+  const handleGoogleCalendar = () => {
+    localStorage.setItem("registerFormData", JSON.stringify(formData));
+    const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${client_id}&redirect_uri=${redirect_uri}&response_type=code&scope=https://www.googleapis.com/auth/calendar&access_type=offline&prompt=consent`;
+    window.location.href = googleAuthUrl;
   };
 
   const validateForm = () => {
@@ -66,15 +111,71 @@ const RegisterForm = () => {
       newErrors.mobileNumber = "Please enter a valid 10-digit mobile number.";
       formIsValid = false;
     }
+
     setErrors(newErrors);
     return formIsValid;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
+    if (!formData.acceptTerms) {
+      setMessage("You must accept the terms and conditions to continue.");
+      setIsError(true);
+      return; // stop submission
+    }
     if (validateForm()) {
+      localStorage.removeItem("registerFormData");
+      setIsLoading(true);
       const { confirmPassword, ...dataToSubmit } = formData;
+      if (userType === "vendor") {
+        const data = {
+          name: formData.firstName + " " + formData.lastName,
+          email: formData.email,
+          phoneNumber: formData.mobileNumber,
+          password: formData.password,
+          acceptTerms: formData.acceptTerms,
+          calendarId: calendarId,
+          accessToken: accessToken,
+          refreshToken: refreshToken,
+          tokenExpiry: tokenExpiry,
+        };
+        const res = await vendorRegistration(data);
+        if (res.type === "error") {
+          console.log("An error occurred:", res.message);
+          setMessage(res.message);
+          setIsError(true);
+        } else {
+          console.log("Success:", res.message);
+          setMessage("Registration successful!");
+          setIsError(false);
+          navigate("/register-otp", {
+            state: { userType: "vendor", email: formData.email },
+          });
+        }
+      } else {
+        const data = {
+          name: formData.firstName + " " + formData.lastName,
+          email: formData.email,
+          mobileNo: formData.mobileNumber,
+          password: formData.password,
+          acceptTerms: formData.acceptTerms,
+        };
+
+        const res = await customerRegistration(data);
+        if (res.type === "error") {
+          console.log("An error occurred:", res.message);
+          setMessage(res.message);
+          setIsError(true);
+        } else {
+          console.log("Success:", res.message);
+          setMessage("Registration successful!");
+          setIsError(false);
+          localStorage.removeItem("registerFormData");
+          navigate("/register-otp", {
+            state: { userType: "customer", email: formData.email },
+          });
+        }
+      }
       console.log("Form Data:", dataToSubmit);
     }
   };
@@ -82,31 +183,19 @@ const RegisterForm = () => {
   return (
     <ThemeProvider theme={theme}>
       <Grid container>
-        {!isMobile && (
-          <Grid item md={5} sx={{ position: "relative" }}>
-            <Box
-              component="img"
-              src={authServiceImage}
-              alt="Register"
-              sx={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-              }}
-            />
-            <Box
-              sx={{
-                position: "absolute",
-                top: "0px",
-                left: "20px",
-                zIndex: 1,
-              }}
-            >
-              <AppLogo size="lg" />
-            </Box>
-            <SideNavBar />
-          </Grid>
-        )}
+        <SideNavBar />
+        <Grid item md={5}>
+          <Box
+            component="img"
+            src={userType === "vendor" ? vendorRegister : authServiceImage}
+            alt="Register"
+            sx={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+            }}
+          />
+        </Grid>
 
         <Grid item md={7}>
           <Header />
@@ -116,12 +205,13 @@ const RegisterForm = () => {
             md={12}
             style={{ textAlign: "center", paddingTop: "40px" }}
           >
-            <Typography style={styles.sectionHeading}>
-              Register as {userType === "vendor" ? "a Vendor" : "an Event Planner"}
+            <Typography style={{ fontSize: "32px" }}>
+              Register as{" "}
+              {userType === "vendor" ? "a Vendor" : "an Event Planner"}
             </Typography>
           </Grid>
 
-          <form onSubmit={handleSubmit}>
+          <form>
             <Grid container className={classes.formContent}>
               {[
                 "firstName",
@@ -136,31 +226,27 @@ const RegisterForm = () => {
                   container
                   xs={12}
                   md={12}
-                  direction="row"
                   alignItems="center"
-                  spacing={1}
+                  spacing={2}
                   style={{ marginBottom: "10px" }}
                   key={index}
                 >
-                  {/* Field Name */}
-                  <Grid item xs={4} md={4}>
+                  <Grid item xs={12} md={4}>
                     <Typography
                       className={classes.typo}
-                      style={{ fontSize: "14px", textAlign: "left", whiteSpace: "nowrap" }}
+                      style={{ fontSize: "14px" }}
                     >
                       {field.charAt(0).toUpperCase() +
                         field.slice(1).replace(/([A-Z])/g, " $1")}
                       :
                     </Typography>
                   </Grid>
-
-                  {/* Input Field */}
-                  <Grid item xs={8} md={8}>
+                  <Grid item xs={12} md={8}>
                     <InputBase
                       className={classes.formInput}
-                      fullWidth
                       type={
-                        field.includes("password") || field.includes("confirmPassword")
+                        field.includes("password") ||
+                        field.includes("confirmPassword")
                           ? "password"
                           : "text"
                       }
@@ -187,97 +273,152 @@ const RegisterForm = () => {
                 >
                   <Grid item>
                     <Typography
-                      style={{
-                        fontSize: "14px",
-                        textAlign: "center",
-                      }}
+                      style={{ fontSize: "13px", textAlign: "center" }}
                     >
-                      Please authorize Genius to access your Google Calendar
-                      before proceeding. More info..
+                      {isGoogleCalendarLinked ? (
+                        <>
+                          Your Google Calendar is linked successfully. <br />
+                        </>
+                      ) : (
+                        <>
+                          Please authorize Genius to access your Google Calendar
+                          before proceeding. <br />
+                          More info..
+                        </>
+                      )}
                     </Typography>
                   </Grid>
 
-                  <Grid item style={{ marginTop: "20px" }}>
-                    <Button
-                      variant="contained"
-                      style={styles.googleButton}
-                      onClick={() => console.log("Link Google Calendar")}
-                    >
-                      Link Google Calendar
-                      <img
-                        src={googleCalendar}
-                        alt="Google Calendar Icon"
+                  {!isGoogleCalendarLinked && (
+                    <Grid item style={{ marginTop: "20px" }}>
+                      <Button
+                        variant="contained"
                         style={{
-                          width: "20px",
-                          height: "20px",
+                          backgroundColor: "#4C3A74",
+                          color: "#FFFFFF",
+                          padding: "10px 20px",
+                          fontSize: "14px",
+                          borderRadius: "8px",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "10px",
+                          textTransform: "none",
                         }}
-                      />
-                    </Button>
-                  </Grid>
+                        onClick={handleGoogleCalendar}
+                      >
+                        Link Google Calendar
+                        <img
+                          src={googleCalendar}
+                          alt="Google Calendar Icon"
+                          style={{ width: "20px", height: "20px" }}
+                        />
+                      </Button>
+                    </Grid>
+                  )}
                 </Grid>
               )}
 
               {/* Terms and Conditions Checkbox */}
-              <Grid item
+              <Grid
+                item
                 container
                 xs={12}
                 justifyContent="center"
-                spacing={2}
                 style={{ marginTop: "20px", marginBottom: "10px" }}
               >
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={formData.acceptTerms}
-                        onChange={handleChange}
-                        name="acceptTerms"
-                        sx={{ color: "#fff" }}
-                      />
-                    }
-                    label={
-                      <span style={{ fontSize: "14px" }}>
-                        Do you agree to our{" "}
-                        <span
-                          style={{ color: "#007ADF", cursor: "pointer" }}
-                          onClick={() =>
-                            console.log("Navigate to Privacy and Policies")
-                          }
-                        >
-                          Privacy and Policies
-                        </span>
-                        ?
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      name="acceptTerms"
+                      checked={formData.acceptTerms}
+                      onChange={handleChange}
+                      color="primary"
+                    />
+                  }
+                  label={
+                    <span style={{ fontSize: "14px" }}>
+                      Do you agree to our{" "}
+                      <span
+                        style={{ color: "blue", cursor: "pointer" }}
+                        onClick={() =>
+                          console.log("Navigate to Privacy and Policies")
+                        }
+                      >
+                        Privacy and Policies
                       </span>
-                    }
-                    sx={{ color: "#fff" }}
-                  />
+                      ?
+                    </span>
+                  }
+                />
               </Grid>
 
               {/* Submit Button */}
               <Grid item container xs={12} justifyContent="center">
-                <Button type="submit" style={styles.button}>
-                  Register
+                <Button
+                  type="submit"
+                  className={classes.submitButton}
+                  onClick={handleSubmit}
+                  disabled={isLoading}
+                  style={{
+                    backgroundColor: "#1976d2",
+                    color: "#fff",
+                  }}
+                >
+                  {isLoading ? (
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                      gap={1} 
+                    >
+                      <CircularProgress size={20} color="inherit"/>
+                      Registering...
+                    </Box>
+                  ) : (
+                    "Register"
+                  )}
                 </Button>
               </Grid>
             </Grid>
           </form>
 
-          {/* Login Section */}
+          {message && (
+            <Grid
+              item
+              xs={12}
+              style={{ textAlign: "center", marginTop: "20px" }}
+            >
+              <Typography
+                style={{
+                  color: isError ? "red" : "green",
+                  fontSize: "14px",
+                  marginBottom: "10px",
+                }}
+              >
+                {message}
+              </Typography>
+            </Grid>
+          )}
+
+          {/* Login Section (Button and Text on the Same Line) */}
           <Grid
             container
             spacing={1}
             alignItems="center"
             justifyContent="center"
-            style={{ marginTop: "40px", marginBottom: "40px" }}
+            style={{ marginTop: "30px" }}
           >
             <Grid item>
-              <Typography style={{ fontSize: "14px" }}>
+              <Typography className={classes.typo} style={{ fontSize: "14px" }}>
                 Do you have an account?
               </Typography>
             </Grid>
             <Grid item>
               <Button
-                onClick={() => navigate("/login")}
-                style={styles.linkButton}
+                type="submit"
+                className={classes.submitButton}
+                style={{ backgroundColor: "#B07207" }}
+                onClick={() =>{navigate("/login")}}
               >
                 Login
               </Button>
@@ -290,45 +431,3 @@ const RegisterForm = () => {
 };
 
 export default RegisterForm;
-
-
-export const styles = {
-  button: {
-    backgroundColor: "#4C3A74",
-    color: "#FFFFFF",
-    padding: "10px 30px",
-    fontSize: "16px",
-    borderRadius: "8px",
-    width: "220px",
-    textTransform: "none",
-    border: "2px solid #a0a5ee",
-    marginTop: "20px"
-  },
-  linkButton: {
-    backgroundColor: "#B07207",
-    color: "#FFFFFF",
-    padding: "8px 20px",
-    fontSize: "14px",
-    borderRadius: "8px",
-    textTransform: "none",
-  },
-  googleButton: {
-    backgroundColor: "#4C3A74",
-    color: "#FFFFFF",
-    padding: "10px 20px",
-    fontSize: "14px",
-    borderRadius: "8px",
-    display: "flex",
-    alignItems: "center",
-    gap: "10px",
-    textTransform: "none",
-  },
-  errorText: {
-    color: "red",
-    fontSize: "12px",
-  },
-  sectionHeading: {
-    fontSize: "42px",
-    marginBottom: "25px",
-  },
-};

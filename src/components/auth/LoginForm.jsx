@@ -222,7 +222,7 @@ const LoginForm = () => {
               </Grid>
               <Grid item>
                 <Button
-                  onClick={() => navigate("/register")}
+                  onClick={() => navigate("/choose-type")}
                   style={styles.linkButton}
                 >
                   Register
