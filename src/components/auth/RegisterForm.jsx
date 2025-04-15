@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Navigate, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import {
   ThemeProvider,
   Grid,
@@ -19,6 +19,7 @@ import { Checkbox } from "@mui/material";
 import SideNavBar from "../../layout/SideNavBar";
 import { customerRegistration, vendorRegistration } from "../../utils/auth";
 import { useNavigate } from "react-router-dom";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const RegisterForm = () => {
   const redirect_uri = process.env.REACT_APP_GOOGLE_CALENDER_REDIRECT_URI;
@@ -35,6 +36,8 @@ const RegisterForm = () => {
   const [accessToken, setAccessToken] = useState(null);
   const [refreshToken, setRefreshToken] = useState(null);
   const [tokenExpiry, setTokenExpiry] = useState(null);
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -76,8 +79,6 @@ const RegisterForm = () => {
       }
     }
   }, [from]);
-
- 
 
   const handleChange = (event) => {
     const { name, value, checked, type } = event.target;
@@ -123,6 +124,8 @@ const RegisterForm = () => {
       return; // stop submission
     }
     if (validateForm()) {
+      localStorage.removeItem("registerFormData");
+      setIsLoading(true);
       const { confirmPassword, ...dataToSubmit } = formData;
       if (userType === "vendor") {
         const data = {
@@ -145,7 +148,7 @@ const RegisterForm = () => {
           console.log("Success:", res.message);
           setMessage("Registration successful!");
           setIsError(false);
-          navigate("/otp", {
+          navigate("/register-otp", {
             state: { userType: "vendor", email: formData.email },
           });
         }
@@ -168,7 +171,7 @@ const RegisterForm = () => {
           setMessage("Registration successful!");
           setIsError(false);
           localStorage.removeItem("registerFormData");
-          navigate("/otp", {
+          navigate("/register-otp", {
             state: { userType: "customer", email: formData.email },
           });
         }
@@ -355,8 +358,25 @@ const RegisterForm = () => {
                   type="submit"
                   className={classes.submitButton}
                   onClick={handleSubmit}
+                  disabled={isLoading}
+                  style={{
+                    backgroundColor: "#1976d2",
+                    color: "#fff",
+                  }}
                 >
-                  Register
+                  {isLoading ? (
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                      gap={1} 
+                    >
+                      <CircularProgress size={20} color="inherit"/>
+                      Registering...
+                    </Box>
+                  ) : (
+                    "Register"
+                  )}
                 </Button>
               </Grid>
             </Grid>
@@ -372,6 +392,7 @@ const RegisterForm = () => {
                 style={{
                   color: isError ? "red" : "green",
                   fontSize: "14px",
+                  marginBottom: "10px",
                 }}
               >
                 {message}
@@ -397,7 +418,7 @@ const RegisterForm = () => {
                 type="submit"
                 className={classes.submitButton}
                 style={{ backgroundColor: "#B07207" }}
-                // onClick={handleRegisterClick}
+                onClick={() =>{navigate("/login")}}
               >
                 Login
               </Button>
