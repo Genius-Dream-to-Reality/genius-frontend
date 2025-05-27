@@ -2,7 +2,7 @@ import axios from "axios";
 
 export async function customerRegistration(customerRegistrationData) {
     try {
-        const apiURL = process.env.REACT_APP_AUTH_API_URL + "/customers/register";
+        const apiURL = process.env.REACT_APP_AUTH_API_URL + "/customer/auth/register";
 
         const response = await axios.post(apiURL, customerRegistrationData, {
             headers: {
@@ -30,7 +30,7 @@ export async function customerRegistration(customerRegistrationData) {
 
 export async function vendorRegistration(vendorRegistrationData) {
     try {
-        const apiURL = process.env.REACT_APP_AUTH_API_URL + "/vendors/register";
+        const apiURL = process.env.REACT_APP_AUTH_API_URL + "/vendor/auth/register";
 
         const response = await axios.post(apiURL, vendorRegistrationData, {
             headers: {
@@ -60,10 +60,10 @@ export async function otpVerification(data, type) {
     try {
         let apiURL;
         if(type === "vendor"){
-            apiURL = process.env.REACT_APP_AUTH_API_URL + "/vendors/otp";
+            apiURL = process.env.REACT_APP_AUTH_API_URL + "/vendor/auth/otp";
         }
         if(type === "customer"){
-            apiURL = process.env.REACT_APP_AUTH_API_URL + "/customers/otp";
+            apiURL = process.env.REACT_APP_AUTH_API_URL + "/customer/auth/otp";
         }
 
 
@@ -95,10 +95,10 @@ export async function otpRequest(email, type) {
     try {
         let apiURL;
         if(type === "vendor"){
-            apiURL = process.env.REACT_APP_AUTH_API_URL + "/vendors/otp";
+            apiURL = process.env.REACT_APP_AUTH_API_URL + "/vendor/auth/otp";
         }
         if(type === "customer"){
-            apiURL = process.env.REACT_APP_AUTH_API_URL + "/customers/otp";
+            apiURL = process.env.REACT_APP_AUTH_API_URL + "/customer/auth/otp";
         }
 
         const response = await axios.get(apiURL+`?email=${email}`);
