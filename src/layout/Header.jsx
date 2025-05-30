@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   AppBar,
   Toolbar,
@@ -18,6 +18,7 @@ import {
 import { FaCartPlus } from "react-icons/fa";
 import { Menu } from "lucide-react";
 import { ThemeProvider } from "@mui/material/styles";
+import LoginIcon from '@mui/icons-material/Login';
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   DropdownMenu,
@@ -44,12 +45,19 @@ const Header = () => {
 
   const links = ["Explore", "About Us", "Contact Us"];
 
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [user] = useState({
-    name: "John Doe",
-    email: "john@example.com",
-  });
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userInfo, setUserInfo] = useState(null);
+
+  useEffect(() => {
+    const savedAuth = localStorage.getItem("isAuthenticated");
+    const savedUser = localStorage.getItem("userInfo");
+
+    if (savedAuth === "true" && savedUser) {
+      setIsAuthenticated(true);
+      setUserInfo(JSON.parse(savedUser));
+    }
+  }, []);
 
   const handleRegisterClick = () => {
     navigate("/choose-type", { state: { userType: "vendor" } });
@@ -57,12 +65,15 @@ const Header = () => {
   };
 
   const handleLoginClick = () => {
-    setIsAuthenticated(true);
+    navigate("/login")
     setDrawerOpen(false);
   };
 
   const handleLogout = () => {
+    localStorage.removeItem("userInfo");
+    localStorage.removeItem("isAuthenticated");
     setIsAuthenticated(false);
+    setUserInfo(null);
     navigate("/");
     setDrawerOpen(false);
   };
@@ -265,8 +276,8 @@ const Header = () => {
                       <DropdownMenuLabel className="flex items-center gap-2">
                         <User className="h-5 w-5" />
                         <div className="flex flex-col">
-                          <p className="text-sm font-medium">{user.name}</p>
-                          <p className="text-xs text-gray-500">{user.email}</p>
+                          <p className="text-sm font-medium">{userInfo?.username}</p>
+                          <p className="text-xs text-gray-500">{userInfo?.email}</p>
                         </div>
                       </DropdownMenuLabel>
                       <DropdownMenuSeparator />
@@ -323,14 +334,17 @@ const Header = () => {
               )}
 
               {/* Sign Up Button - Only on Desktop */}
-              {!isMobile && !isAuthenticated && (
+              {!isMobile && (
                 <Grid item>
-                  <Button
-                    className={classes.button}
-                    onClick={handleRegisterClick}
-                  >
-                    Sign Up
-                  </Button>
+                  {!isAuthenticated ? (
+                    <Button className={classes.button} onClick={handleRegisterClick}>
+                      Sign Up <LoginIcon />
+                    </Button>
+                  ) : (
+                    <Typography className={classes.userText}>
+                       {userInfo?.username ? userInfo.username.split(" ")[0] : ""}
+                    </Typography>
+                  )}
                 </Grid>
               )}
             </Grid>
