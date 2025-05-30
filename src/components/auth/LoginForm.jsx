@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   ThemeProvider,
   Grid,
@@ -25,11 +25,13 @@ import { login } from "../../utils/auth";
 const LoginForm = () => {
   const classes = useStyles();
   const navigate = useNavigate();
+  const location = useLocation();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [loginError, setLoginError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
+  const { isAuthenticated } = location.state || {};
 
   const [formData, setFormData] = useState({
     email: "",
@@ -84,6 +86,10 @@ const LoginForm = () => {
       setIsError(false);
       const result = await login(formData);
       if (result.type === "success") {
+        const userInfo = { ...result.message };
+        localStorage.setItem("userInfo", JSON.stringify(userInfo));
+        localStorage.setItem("isAuthenticated", "true");
+
         setMessage("Login successful!");
         setTimeout(() => {
           navigate("/", { state: result });

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   AppBar,
   Toolbar,
@@ -18,7 +18,10 @@ import {
 import { FaCartPlus } from "react-icons/fa";
 import { Menu } from "lucide-react";
 import { ThemeProvider } from "@mui/material/styles";
+import LoginIcon from '@mui/icons-material/Login';
 import { useNavigate, useLocation } from "react-router-dom";
+import { Settings } from "lucide-react";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -44,12 +47,19 @@ const Header = () => {
 
   const links = ["Explore", "About Us", "Contact Us"];
 
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [user] = useState({
-    name: "John Doe",
-    email: "john@example.com",
-  });
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userInfo, setUserInfo] = useState(null);
+
+  useEffect(() => {
+    const savedAuth = localStorage.getItem("isAuthenticated");
+    const savedUser = localStorage.getItem("userInfo");
+
+    if (savedAuth === "true" && savedUser) {
+      setIsAuthenticated(true);
+      setUserInfo(JSON.parse(savedUser));
+    }
+  }, []);
 
   const handleRegisterClick = () => {
     navigate("/choose-type", { state: { userType: "vendor" } });
@@ -57,12 +67,15 @@ const Header = () => {
   };
 
   const handleLoginClick = () => {
-    setIsAuthenticated(true);
+    navigate("/login")
     setDrawerOpen(false);
   };
 
   const handleLogout = () => {
+    localStorage.removeItem("userInfo");
+    localStorage.removeItem("isAuthenticated");
     setIsAuthenticated(false);
+    setUserInfo(null);
     navigate("/");
     setDrawerOpen(false);
   };
@@ -260,26 +273,39 @@ const Header = () => {
                       align="end"
                       alignOffset={-5}
                       sideOffset={5}
-                      className="w-56 mt-2"
+                      className="w-64 bg-[#1A103D] text-white rounded-xl shadow-lg p-5"
                     >
-                      <DropdownMenuLabel className="flex items-center gap-2">
-                        <User className="h-5 w-5" />
-                        <div className="flex flex-col">
-                          <p className="text-sm font-medium">{user.name}</p>
-                          <p className="text-xs text-gray-500">{user.email}</p>
+                      <div className="flex justify-between items-start mb-1">
+                        <p className="text-sm text-gray-300 ml-auto">{userInfo?.userType}</p>
+                      </div>
+                      <div className="flex items-start space-x-4 mb-4">
+                        <div>
+                          <p className="text-lg font-semibold">{userInfo?.username}</p>
+                          <p className="text-xs text-gray-500">{userInfo?.email}</p>
                         </div>
-                      </DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={() => navigate("/vendor-account")}>
-                        Profile
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => navigate("/orders")}>
-                        Orders
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={handleLogout}>
+                      </div>
+                      <div className="space-y-3 mb-4 text-sm">
+                        <div
+                          onClick={() => navigate("/account")}
+                          className="flex items-center space-x-2 cursor-pointer hover:text-gray-600"
+                        >
+                          <User className="h-5 w-5" />
+                          <span>Account</span>
+                        </div>
+                        <div
+                          onClick={() => navigate("/settings")}
+                          className="flex items-center space-x-2 cursor-pointer hover:text-gray-600"
+                        >
+                          <Settings className="h-5 w-5" />
+                          <span>Setting</span>
+                        </div>
+                      </div>
+                      <button
+                        onClick={handleLogout}
+                        className="w-full bg-[#A33B3B] hover:bg-[#8c3232] text-white font-semibold py-2 rounded-md"
+                      >
                         Log out
-                      </DropdownMenuItem>
+                      </button>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 ) : (
@@ -323,14 +349,17 @@ const Header = () => {
               )}
 
               {/* Sign Up Button - Only on Desktop */}
-              {!isMobile && !isAuthenticated && (
+              {!isMobile && (
                 <Grid item>
-                  <Button
-                    className={classes.button}
-                    onClick={handleRegisterClick}
-                  >
-                    Sign Up
-                  </Button>
+                  {!isAuthenticated ? (
+                    <Button className={classes.button} onClick={handleRegisterClick}>
+                      Sign Up <LoginIcon />
+                    </Button>
+                  ) : (
+                    <Typography className={classes.userText}>
+                      {userInfo?.username ? userInfo.username.split(" ")[0] : ""}
+                    </Typography>
+                  )}
                 </Grid>
               )}
             </Grid>
