@@ -20,11 +20,7 @@ export async function customerRegistration(customerRegistrationData) {
     } catch (error) {
         console.error("Error in customer registration:", error.response?.data || error.message);
 
-        return {
-            type: "error",
-            status: error.response?.status || 500,
-            message: error.response?.data || "Something went wrong",
-        };
+        return handleAuthError(error)
     }
 }
 
@@ -48,11 +44,7 @@ export async function vendorRegistration(vendorRegistrationData) {
     } catch (error) {
         console.error("Error in vendor registration:", error.response?.data || error.message);
 
-        return {
-            type: "error",
-            status: error.response?.status || 500,
-            message: error.response?.data || "Something went wrong",
-        };
+        return handleAuthError(error)
     }
 }
 
@@ -83,11 +75,7 @@ export async function otpVerification(data, type) {
     } catch (error) {
         console.error("Error in vendor otp verification:", error.response?.data || error.message);
 
-        return {
-            type: "error",
-            status: error.response?.status || 500,
-            message: error.response?.data || "Something went wrong",
-        };
+        return handleAuthError(error)
     }
 }
 
@@ -113,10 +101,37 @@ export async function otpRequest(email, type) {
     } catch (error) {
         console.error("Error in vendor otp Request:", error.response?.data || error.message);
 
-        return {
-            type: "error",
-            status: error.response?.status || 500,
-            message: error.response?.data || "Something went wrong",
-        };
+        return handleAuthError(error);
     }
+}
+
+export async function login({ email, password, type }) {
+    try {
+        let apiURL;
+        if (type === "Event Planner") {
+            apiURL = process.env.REACT_APP_AUTH_API_URL + "/customer/auth/login";
+        } else if (type === "Vendor") {
+            apiURL = process.env.REACT_APP_AUTH_API_URL + "/vendor/auth/login";
+        } else {
+            throw new Error("Invalid login type");
+        }
+
+        const response = await axios.post(apiURL, { email, password }, {
+            headers: { "Content-Type": "application/json" },
+        });
+
+        return { type: "success", status: response.status, message: response.data };
+    } catch (error) {
+        return handleAuthError(error);
+    }
+}
+
+
+function handleAuthError(error) {
+    console.error("Auth Error:", error.response?.data || error.message);
+    return {
+        type: "error",
+        status: error.response?.status || 500,
+        message: error.response?.data || "Something went wrong",
+    };
 }

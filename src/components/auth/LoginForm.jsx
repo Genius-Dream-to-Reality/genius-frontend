@@ -9,6 +9,7 @@ import {
   Button,
   useMediaQuery,
   RadioGroup,
+  CircularProgress,
   FormControlLabel,
   Radio,
   styled,
@@ -19,11 +20,16 @@ import authServiceImage from "../../assets/images/authService.jpg";
 import useStyles from "../../assets/css/style";
 import SideNavBar from "../../layout/SideNavBar";
 import AppLogo from "../shared/AppLogo";
+import { login } from "../../utils/auth";
 
 const LoginForm = () => {
   const classes = useStyles();
   const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const [loginError, setLoginError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const [isError, setIsError] = useState(false);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -70,10 +76,26 @@ const LoginForm = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
-      console.log("Form submitted:", formData);
+      setIsLoading(true);
+      setMessage("");
+      setIsError(false);
+      const result = await login(formData);
+      if (result.type === "success") {
+        setMessage("Login successful!");
+        setTimeout(() => {
+          navigate("/", { state: result });
+        }, 1000);
+      } else {
+        setIsError(true);
+        setMessage(result.message?.message || result.message);
+      }
+      setIsLoading(false);
+    } else {
+      setIsError(true);
+      setMessage("Please fill in all fields.");
     }
   };
 
@@ -196,15 +218,46 @@ const LoginForm = () => {
                 </Grid>
               ))}
 
-              {/* Submit Button */}
               <Grid item container xs={12} justifyContent="center">
-                <Button type="submit"
-                  onClick={() => navigate("/")}
+                <Button
+                  type="submit"
+                  className={classes.submitButton}
+                  disabled={isLoading}
                   style={styles.button}
                 >
-                  Login
+                  {isLoading ? (
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                      gap={1}
+                    >
+                      <CircularProgress size={20} color="inherit" />
+                      Logging in...
+                    </Box>
+                  ) : (
+                    "Login"
+                  )}
                 </Button>
               </Grid>
+
+              {message && (
+                <Grid
+                  item
+                  xs={12}
+                  style={{ textAlign: "center", marginTop: "20px" }}
+                >
+                  <Typography
+                    style={{
+                      color: isError ? "red" : "green",
+                      fontSize: "14px",
+                      marginBottom: "10px",
+                    }}
+                  >
+                    {message}
+                  </Typography>
+                </Grid>
+              )}
             </Grid>
 
             {/* Registration Link */}
