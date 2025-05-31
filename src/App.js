@@ -14,6 +14,7 @@ import EventPlanningCompletion from "./components/event-planning/EvenPlanningCom
 import ViewPlan from "./components/event-planning/ViewPlan";
 import LoginForm from "./components/auth/LoginForm";
 import Callback from "./components/auth/Callback";
+import CustomerDashboard from "./components/customer-dashboard/CustomerDashboard";
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
             <Route path="register-completed" element={<RegisterCompleted />} />
             <Route path="eventplaning-completed" element={<EventPlanningCompletion />} />
             <Route path="view-plan" element={<ViewPlan />} />
+            <Route path="customer-dashboard" element={<CustomerDashboard/>} />
         </Routes>
       </Router>
     </ThemeProvider>
