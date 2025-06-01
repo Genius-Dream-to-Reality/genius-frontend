@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useContext, useState} from "react";
 import {
   Grid,
   Button,
@@ -18,6 +18,9 @@ import StepOne from "./StepOne";
 import StepTwo from "./StepTwo";
 import StepThree from "./StepThree";
 import Header from "../../layout/Header";
+import {eventApi} from "../../api/event";
+import {AlertContext} from "../../contexts/AlertContext";
+import dayjs from "dayjs";
 
 const STEPS = [
   { text: "Initial Setup" },
@@ -25,11 +28,7 @@ const STEPS = [
   { text: "Finalize" },
 ];
 
-const DIALOG_FIELDS = [
-  { label: "Number of Services:", value: "50" },
-  { label: "Total Budget:", value: "Rs. 50,000" },
-  { label: "Down Payment:", value: "Rs. 5,000" },
-];
+
 
 const dialogStyles = {
   dialogPaper: {
@@ -67,24 +66,48 @@ const EventPlanningForm = () => {
     eventName: "",
     budgetRange: "",
     numberOfParticipants: "",
-    selectedDistrict: "Select Location District",
-    selectedEventType: "Select Event Type",
-    selectedDate: null,
+    selectedDistrict: "",
+    hasLocation: false,
+    eventLocation:"",
+    selectedEventType: "",
+    eventDate: null,
+    startTime:null,
+    endTime:null,
+    budgetLimited: false
   });
-
+  const [addedServices,  setAddedServices] = useState([]);
+  const { addAlert } = useContext(AlertContext);
   const [openPopup, setOpenPopup] = useState(false);
   const [openFinalizingPopup, setOpenFinalizingPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState(
     "Do you want to finalize this plan?"
   );
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [currentPrice, setCurrentPrice] = useState(0);
 
   const navigate = useNavigate();
 
+  const DIALOG_FIELDS = [
+    { label: "Number of Services:", value: addedServices.length},
+    { label: "Total Budget:", value: totalPrice },
+    { label: "Down Payment:", value: totalPrice * 0.1 },
+  ];
+
   const handleNext = () => {
+    if(currentStep === 2){
+      console.log("inside the step 2", addedServices);
+      setTotalPrice(addedServices?.reduce((sum, service) => {
+        const packageType = service.selectedPackage?.toLowerCase();
+        console.log(packageType);
+        const selectedPackage = service[packageType];
+        return sum + (selectedPackage?.price || 0);
+      }, 0));
+    }
     if (currentStep < 3) {
       console.log("Entered Data from Step One:", stepOneData);
       setCurrentStep(currentStep + 1);
     }
+
   };
 
   const handleBack = () => {
@@ -98,21 +121,91 @@ const EventPlanningForm = () => {
     }));
   };
 
-  const handleConfirm = () => {
+  const handleStepTwoDataChange = (newData) => {
+    setAddedServices((prevData) => ({
+      ...prevData,
+      ...newData,
+    }));
+
+  };
+
+  const handleConfirm = async () => {
     setOpenPopup(false);
     setPopupMessage("Finalizing...");
     setOpenFinalizingPopup(true);
+    const payload = {
+      name: stepOneData.eventName,
+      type: stepOneData.selectedEventType,
+      eventDate: stepOneData.eventDate,
+      startTime: formatTimeString(stepOneData.startTime),
+      endTime: formatTimeString(stepOneData.endTime),
+      district: stepOneData.selectedDistrict,
+      location: stepOneData.eventLocation,
+      customerId: "abc456", //add the userId here
+      paymentStatus: "PENDING_PAYMENT",
+      participationCount: stepOneData.numberOfParticipants,
+      services: formatServices(),
+      status: "PENDING_APPROVAL"
+    };
+
+    console.log(payload);
+
+    const result = await createEvent(payload);
+    if (result) {
+      console.log("Event created successfully!", result);
+      // You can navigate or update UI here
+    }
     setTimeout(() => {
       setOpenFinalizingPopup(false);
-      navigate("/eventplaning-completed");
+      navigate("/eventplaning-completed",{
+        state: {
+          stepOneData: stepOneData,
+          totalPrice:totalPrice,
+          addedServices: addedServices
+        }
+      });
     }, 4000);
   };
+
+  function formatTimeString(timeStr) {
+    return timeStr.includes(":") ? `${timeStr}:00` : `${timeStr}:00:00`;
+  }
 
   const handleDecline = () => {
     setOpenPopup(false);
   };
 
-  const renderDialogFields = () =>
+  const createEvent = async (eventData) => {
+    try {
+      console.log("Creating event with data:", eventData);
+      const response = await eventApi.createEvent(eventData);
+
+      if (response.type === "success") {
+        addAlert("Event created successfully!", "success");
+        console.log("Event creation response:", response.data);
+        return response.data;
+      } else {
+        addAlert(`Error creating event: ${response.message}`, "error");
+        console.error("Event creation failed:", response.message);
+        return null;
+      }
+    } catch (err) {
+      console.error("Error during event creation:", err);
+      addAlert("Server error occurred while creating the event.", "error");
+      return null;
+    }
+  };
+
+  const formatServices = () => {
+    let formattedServices = addedServices.map(service => ({
+      id: service.id,
+      packageName: service.selectedPackage,
+      vendorApproved: false
+    }));
+    return formattedServices;
+  };
+
+const renderDialogFields = () =>
     DIALOG_FIELDS.map((field, index) => (
       <Grid
         container
@@ -178,11 +271,23 @@ const EventPlanningForm = () => {
         <Grid item xs={12} md={12} style={{ marginTop: "40px" }}>
           {currentStep === 1 && (
             <StepOne
+                stepOneData={stepOneData}
               onStepOneDataChange={handleStepOneDataChange}
             />
           )}
-          {currentStep === 2 && <StepTwo />}
-          {currentStep === 3 && <StepThree />}
+          {currentStep === 2 && <StepTwo
+           stepOneData ={stepOneData}
+           setAddedServices={setAddedServices}
+           addedServices={addedServices}
+           setCurrentPrice={setCurrentPrice}
+           currentPrice={currentPrice}
+          />}
+          {currentStep === 3 && <StepThree
+          stepOneData={stepOneData}
+          addedServices={addedServices}
+          totalBudget={totalPrice}
+
+          />}
         </Grid>
 
 

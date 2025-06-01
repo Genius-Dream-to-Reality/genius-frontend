@@ -1,0 +1,17 @@
+.dropdown-container {
+    position: relative;
+    z-index: 50;
+}
+
+
+.tooltip-arrow {
+    position: absolute;
+    right: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 8px solid transparent;
+    border-right: 8px solid white;
+    border-bottom: 8px solid transparent;
+}

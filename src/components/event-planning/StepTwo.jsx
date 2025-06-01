@@ -1,37 +1,169 @@
-import React, { useState } from "react";
+import React, {useContext, useState,useEffect} from "react";
 import {
     Grid,
     InputBase,
     IconButton,
     Box,
     Typography,
+    CircularProgress,
 } from "@mui/material";
 import { Search } from "@mui/icons-material";
 import DropDown from "../common/DropDown";
 import useStyles from "../../assets/css/style";
 import ServiceCard from "../common/ServiceProviderCard";
+import { AlertContext } from "../../contexts/AlertContext";
+import {vendorServiceApi} from "../../api/event";
+import { generateDateTimeStrings } from "../../utils/dateFormatter";
 
-const StepTwo = () => {
+
+const StepTwo = ({stepOneData, setAddedServices, addedServices, setCurrentPrice, currentPrice}) => {
     const classes = useStyles();
     const [selectedService, setSelectedService] = useState("");
     const [searchValue, setSearchValue] = useState("");
-    const [addedServiceProviders, setAddedServiceProviders] = useState([]); 
+    const [addedServiceProviders, setAddedServiceProviders] = useState([]);
+    const [availableServices, setAvailableServices] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const { addAlert } = useContext(AlertContext);
+    const [eventServices, setEventServices] = useState([]);
 
-    const eventServices = [
-        "Decoration", "Music Teams", "Catering", "Photography",
-        "Videography", "Lighting", "Sound System", "Venue Management",
-        "Event Planning", "Security Services", "Transportation", "Invitation Cards",
-        "Seating Arrangements", "Stage Setup", "Entertainment", "DJ Services",
-        "Live Band", "Fireworks", "Florists", "Tableware",
-    ];
+
+    useEffect( () => {
+        const fetchVendorServiceTypes = async () =>{
+            try{
+                const response = await vendorServiceApi.getVendorServiceTypes();
+                console.log(response);
+
+                if (response.type === "success") {
+                    let services = response.data.map(type => type.name);
+                    if (stepOneData.hasLocation && stepOneData.eventLocation !== "") {
+                        const excludedServices = ["Event Hall", "Hotel", "Outdoor Venue", "Restaurant"];
+                        services = services.filter(service => !excludedServices.includes(service));
+                        console.log("Filtered Services:", services);
+                    }
+                    setEventServices(services);
+                }else{
+                    addAlert("Sorry! Server Error", "error");
+                    console.log(response.message);
+                }
+
+            }catch (err){
+                console.error("Error fetching services:", err);
+            }
+        };
+        fetchVendorServiceTypes()
+        },[]);
+
+
+
+    useEffect(() => {
+        const fetchAvailableServices = async () => {
+            if (!selectedService || !stepOneData) return;
+
+            try {
+                setLoading(true);
+                setError(null);
+                setAvailableServices([]);
+                console.log(stepOneData)
+                const formattedStartDateTime = generateDateTimeStrings(stepOneData.eventDate, stepOneData.startTime);
+                const formattedEndDateTime = generateDateTimeStrings(stepOneData.eventDate, stepOneData.endTime);
+                let dataToBesend = {
+                    startDateTime: formattedStartDateTime,
+                    endDateTime: formattedEndDateTime,
+                    serviceType: selectedService,
+                    district: stepOneData.selectedDistrict,
+                    eventType: stepOneData.selectedEventType
+                }
+                console.log(dataToBesend);
+
+                const response = await vendorServiceApi.getAvailableServices(dataToBesend)
+                console.log(response);
+
+                if (response.type === "success") {
+                    const filteredServices = response.data.filter(service =>
+                        !addedServices.some(added => added.id === service.id)
+                    );
+                    setAvailableServices(filteredServices);
+                    console.log("available service: ", availableServices);
+                } else if((await response).status === 404) {
+                    addAlert(`We are sorry!, No ${selectedService} service available for ${stepOneData.selectedEventType} for the given time period`,"warning")
+
+                }else{
+                    addAlert(response.message, "error");
+                }
+
+            } catch (err) {
+                setError(err.message || "Failed to fetch available services");
+                if(err.status === 404){
+                    addAlert(`We are sorry!, No ${selectedService} service available for ${stepOneData.selectedEventType} for the given time period`,"warning")
+                }else {
+                    addAlert(error, "error")
+                }
+                console.error("Error fetching services:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        // Add debounce to prevent rapid API calls
+        const timer = setTimeout(() => {
+            fetchAvailableServices();
+        }, 500);
+
+        return () => clearTimeout(timer);
+    }, [selectedService, stepOneData]);
+
 
     const handleSearchChange = (e) => {
         setSearchValue(e.target.value);
     };
 
-    const handleAddServiceProvider = (serviceProvider) => {
-        // setAddedServiceProviders((prev) => [...prev, serviceProvider]);
-        console.log("Need to develop!!!")
+
+
+    const filteredServices = !searchValue
+        ? availableServices
+        : availableServices?.filter(service =>
+            service.name.toLowerCase().includes(searchValue.toLowerCase()) ||
+            service.description.toLowerCase().includes(searchValue.toLowerCase())
+        );
+
+
+
+    const handleAddServiceProvider = (serviceData) => {
+        if (addedServices.some(s => s.id === serviceData.serviceId)) {
+            return;
+        }
+        const packageType = serviceData.package?.toLowerCase();
+        const selectedPackage = serviceData.service[packageType];
+
+        if(stepOneData.budgetLimited){
+            if((currentPrice+selectedPackage.price)>stepOneData.budgetRange){
+                addAlert(" Cannot add! You are trying to surpass the budget limit.","warning");
+                return;
+            }
+        }
+        setAddedServices(prev => [
+            ...prev,
+            {
+                ...serviceData.service,
+                selectedPackage: serviceData.package
+            }
+        ]);
+
+        setAvailableServices(prev => prev?.filter(service => service.id !== serviceData.serviceId));
+        setCurrentPrice(prevPrice => prevPrice + selectedPackage.price);
+        addAlert("Successfully Added!","success")
+    };
+
+    const handleRemoveServiceProvider = (serviceId) => {
+        let service = addedServices.find(service => service.id === serviceId);
+        const packageType = service.selectedPackage?.toLowerCase();
+        const selectedPackage = service[packageType]
+        setAddedServices(prev => prev.filter(service => service.id !== serviceId));
+        setAvailableServices(prev => [...prev, service ])
+        setCurrentPrice(prevPrice => prevPrice - selectedPackage.price);
+
+        addAlert("Successfully Remove!","error")
     };
 
     return (
@@ -50,14 +182,12 @@ const StepTwo = () => {
                     justifyContent="center"
                     padding="5px 0"
                     mt={2}
-
                 >
                     <InputBase
                         className={classes.formInput}
                         placeholder="Search Vendors/Services"
                         value={searchValue}
                         onChange={handleSearchChange}
-
                     />
                     <IconButton style={{ color: "white" }}>
                         <Search />
@@ -80,16 +210,35 @@ const StepTwo = () => {
                     >
                         <Typography variant="h6">The Closest Service Providers for You</Typography>
                     </Box>
-                    {/* todo: adding service providers should done by admin */}
-                    <ServiceCard onAdd={handleAddServiceProvider} />
-                    <ServiceCard onAdd={handleAddServiceProvider} />
+
+                    {loading ? (
+                        <Box display="flex" justifyContent="center" p={4}>
+                            <CircularProgress />
+                        </Box>
+                    ) : error ? (
+                        <Typography color="error" align="center">{error}</Typography>
+                    ) : filteredServices?.length > 0 ? (
+                        filteredServices.map((service, index) => (
+                            <ServiceCard
+                                key={index}
+                                service={service}
+                                onAdd={handleAddServiceProvider}
+                                noOfParticipants= {Number(stepOneData.numberOfParticipants)}
+                                isAdded={addedServices.some(s => s.serviceId === service.id)}
+                            />
+                        ))
+                    ) : (
+                        <Typography align="center">
+                            {selectedService ? "No service providers available" : "Please select a service type"}
+                        </Typography>
+                    )}
                 </Box>
             </Grid>
 
             {/* Third Section: Added Service Providers */}
             <Grid item xs={12}>
                 <Box sx={{ backgroundColor: "white", borderRadius: "8px", padding: "20px", marginBottom: "20px" }}>
-                <Box
+                    <Box
                         sx={{
                             backgroundColor: "rgba(96, 84, 3, 0.91)",
                             color: "#fff",
@@ -99,14 +248,25 @@ const StepTwo = () => {
                             marginBottom: "20px",
                         }}
                     >
-                        <Typography variant="h6">Your Added Service Providers</Typography>
+                        <Typography variant="h6">
+                            <span style={{ fontWeight: 'bold' }}>Your Added Service Providers</span>
+                            &nbsp;|&nbsp;
+                            <span style={{ color: '#4CAF50', fontWeight: 'bold' }}>Total Price: Rs. {currentPrice.toFixed(2)}</span>
+                        </Typography>
+
                     </Box>
-                    {addedServiceProviders.length > 0 ? (
-                        addedServiceProviders.map((service, index) => (
-                            <ServiceCard key={index} onAdd={() => {}} /> 
+                    {addedServices?.length > 0 ? (
+                        addedServices.map((service, index) => (
+                            <ServiceCard
+                                key={index}
+                                service={service}
+                                onAdd={() => {}}
+                                isAdded={true}
+                                onRemove={handleRemoveServiceProvider}
+                            />
                         ))
                     ) : (
-                        <Typography>No service providers added yet.</Typography>
+                        <Typography align="center">No service providers added yet.</Typography>
                     )}
                 </Box>
             </Grid>

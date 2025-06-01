@@ -2,6 +2,8 @@ import React from "react";
 import { Grid, Typography, Box, InputBase, FormControlLabel, Checkbox } from "@mui/material";
 import { LocationOn, CalendarToday } from "@mui/icons-material";
 import useStyles from "../../assets/css/style";
+import ServiceCard from "../common/ServiceProviderCard";
+import {formatTimestampToDateTime} from "../../utils/dateFormatter";
 
 const DetailInput = ({ label, value, icon }) => (
     <Box
@@ -28,7 +30,7 @@ const DetailInput = ({ label, value, icon }) => (
     </Box>
 );
 
-const StepThree = ({ eventType, date, location, noOfParticipants, budgetRange }) => {
+const StepThree = ({ stepOneData, addedServices, totalBudget }) => {
     const classes = useStyles();
 
     return (
@@ -54,20 +56,26 @@ const StepThree = ({ eventType, date, location, noOfParticipants, budgetRange })
                     If you need anything to change, go BACK and alter them!
                 </Typography>
                 <Typography sx={{ fontSize: "30px", marginTop: 4 }}>
-                    MY {eventType?.toUpperCase()}
+                    {stepOneData?.eventName?.toUpperCase()}
                 </Typography>
             </Grid>
 
             {/* Event Details Section */}
             <Grid container justifyContent="center" spacing={2}>
                 <Grid item xs={12} sm={3}>
-                    <DetailInput label="Event Type" value={eventType} />
+                    <DetailInput label="Event Type" value={stepOneData?.selectedEventType} />
                 </Grid>
                 <Grid item xs={12} sm={3}>
-                    <DetailInput value={date} icon={<CalendarToday />} />
+                    <DetailInput value={stepOneData.eventDate} icon={<CalendarToday />} />
                 </Grid>
                 <Grid item xs={12} sm={3}>
-                    <DetailInput value={location} icon={<LocationOn />} />
+                    <DetailInput value={stepOneData.startTime} icon={<CalendarToday />} />
+                </Grid>
+                <Grid item xs={12} sm={3}>
+                    <DetailInput value={stepOneData.endTime} icon={<CalendarToday />} />
+                </Grid>
+                <Grid item xs={12} sm={3}>
+                    <DetailInput value={stepOneData?.selectedDistrict} icon={<LocationOn />} />
                 </Grid>
             </Grid>
 
@@ -81,11 +89,15 @@ const StepThree = ({ eventType, date, location, noOfParticipants, budgetRange })
                 <Grid item xs={12} md={9}>
                     {[{
                         label: "Number of Participants:",
-                        value: noOfParticipants
+                        value: stepOneData?.numberOfParticipants
                     }, {
-                        label: "Initial Budget Range:",
-                        value: `Rs. ${budgetRange}`
-                    }].map((field, index) => (
+                        label: "Initial Budget Limit:",
+                        value: `Rs. ${stepOneData?.budgetRange}`
+                    }, {
+                        label: "Current Package Price:",
+                        value: `Rs. ${totalBudget}`
+                    }
+                    ].map((field, index) => (
                         <Grid
                             container
                             direction="row"
@@ -106,12 +118,45 @@ const StepThree = ({ eventType, date, location, noOfParticipants, budgetRange })
                             </Grid>
                         </Grid>
                     ))}
+
+
                 </Grid>
+
+
+                <Grid item xs={12}>
+                    <Box sx={{ backgroundColor: "white", borderRadius: "8px", padding: "20px", marginBottom: "20px" }}>
+                        <Box
+                            sx={{
+                                backgroundColor: "rgba(96, 84, 3, 0.91)",
+                                color: "#fff",
+                                padding: "10px",
+                                borderRadius: "8px",
+                                textAlign: "center",
+                                marginBottom: "20px",
+                            }}
+                        >
+                            <Typography variant="h6">Your Added Services</Typography>
+                        </Box>
+                        {addedServices?.length > 0 ? (
+                            addedServices.map((service, index) => (
+                                <ServiceCard
+                                    key={index}
+                                    service={service}
+                                    onAdd={() => {}}
+                                    isAdded={true}
+                                    onFinal={true}
+                                />
+                            ))
+                        ) : (
+                            <Typography align="center">No service providers added yet.</Typography>
+                        )}
+                    </Box>
+                </Grid>
+
             </Grid>
 
-            {/* todo: view added service providers */}
 
-            {/* Checkbox for Budget Limitation */}
+
             <Grid
                 container
                 justifyContent="center"
