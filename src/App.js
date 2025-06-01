@@ -10,31 +10,34 @@ import EventPlanningForm from "./components/event-planning/EventPlanningForm";
 import VendorAccountForm from "./components/vendor-account/VendorAccountForm";
 import RegisterOTP from "./components/auth/RegisterOTP";
 import RegisterCompleted from "./components/auth/RegisterCompleted";
-import EventPlanningCompletion from "./components/event-planning/EvenPlanningCompletion";
+import EventPlanningCompletion from "./components/event-planning/EventPlanningCompletion";
 import ViewPlan from "./components/event-planning/ViewPlan";
 import LoginForm from "./components/auth/LoginForm";
 import Callback from "./components/auth/Callback";
+import {AlertProvider} from "./contexts/AlertContext";
 
 function App() {
   return (
-    <ThemeProvider theme={theme}> 
-      <CssBaseline />
-      <Router>
-        <Routes>
-            <Route index element={<Home />} />
-            <Route path="select-event" element={<SelectEventType />} />
-            <Route path="choose-type" element={<UserTypeSelection />} />
-            <Route path="login" element={<LoginForm />} />
-            <Route path="register" element={<RegisterComponent />} />
-            <Route path="auth/callback" element={<Callback />} />
-            <Route path="event-planning" element={<EventPlanningForm/>} />
-            <Route path="vendor-account" element={<VendorAccountForm/>} />
-            <Route path="register-otp" element={<RegisterOTP />} />
-            <Route path="register-completed" element={<RegisterCompleted />} />
-            <Route path="eventplaning-completed" element={<EventPlanningCompletion />} />
-            <Route path="view-plan" element={<ViewPlan />} />
-        </Routes>
-      </Router>
+    <ThemeProvider theme={theme}>
+        <AlertProvider>
+          <CssBaseline />
+          <Router>
+            <Routes>
+                <Route index element={<Home />} />
+                <Route path="select-event" element={<SelectEventType />} />
+                <Route path="choose-type" element={<UserTypeSelection />} />
+                <Route path="login" element={<LoginForm />} />
+                <Route path="register" element={<RegisterComponent />} />
+                <Route path="auth/callback" element={<Callback />} />
+                <Route path="event-planning" element={<EventPlanningForm/>} />
+                <Route path="vendor-account" element={<VendorAccountForm/>} />
+                <Route path="register-otp" element={<RegisterOTP />} />
+                <Route path="register-completed" element={<RegisterCompleted />} />
+                <Route path="eventplaning-completed" element={<EventPlanningCompletion />} />
+                <Route path="view-plan" element={<ViewPlan />} />
+            </Routes>
+          </Router>
+        </AlertProvider>
     </ThemeProvider>
   );
 }
