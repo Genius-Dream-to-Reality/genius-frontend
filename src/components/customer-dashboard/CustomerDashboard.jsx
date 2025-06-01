@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { ThemeProvider, Grid, Button, useTheme } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { ThemeProvider, Grid, Button, useTheme, Dialog, DialogActions, DialogContent, Typography } from "@mui/material";
 import { CalendarToday, LocationOn, Settings } from "@mui/icons-material";
 import DashboardHeader from "../../layout/DashboardHeader";
 import ProfileImageUploader from "../shared/ProfileImageUploader";
@@ -7,13 +8,15 @@ import { getEventDataForCustomer } from "../../utils/customer-account";
 
 
 const CustomerDashboard = () => {
-
   const theme = useTheme();
+  const navigate = useNavigate();
+
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
-
   const [pendingEvents, setPendingEvents] = useState([]);
   const [completedEvents, setCompletedEvents] = useState([]);
+  const [dialogOpen, setDialogOpen] = useState(false);
+
 
   useEffect(() => {
     const savedAuth = localStorage.getItem("isAuthenticated");
@@ -123,6 +126,12 @@ const CustomerDashboard = () => {
           variant="contained"
           size="small"
           style={{ backgroundColor: "#10b981", color: "#fff" }}
+          onClick={() => navigate("/view-plan", { // To do
+            state: {
+              customerId: event.customerId,
+              eventId: event.eventId,
+            },
+          })}
         >
           View
         </Button>
@@ -130,6 +139,7 @@ const CustomerDashboard = () => {
           variant="contained"
           size="small"
           style={{ backgroundColor: "#dc2626", color: "#fff" }}
+          onClick={handleCancelClick}
         >
           Cancel
         </Button>
@@ -137,11 +147,24 @@ const CustomerDashboard = () => {
     </div>
   );
 
-
   const handleImageChange = (file) => {
     // Optional: Handle server upload or notify parent
     console.log("New image selected:", file.name);
   };
+
+  const handleCancelClick = () => {
+    setDialogOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    // TODO: Add your delete logic here
+    setDialogOpen(false);
+  };
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+  };
+
 
   return (
     <ThemeProvider theme={theme}>
@@ -202,8 +225,68 @@ const CustomerDashboard = () => {
           </section>
         </Grid>
       </Grid>
+
+      <Dialog
+        open={dialogOpen}
+        onClose={handleCloseDialog}
+        PaperProps={{ sx: dialogStyles.dialogPaper }}
+      >
+        <DialogContent sx={dialogStyles.dialogContent}>
+          <Typography sx={dialogStyles.dialogTitle}>
+            Do you want to cancel this event?
+          </Typography>
+
+          <DialogActions sx={{ justifyContent: "center", marginTop: "20px" }}>
+            <Button
+              onClick={handleCloseDialog}
+              sx={dialogStyles.dialogButton}
+              style={{ backgroundColor: "#dc2626" }}
+            >
+              No
+            </Button>
+            <Button
+              onClick={handleConfirmDelete}
+              sx={dialogStyles.dialogButton}
+              style={{ backgroundColor: "#10b981" }}
+            >
+              Yes
+            </Button>
+          </DialogActions>
+        </DialogContent>
+      </Dialog>
+
     </ThemeProvider>
   );
+};
+
+const dialogStyles = {
+  dialogPaper: {
+    backgroundColor: "#201439",
+    borderRadius: "16px",
+    padding: "20px",
+  },
+  dialogContent: {
+    backgroundColor: "#403557",
+    color: "white",
+    borderRadius: "16px",
+    padding: "20px",
+  },
+  dialogTitle: {
+    fontSize: "20px",
+    textAlign: "center",
+    marginBottom: "20px",
+  },
+  dialogButton: {
+    height: "40px",
+    width: "130px",
+    color: "#FFFFFF",
+    padding: "8px 20px",
+    fontSize: "14px",
+    borderRadius: "8px",
+    textTransform: "none",
+    display: "flex",
+    alignItems: "center",
+  },
 };
 
 export default CustomerDashboard;
