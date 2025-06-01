@@ -14,6 +14,8 @@ import EventPlanningCompletion from "./components/event-planning/EventPlanningCo
 import ViewPlan from "./components/event-planning/ViewPlan";
 import LoginForm from "./components/auth/LoginForm";
 import Callback from "./components/auth/Callback";
+import CustomerDashboard from "./components/customer-dashboard/CustomerDashboard";
+import VendorDashboardIncompleted from "./components/vendor-dashboard/VendorDashboardIncompleted";
 import {AlertProvider} from "./contexts/AlertContext";
 
 function App() {
@@ -35,6 +37,8 @@ function App() {
                 <Route path="register-completed" element={<RegisterCompleted />} />
                 <Route path="eventplaning-completed" element={<EventPlanningCompletion />} />
                 <Route path="view-plan" element={<ViewPlan />} />
+                <Route path="customer-dashboard" element={<CustomerDashboard/>} />
+                <Route path="vendor-dashboard-incompleted" element={<VendorDashboardIncompleted/>} />
             </Routes>
           </Router>
         </AlertProvider>

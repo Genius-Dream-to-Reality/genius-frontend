@@ -286,7 +286,11 @@ const Header = () => {
                       </div>
                       <div className="space-y-3 mb-4 text-sm">
                         <div
-                          onClick={() => navigate("/account")}
+                          onClick={() =>
+                            userInfo?.userType === "CUSTOMER"
+                              ? navigate("/customer-dashboard")
+                              : navigate("/customer-dashboard2") //To do
+                          }
                           className="flex items-center space-x-2 cursor-pointer hover:text-gray-600"
                         >
                           <User className="h-5 w-5" />
