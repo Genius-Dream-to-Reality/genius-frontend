@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { ThemeProvider, Grid, Button, useTheme } from "@mui/material";
 import { CalendarToday, Settings } from "@mui/icons-material";
 import DashboardHeader from "../../layout/DashboardHeader";
+import ProfileImageUploader from "../shared/ProfileImageUploader";
 
 const events = {
   pending: [
@@ -93,6 +94,11 @@ const CustomerDashboard = () => {
     </div>
   );
 
+  const handleImageChange = (file) => {
+    // Optional: Handle server upload or notify parent
+    console.log("New image selected:", file.name);
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <DashboardHeader />
@@ -101,19 +107,11 @@ const CustomerDashboard = () => {
         {/* Sidebar */}
         <Grid item xs={12} md={3}>
           <div className="flex flex-col items-center pt-16">
-            <div className="w-48 h-48 rounded-full border-8 border-[#403557] overflow-hidden">{/* dark blue ring */}
-              <img
-                src="https://randomuser.me/api/portraits/men/75.jpg"
-                alt="Profile"
-                className="w-full h-full object-cover rounded-full"
-              />
-            </div>
+            <ProfileImageUploader onImageChange={handleImageChange} />
 
-            {isAuthenticated ? (
-              <h2 className="text-xl mt-4 font-medium text-white">{userInfo?.username}</h2>
-            ) : (
-              <h2 className="text-xl mt-4 font-medium text-white">Guest</h2>
-            )}
+            <h2 className="text-xl mt-4 font-medium text-white">
+              {isAuthenticated ? userInfo?.username : "Guest"}
+            </h2>
 
             <div className="flex items-center mt-2 text-sm gap-1 text-gray-300 cursor-pointer hover:text-white">
               <Settings fontSize="small" /> Setting
