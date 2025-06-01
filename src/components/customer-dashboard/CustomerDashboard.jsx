@@ -1,12 +1,73 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { ThemeProvider, Grid, Button, useTheme, Dialog, DialogActions, DialogContent, Typography } from "@mui/material";
+import {
+  ThemeProvider,
+  Grid,
+  Button,
+  useTheme,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  Typography,
+} from "@mui/material";
 import { CalendarToday, LocationOn, Settings } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 import DashboardHeader from "../../layout/DashboardHeader";
 import ProfileImageUploader from "../shared/ProfileImageUploader";
 import { getEventDataForCustomer } from "../../utils/customer-account";
 
+// --- Utility Functions ---
+const mapEventStatus = (status, services) => {
+  if (status === "PENDING_PAYMENT") return "Waiting for payment";
+  if (status === "CANCELED") return "Canceled";
+  if (status === "PENDING_APPROVAL") {
+    const anyDeclined = services.some((s) => !s.vendorApproved);
+    return anyDeclined ? "A vendor declined the event" : "Approved";
+  }
+  if (status === "COMPLETED") return "Successfully Completed";
+  return status;
+};
 
+const getStatusColor = (status, services) => {
+  if (status === "PENDING_PAYMENT") return "#f59e0b";
+  if (status === "CANCELED") return "#dc2626";
+  if (status === "COMPLETED") return "#16a34a";
+  if (status === "PENDING_APPROVAL") {
+    return services.some((s) => !s.vendorApproved) ? "#dc2626" : "#22c55e";
+  }
+  return "#6b7280";
+};
+
+const dialogStyles = {
+  dialogPaper: {
+    backgroundColor: "#201439",
+    borderRadius: "16px",
+    padding: "20px",
+  },
+  dialogContent: {
+    backgroundColor: "#403557",
+    color: "white",
+    borderRadius: "16px",
+    padding: "20px",
+  },
+  dialogTitle: {
+    fontSize: "20px",
+    textAlign: "center",
+    marginBottom: "20px",
+  },
+  dialogButton: {
+    height: "40px",
+    width: "130px",
+    color: "#FFFFFF",
+    padding: "8px 20px",
+    fontSize: "14px",
+    borderRadius: "8px",
+    textTransform: "none",
+    display: "flex",
+    alignItems: "center",
+  },
+};
+
+// --- Main Component ---
 const CustomerDashboard = () => {
   const theme = useTheme();
   const navigate = useNavigate();
@@ -16,7 +77,9 @@ const CustomerDashboard = () => {
   const [pendingEvents, setPendingEvents] = useState([]);
   const [completedEvents, setCompletedEvents] = useState([]);
   const [dialogOpen, setDialogOpen] = useState(false);
-
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [dialogMode, setDialogMode] = useState("confirm");
+  const [dialogMessage, setDialogMessage] = useState("");
 
   useEffect(() => {
     const savedAuth = localStorage.getItem("isAuthenticated");
@@ -27,23 +90,24 @@ const CustomerDashboard = () => {
       setIsAuthenticated(true);
       setUserInfo(parsedUser);
 
-      getEventDataForCustomer("abc123").then((res) => { //todo
+      // Fetch Events
+      getEventDataForCustomer("abc123").then((res) => {
         if (res.type === "success") {
           const pending = [];
           const completed = [];
 
           res.data.forEach((event) => {
             const eventObj = {
+              ...event,
               title: event.name,
-              type: event.type,
               date: event.eventDate?.split("T")[0],
+              fullDate: event.eventDate,
               location: event.location || "Unknown",
               status: mapEventStatus(event.status, event.services),
               statusColor: getStatusColor(event.status, event.services),
               payVisible: event.paymentStatus === "PENDING_PAYMENT",
             };
 
-            // Categorize based on status
             if (
               event.status === "PENDING_APPROVAL" ||
               event.status === "PENDING_PAYMENT"
@@ -62,27 +126,6 @@ const CustomerDashboard = () => {
       });
     }
   }, []);
-
-  const mapEventStatus = (status, services) => {
-    if (status === "PENDING_PAYMENT") return "Waiting for payment";
-    if (status === "CANCELED") return "Canceled";
-    if (status === "PENDING_APPROVAL") {
-      const anyDeclined = services.some((s) => !s.vendorApproved);
-      return anyDeclined ? "A vendor declined the event" : "Approved";
-    }
-    if (status === "COMPLETED") return "Successfully Completed";
-    return status;
-  };
-
-  const getStatusColor = (status, services) => {
-    if (status === "PENDING_PAYMENT") return "#f59e0b";
-    if (status === "CANCELED") return "#dc2626";
-    if (status === "COMPLETED") return "#16a34a";
-    if (status === "PENDING_APPROVAL") {
-      return services.some((s) => !s.vendorApproved) ? "#dc2626" : "#22c55e";
-    }
-    return "#6b7280";
-  };
 
   const renderEventCard = (event, index, isPending = false) => (
     <div
@@ -126,12 +169,14 @@ const CustomerDashboard = () => {
           variant="contained"
           size="small"
           style={{ backgroundColor: "#10b981", color: "#fff" }}
-          onClick={() => navigate("/view-plan", { // To do
-            state: {
-              customerId: event.customerId,
-              eventId: event.eventId,
-            },
-          })}
+          onClick={() =>
+            navigate("/view-plan", {
+              state: {
+                customerId: event.customerId,
+                eventId: event.eventId,
+              },
+            })
+          }
         >
           View
         </Button>
@@ -139,7 +184,7 @@ const CustomerDashboard = () => {
           variant="contained"
           size="small"
           style={{ backgroundColor: "#dc2626", color: "#fff" }}
-          onClick={handleCancelClick}
+          onClick={() => handleCancelClick(event)}
         >
           Cancel
         </Button>
@@ -148,42 +193,60 @@ const CustomerDashboard = () => {
   );
 
   const handleImageChange = (file) => {
-    // Optional: Handle server upload or notify parent
     console.log("New image selected:", file.name);
   };
 
-  const handleCancelClick = () => {
-    setDialogOpen(true);
-  };
+  const handleCancelClick = (event) => {
+    const isCompleted = ["Completed", "Canceled"].includes(event.status);
+    if (isCompleted) {
+      setDialogMessage("Do you want to delete this event?");
+      setDialogMode("confirm");
+      setSelectedEvent(event);
+      setDialogOpen(true);
+      return;
+    }
 
-  const handleConfirmDelete = () => {
-    // TODO: Add your delete logic here
-    setDialogOpen(false);
+    const daysDiff =
+      (new Date(event.fullDate).getTime() - new Date().getTime()) /
+      (1000 * 3600 * 24);
+
+    if (daysDiff >= 14) {
+      setDialogMessage("Do you want to cancel this event?");
+      setDialogMode("confirm");
+    } else {
+      setDialogMessage("You can only cancel events at least two weeks in advance.");
+      setDialogMode("info");
+    }
+
+    setSelectedEvent(event);
+    setDialogOpen(true);
   };
 
   const handleCloseDialog = () => {
     setDialogOpen(false);
+    setSelectedEvent(null);
+    setDialogMessage("");
+    setDialogMode("confirm");
   };
 
+  const handleConfirmDelete = () => {
+    console.log("Deleting event:", selectedEvent);
+    // TODO: Integrate deletion logic here
+    handleCloseDialog();
+  };
 
   return (
     <ThemeProvider theme={theme}>
       <DashboardHeader />
 
-      <Grid
-        container
-        spacing={4}
-        style={{ paddingTop: "40px", paddingLeft: "20px", paddingRight: "20px" }}
-      >
+      <Grid container spacing={4} style={{ padding: "40px 20px 0" }}>
         {/* Sidebar */}
         <Grid item xs={12} md={3}>
           <div className="flex flex-col items-center pt-16">
             <ProfileImageUploader onImageChange={handleImageChange} />
-
             <h2 className="text-xl mt-4 font-medium text-white">
               {isAuthenticated ? userInfo?.username : "Guest"}
             </h2>
-
             <div className="flex items-center mt-2 text-sm gap-1 text-gray-300 cursor-pointer hover:text-white">
               <Settings fontSize="small" /> Setting
             </div>
@@ -192,32 +255,28 @@ const CustomerDashboard = () => {
 
         {/* Main Content */}
         <Grid item xs={12} md={9}>
+          {/* Pending Events */}
           <section className="mb-8">
-            <h3 className="text-xl font-semibold mb-4 text-white">
-              Pending Events
-            </h3>
+            <h3 className="text-xl font-semibold mb-4 text-white">Pending Events</h3>
             <div className="bg-[#403557] rounded-xl p-6">
               {pendingEvents.length > 0 ? (
-                pendingEvents.map((event, index) => (
-                  <Grid item xs={12} key={index}>
-                    {renderEventCard(event, index, true)}
-                  </Grid>
-                ))
+                pendingEvents.map((event, index) =>
+                  renderEventCard(event, index, true)
+                )
               ) : (
                 <p className="text-white">No pending events found.</p>
               )}
             </div>
           </section>
 
+          {/* Completed Events */}
           <section className="mb-8">
             <h3 className="text-xl font-semibold mb-4">Completed Events</h3>
             <div className="bg-[#403557] rounded-xl p-6">
               {completedEvents.length > 0 ? (
-                completedEvents.map((event, index) => (
-                  <Grid item xs={12} key={index}>
-                    {renderEventCard(event, index, false)}
-                  </Grid>
-                ))
+                completedEvents.map((event, index) =>
+                  renderEventCard(event, index, false)
+                )
               ) : (
                 <p className="text-white">No completed events found.</p>
               )}
@@ -226,67 +285,46 @@ const CustomerDashboard = () => {
         </Grid>
       </Grid>
 
+      {/* Confirmation Dialog */}
       <Dialog
         open={dialogOpen}
         onClose={handleCloseDialog}
         PaperProps={{ sx: dialogStyles.dialogPaper }}
       >
         <DialogContent sx={dialogStyles.dialogContent}>
-          <Typography sx={dialogStyles.dialogTitle}>
-            Do you want to cancel this event?
-          </Typography>
-
+          <Typography sx={dialogStyles.dialogTitle}>{dialogMessage}</Typography>
           <DialogActions sx={{ justifyContent: "center", marginTop: "20px" }}>
-            <Button
-              onClick={handleCloseDialog}
-              sx={dialogStyles.dialogButton}
-              style={{ backgroundColor: "#dc2626" }}
-            >
-              No
-            </Button>
-            <Button
-              onClick={handleConfirmDelete}
-              sx={dialogStyles.dialogButton}
-              style={{ backgroundColor: "#10b981" }}
-            >
-              Yes
-            </Button>
+            {dialogMode === "confirm" ? (
+              <>
+                <Button
+                  onClick={handleCloseDialog}
+                  sx={dialogStyles.dialogButton}
+                  style={{ backgroundColor: "#dc2626" }}
+                >
+                  No
+                </Button>
+                <Button
+                  onClick={handleConfirmDelete}
+                  sx={dialogStyles.dialogButton}
+                  style={{ backgroundColor: "#10b981" }}
+                >
+                  Yes
+                </Button>
+              </>
+            ) : (
+              <Button
+                onClick={handleCloseDialog}
+                sx={dialogStyles.dialogButton}
+                style={{ backgroundColor: "#6366f1" }}
+              >
+                OK
+              </Button>
+            )}
           </DialogActions>
         </DialogContent>
       </Dialog>
-
     </ThemeProvider>
   );
-};
-
-const dialogStyles = {
-  dialogPaper: {
-    backgroundColor: "#201439",
-    borderRadius: "16px",
-    padding: "20px",
-  },
-  dialogContent: {
-    backgroundColor: "#403557",
-    color: "white",
-    borderRadius: "16px",
-    padding: "20px",
-  },
-  dialogTitle: {
-    fontSize: "20px",
-    textAlign: "center",
-    marginBottom: "20px",
-  },
-  dialogButton: {
-    height: "40px",
-    width: "130px",
-    color: "#FFFFFF",
-    padding: "8px 20px",
-    fontSize: "14px",
-    borderRadius: "8px",
-    textTransform: "none",
-    display: "flex",
-    alignItems: "center",
-  },
 };
 
 export default CustomerDashboard;
