@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ThemeProvider, Grid, Button, useTheme } from "@mui/material";
-import { CalendarToday, Settings } from "@mui/icons-material";
+import { CalendarToday, LocationOn, Settings } from "@mui/icons-material";
 import DashboardHeader from "../../layout/DashboardHeader";
 import ProfileImageUploader from "../shared/ProfileImageUploader";
 import { getEventDataForCustomer } from "../../utils/customer-account";
@@ -43,7 +43,7 @@ const CustomerDashboard = () => {
             // Categorize based on status
             if (
               event.status === "PENDING_APPROVAL" ||
-              event.status === "ACTIVE"
+              event.status === "PENDING_PAYMENT"
             ) {
               pending.push(eventObj);
             } else {
@@ -61,9 +61,9 @@ const CustomerDashboard = () => {
   }, []);
 
   const mapEventStatus = (status, services) => {
-    if (status === "PENDING_APPROVAL") return "Waiting for payment";
+    if (status === "PENDING_PAYMENT") return "Waiting for payment";
     if (status === "CANCELED") return "Canceled";
-    if (status === "ACTIVE") {
+    if (status === "PENDING_APPROVAL") {
       const anyDeclined = services.some((s) => !s.vendorApproved);
       return anyDeclined ? "A vendor declined the event" : "Approved";
     }
@@ -72,39 +72,44 @@ const CustomerDashboard = () => {
   };
 
   const getStatusColor = (status, services) => {
-    if (status === "PENDING_APPROVAL") return "#f59e0b"; 
-    if (status === "CANCELED") return "#dc2626"; 
-    if (status === "COMPLETED") return "#16a34a"; 
-    if (status === "ACTIVE") {
+    if (status === "PENDING_PAYMENT") return "#f59e0b";
+    if (status === "CANCELED") return "#dc2626";
+    if (status === "COMPLETED") return "#16a34a";
+    if (status === "PENDING_APPROVAL") {
       return services.some((s) => !s.vendorApproved) ? "#dc2626" : "#22c55e";
     }
-    return "#6b7280"; 
+    return "#6b7280";
   };
 
   const renderEventCard = (event, index, isPending = false) => (
     <div
       key={index}
-      className="bg-white rounded-lg p-4 shadow-sm flex justify-between items-center mb-3"
+      className="bg-white rounded-lg p-4 shadow-sm flex justify-between items-start mb-4"
     >
-      <div>
-        <h3 className="font-semibold uppercase tracking-wide text-sm text-black">
+      <div className="w-full">
+        <h3 className="text-xl font-bold text-black mb-3 uppercase tracking-wide">
           {event.title}
         </h3>
+        <div className="text-sm text-black flex flex-wrap items-center gap-x-4 gap-y-1 mb-3">
+          <span>
+            <strong>Type:</strong> {event.type}
+          </span>
+          <span className="flex items-center">
+            <CalendarToday style={{ fontSize: 16, marginRight: 4 }} />
+            {event.date}
+          </span>
+          <span className="flex items-center">
+            <LocationOn style={{ fontSize: 16, marginRight: 4 }} />
+            {event.location}
+          </span>
+        </div>
         <p className="text-sm text-black">
-          <strong>Event:</strong> {event.type}
-          <span className="mx-2">
-            <CalendarToday className="text-xs" style={{ fontSize: "16px" }} />
-          </span>
-          {event.date} – {event.location}
-        </p>
-        <p className="text-sm mt-1 text-black">
-          <strong>Event Status:</strong>
-          <span className="ml-1" style={{ color: event.statusColor }}>
-            {event.status}
-          </span>
+          <strong>Status:</strong>{" "}
+          <span style={{ color: event.statusColor }}>{event.status}</span>
         </p>
       </div>
-      <div className="flex gap-2">
+
+      <div className="flex flex-col gap-2 ml-4">
         {isPending && event.payVisible && (
           <Button
             variant="contained"
@@ -131,6 +136,7 @@ const CustomerDashboard = () => {
       </div>
     </div>
   );
+
 
   const handleImageChange = (file) => {
     // Optional: Handle server upload or notify parent

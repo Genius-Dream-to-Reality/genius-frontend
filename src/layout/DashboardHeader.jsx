@@ -66,7 +66,6 @@ const DashboardHeader = () => {
         setUserInfo(null);
         navigate("/");
         setDrawerOpen(false);
-        // getEventDataForCustomer("abc123");
     };
 
     const toggleDrawer = (open) => (event) => {
