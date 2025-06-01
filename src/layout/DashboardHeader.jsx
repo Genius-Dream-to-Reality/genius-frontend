@@ -20,6 +20,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import { useNavigate, useLocation } from "react-router-dom";
 import useStyles from "../assets/css/style";
 import AppLogo from "../components/shared/AppLogo";
+import { getEventDataForCustomer } from "../utils/customer-account";
 
 const DashboardHeader = () => {
     const classes = useStyles();
