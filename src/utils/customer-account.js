@@ -26,3 +26,28 @@ export async function getEventDataForCustomer(userId) {
         };
     }
 }
+
+// Function to delete an event by its ID
+export async function deleteEventById(eventId) {
+    try {
+        const apiURL = `${process.env.REACT_APP_EVENT_API_URL}/delete/${eventId}`;
+
+        const response = await axios.delete(apiURL);
+
+        console.log("Event deleted:", response.data);
+
+        return {
+            type: "success",
+            status: response.status,
+            data: response.data,
+        };
+    } catch (error) {
+        console.error("Error deleting event:", error.response?.data || error.message);
+
+        return {
+            type: "error",
+            status: error.response?.status || 500,
+            message: error.response?.data || "Something went wrong",
+        };
+    }
+}

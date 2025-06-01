@@ -13,7 +13,7 @@ import { CalendarToday, LocationOn, Settings } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import DashboardHeader from "../../layout/DashboardHeader";
 import ProfileImageUploader from "../shared/ProfileImageUploader";
-import { getEventDataForCustomer } from "../../utils/customer-account";
+import { deleteEventById, getEventDataForCustomer } from "../../utils/customer-account";
 
 // --- Utility Functions ---
 const mapEventStatus = (status, services) => {
@@ -229,11 +229,25 @@ const CustomerDashboard = () => {
     setDialogMode("confirm");
   };
 
-  const handleConfirmDelete = () => {
-    console.log("Deleting event:", selectedEvent);
-    // TODO: Integrate deletion logic here
-    handleCloseDialog();
+  const handleConfirmDelete = async () => {
+    if (!selectedEvent) return;
+
+    try {
+      const response = await deleteEventById(selectedEvent.eventId);
+
+      if (response.type === "success") {
+        console.log("Event deleted successfully:", response.data);
+        // setEvents((prev) => prev.filter((ev) => ev.eventId !== selectedEvent.eventId));
+      } else {
+        console.error("Failed to delete event:", response.message);
+      }
+    } catch (error) {
+      console.error("Unexpected error while deleting event:", error);
+    } finally {
+      handleCloseDialog();
+    }
   };
+
 
   return (
     <ThemeProvider theme={theme}>
