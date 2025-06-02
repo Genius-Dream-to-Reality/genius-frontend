@@ -18,6 +18,8 @@ import CustomerDashboard from "./components/customer-dashboard/CustomerDashboard
 import VendorDashboardIncompleted from "./components/vendor-dashboard/VendorDashboardIncompleted";
 import {AlertProvider} from "./contexts/AlertContext";
 import PaymentSuccess from "./components/payments/PaymentSuccess.jsx";
+import Payment from "./components/payments/Payment.jsx";
+import PaymentProcessing from "./components/payments/PaymentProcessing.jsx";
 
 function App() {
   return (
@@ -41,6 +43,8 @@ function App() {
                 <Route path="customer-dashboard" element={<CustomerDashboard/>} />
                 <Route path="vendor-dashboard-incompleted" element={<VendorDashboardIncompleted/>} />
                 <Route path="payment-success" element={<PaymentSuccess />} />
+                <Route path="payment" element={<Payment />} />
+                <Route path="payment-processing" element={<PaymentProcessing />} />
             </Routes>
           </Router>
         </AlertProvider>
