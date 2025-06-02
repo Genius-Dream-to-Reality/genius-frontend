@@ -9,11 +9,11 @@ import {
   DialogContent,
   Typography,
 } from "@mui/material";
-import { CalendarToday, LocationOn, Settings } from "@mui/icons-material";
+import { CalendarToday, LocationOn } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import DashboardHeader from "../../layout/DashboardHeader";
-import ProfileImageUploader from "../shared/ProfileImageUploader";
 import { deleteEventById, getEventDataForCustomer } from "../../utils/customer-account";
+import Sidebar from "../../layout/DashboardSideBar";
 
 // --- Utility Functions ---
 const mapEventStatus = (status, services) => {
@@ -255,17 +255,11 @@ const CustomerDashboard = () => {
 
       <Grid container spacing={4} style={{ padding: "40px 20px 0" }}>
         {/* Sidebar */}
-        <Grid item xs={12} md={3}>
-          <div className="flex flex-col items-center pt-16">
-            <ProfileImageUploader onImageChange={handleImageChange} />
-            <h2 className="text-xl mt-4 font-medium text-white">
-              {isAuthenticated ? userInfo?.username : "Guest"}
-            </h2>
-            <div className="flex items-center mt-2 text-sm gap-1 text-gray-300 cursor-pointer hover:text-white">
-              <Settings fontSize="small" /> Setting
-            </div>
-          </div>
-        </Grid>
+        <Sidebar
+          isAuthenticated={isAuthenticated}
+          userInfo={userInfo}
+          onImageChange={handleImageChange}
+        />
 
         {/* Main Content */}
         <Grid item xs={12} md={9}>
