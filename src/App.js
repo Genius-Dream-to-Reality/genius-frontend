@@ -40,6 +40,7 @@ function App() {
                 <Route path="view-plan" element={<ViewPlan />} />
                 <Route path="customer-dashboard" element={<CustomerDashboard/>} />
                 <Route path="vendor-dashboard-incompleted" element={<VendorDashboardIncompleted/>} />
+                <Route path="vendor-dashboard" element={<VendorDashboard/>} />
             </Routes>
           </Router>
         </AlertProvider>
