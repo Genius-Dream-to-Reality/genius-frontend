@@ -1,11 +1,13 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import { ThemeProvider, Grid, Typography, Button, useTheme } from "@mui/material";
 import Header from "../../layout/Header";
 
-const EventPlanningCompletion = () => {
+const EventPlanningCompletion = ({}) => {
     const navigate = useNavigate();
     const theme = useTheme();
+    const location = useLocation();
+    const { stepOneData,totalPrice, addedServices } = location.state || {};
 
     const handleDownload = () => {
         console.log("handle download!") //todo
