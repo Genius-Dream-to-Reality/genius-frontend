@@ -17,6 +17,7 @@ import Callback from "./components/auth/Callback";
 import CustomerDashboard from "./components/customer-dashboard/CustomerDashboard";
 import VendorDashboardIncompleted from "./components/vendor-dashboard/VendorDashboardIncompleted";
 import {AlertProvider} from "./contexts/AlertContext";
+import PaymentSuccess from "./components/payments/PaymentSuccess.jsx";
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
                 <Route path="view-plan" element={<ViewPlan />} />
                 <Route path="customer-dashboard" element={<CustomerDashboard/>} />
                 <Route path="vendor-dashboard-incompleted" element={<VendorDashboardIncompleted/>} />
+                <Route path="payment-success" element={<PaymentSuccess />} />
             </Routes>
           </Router>
         </AlertProvider>
