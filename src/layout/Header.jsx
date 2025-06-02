@@ -289,7 +289,7 @@ const Header = () => {
                           onClick={() =>
                             userInfo?.userType === "CUSTOMER"
                               ? navigate("/customer-dashboard")
-                              : navigate("/customer-dashboard2") //To do
+                              : navigate("/vendor-dashboard")
                           }
                           className="flex items-center space-x-2 cursor-pointer hover:text-gray-600"
                         >

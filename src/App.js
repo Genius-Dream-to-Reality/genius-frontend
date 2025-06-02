@@ -16,6 +16,7 @@ import LoginForm from "./components/auth/LoginForm";
 import Callback from "./components/auth/Callback";
 import CustomerDashboard from "./components/customer-dashboard/CustomerDashboard";
 import VendorDashboardIncompleted from "./components/vendor-dashboard/VendorDashboardIncompleted";
+import VendorDashboard from "./components/vendor-dashboard/VendorDashboard";
 import {AlertProvider} from "./contexts/AlertContext";
 import PaymentSuccess from "./components/payments/PaymentSuccess.jsx";
 import Payment from "./components/payments/Payment.jsx";
@@ -42,6 +43,7 @@ function App() {
                 <Route path="view-plan" element={<ViewPlan />} />
                 <Route path="customer-dashboard" element={<CustomerDashboard/>} />
                 <Route path="vendor-dashboard-incompleted" element={<VendorDashboardIncompleted/>} />
+                <Route path="vendor-dashboard" element={<VendorDashboard/>} />
                 <Route path="payment-success" element={<PaymentSuccess />} />
                 <Route path="payment" element={<Payment />} />
                 <Route path="payment-processing" element={<PaymentProcessing />} />
