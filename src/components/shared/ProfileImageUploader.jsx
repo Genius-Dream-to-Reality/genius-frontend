@@ -7,7 +7,6 @@ const ProfileImageUploader = ({ userId, currentImageUrl, onImageChange }) => {
     const [localImage, setLocalImage] = useState(currentImageUrl || null);
     const [uploadError, setUploadError] = useState(null);
 
-    // Sync localImage with currentImageUrl on change
     useEffect(() => {
         setLocalImage(currentImageUrl || null);
     }, [currentImageUrl]);

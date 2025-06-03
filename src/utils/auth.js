@@ -121,9 +121,6 @@ export async function login({ email, password, type }) {
             withCredentials: true
         });
 
-        //Schedule token refresh on login
-        scheduleTokenRefresh();
-
         return { type: "success", status: response.status, message: response.data };
     } catch (error) {
         return handleAuthError(error);
@@ -143,7 +140,7 @@ function handleAuthError(error) {
 
 // Function to refresh token
 export function scheduleTokenRefresh() {
-    const REFRESH_INTERVAL = 40 * 60 * 1000; // 40 minutes
+    const REFRESH_INTERVAL = 45 * 60 * 1000; 
 
     setInterval(async () => {
         try {
