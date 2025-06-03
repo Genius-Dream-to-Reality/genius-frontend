@@ -109,7 +109,7 @@ export async function login({ email, password, type }) {
     try {
         let apiURL;
         if (type === "Event Planner") {
-            apiURL = process.env.REACT_APP_AUTH_API_URL + "auth/customer/login";
+            apiURL = process.env.REACT_APP_AUTH_API_URL + "/auth/customer/login";
         } else if (type === "Vendor") {
             apiURL = process.env.REACT_APP_AUTH_API_URL + "auth/vendor/login";
         } else {
@@ -118,6 +118,7 @@ export async function login({ email, password, type }) {
 
         const response = await axios.post(apiURL, { email, password }, {
             headers: { "Content-Type": "application/json" },
+            withCredentials: true 
         });
 
         return { type: "success", status: response.status, message: response.data };

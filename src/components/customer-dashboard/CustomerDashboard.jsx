@@ -12,7 +12,7 @@ import {
 import { CalendarToday, LocationOn } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import DashboardHeader from "../../layout/DashboardHeader";
-import { deleteEventById, getEventDataForCustomer } from "../../utils/customer-account";
+import { deleteEventById, getCustomerDetails, getEventDataForCustomer } from "../../utils/customer-account";
 import Sidebar from "../../layout/DashboardSideBar";
 
 // --- Utility Functions ---
@@ -86,11 +86,19 @@ const CustomerDashboard = () => {
     const savedUser = localStorage.getItem("userInfo");
 
     if (savedAuth === "true" && savedUser) {
-      const parsedUser = JSON.parse(savedUser);
       setIsAuthenticated(true);
-      setUserInfo(parsedUser);
+      const userId = JSON.parse(savedUser)?.userId;
+      if (userId) {
+        getCustomerDetails(userId)
+          .then((res) => {
+            setUserInfo(res.data);
+          })
+          .catch((err) => {
+            console.error("Error fetching customer details:", err);
+          });
+      }
 
-      // Fetch Events
+      // Fetch Events for customer
       getEventDataForCustomer("abc123").then((res) => {
         if (res.type === "success") {
           const pending = [];
