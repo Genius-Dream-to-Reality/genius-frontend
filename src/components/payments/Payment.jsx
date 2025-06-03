@@ -2,35 +2,51 @@ import React from "react";
 import {
   Box,
   Container,
-  Typography,
-  IconButton,
   Grid,
+  Typography,
+  TextField,
+  Button,
+  Paper,
+  Divider,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import AppLogo from "../shared/AppLogo";
+import PaymentIcon from "@mui/icons-material/Payment";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import Header from "../../layout/Header";
 
 const Payment = () => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const navigate = useNavigate();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  const onSubmit = (data) => {
+    console.log("Payment Data", data);
+    navigate("/paymentprocess");
+  };
 
   return (
     <Box
       sx={{
         minHeight: "100vh",
-        backgroundColor: "#f5f0fc",
+        backgroundColor: "#f3edfc",
+        color: "black",
+        "& .MuiTypography-root": { color: "black" },
+        "& .MuiSvgIcon-root": { color: "black" },
+        "& .MuiInputBase-input": { color: "black" },
+        "& .MuiInputLabel-root": { color: "black" },
+        "& .MuiOutlinedInput-notchedOutline": { borderColor: "black" },
         display: "flex",
         flexDirection: "column",
-
         // Force Header button color to black
         "& header button": {
-          color: "black !important",
-        },
-
-        // Typography text inside the whole page (including inside Header)
-        "& .MuiTypography-root": {
           color: "black !important",
         },
 
@@ -40,86 +56,159 @@ const Payment = () => {
         },
       }}
     >
-      {/* Top Navigation */}
       <Header />
 
-      {/* Center Card */}
-      <Container
-        maxWidth="lg" // widened from "md"
-        sx={{
-          backgroundColor: "#fff",
-          borderRadius: "12px",
-          boxShadow: 3,
-          my: isMobile ? 4 : 8,
-          py: isMobile ? 4 : 8,
-          px: isMobile ? 2 : 6,
-          textAlign: "center",
-          display: "flex",
-          flexDirection: "column",
-          minHeight: isMobile ? "400px" : "500px",
-        }}
-      >
-        {/* Logo at the Top */}
-        <Box mb={4} display="flex" justifyContent="center" alignItems="center">
-          <Box sx={{ transform: "scale(1.2)", transformOrigin: "top center" }}>
-            <AppLogo size="lg" />
-          </Box>
-        </Box>
-
-        {/* Success Message and Icon */}
-        <Typography
-          variant={isMobile ? "body1" : "h6"}
-          sx={{ color: "black", mb: 3 }}
-          gutterBottom
-        >
-          Payment Successful. Check your mail. Payment
-        </Typography>
-
-        <IconButton
-          disableRipple
+      <Container maxWidth="lg" sx={{ mt: 4, flexGrow: 1, minHeight: isMobile ? "400px" : "500px", }}>
+        <Paper
+          elevation={4}
           sx={{
-            "&:hover": { background: "transparent" },
-            mb: 4,
+            borderRadius: 4,
+            p: isMobile ? 3 : 5,
+            backgroundColor: "#fff",
           }}
         >
-          <CheckCircleIcon sx={{ fontSize: isMobile ? 60 : 80, color: "#3b2a8d" }} />
-        </IconButton>
+          <Grid container spacing={4}>
+            {/* Left Side - Card Form */}
+            <Grid item xs={12} md={6}>
+              <Box display="flex" alignItems="center" mb={2}>
+                <PaymentIcon sx={{ mr: 1 }} />
+                <Typography variant="h6" fontWeight="bold">
+                  Payment
+                </Typography>
+              </Box>
 
-        {/* Footer Links */}
-        <Box
-          component="footer"
-          sx={{
-            mt: "auto",
-            pt: 4,
-          }}
-        >
-          <Grid
-            container
-            spacing={2}
-            justifyContent="center"
-            sx={{
-              fontSize: 14,
-              color: "gray",
-              textAlign: "center",
-            }}
-          >
-            <Grid item xs={12} sm="auto">
-              <a href="/" style={{ textDecoration: "none", color: "inherit" }}>
-                Home
-              </a>
+              <Typography variant="subtitle1" mb={2}>
+                Enter card details
+              </Typography>
+
+              <form onSubmit={handleSubmit(onSubmit)} noValidate>
+                <TextField
+                  fullWidth
+                  label="Card Name"
+                  variant="outlined"
+                  margin="normal"
+                  {...register("cardName", { required: "Card Name is required" })}
+                  error={!!errors.cardName}
+                  helperText={errors.cardName?.message}
+                />
+
+                <TextField
+                  fullWidth
+                  label="Card Number"
+                  variant="outlined"
+                  margin="normal"
+                  inputProps={{ maxLength: 19 }}
+                  {...register("cardNumber", {
+                    required: "Card Number is required",
+                    pattern: {
+                      value: /^[0-9\s]{16,19}$/,
+                      message: "Invalid card number",
+                    },
+                  })}
+                  error={!!errors.cardNumber}
+                  helperText={errors.cardNumber?.message}
+                />
+
+                <Grid container spacing={2}>
+                  <Grid item xs={6}>
+                    <TextField
+                      fullWidth
+                      label="CCV"
+                      variant="outlined"
+                      margin="normal"
+                      inputProps={{ maxLength: 4 }}
+                      {...register("ccv", {
+                        required: "CCV is required",
+                        pattern: {
+                          value: /^[0-9]{3,4}$/,
+                          message: "Invalid CCV",
+                        },
+                      })}
+                      error={!!errors.ccv}
+                      helperText={errors.ccv?.message}
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      fullWidth
+                      label="Expiry Date (MM/YY)"
+                      variant="outlined"
+                      margin="normal"
+                      placeholder="MM / YY"
+                      {...register("expiryDate", {
+                        required: "Expiry Date is required",
+                        pattern: {
+                          value: /^(0[1-9]|1[0-2])\/?([0-9]{2})$/,
+                          message: "Invalid expiry format",
+                        },
+                      })}
+                      error={!!errors.expiryDate}
+                      helperText={errors.expiryDate?.message}
+                    />
+                  </Grid>
+                </Grid>
+
+                <Button
+                  type="submit"
+                  variant="contained"
+                  fullWidth
+                  sx={{
+                    mt: 3,
+                    backgroundColor: "#1c2452",
+                    textTransform: "none",
+                    fontWeight: "bold",
+                    fontSize: "16px",
+                    py: 1.5,
+                    "&:hover": {
+                      backgroundColor: "#0f183c",
+                    },
+                  }}
+                >
+                  Submit
+                </Button>
+              </form>
             </Grid>
-            <Grid item xs={12} sm="auto">
-              <a href="/about-us" style={{ textDecoration: "none", color: "inherit" }}>
-                About Us
-              </a>
-            </Grid>
-            <Grid item xs={12} sm="auto">
-              <a href="/contact-us" style={{ textDecoration: "none", color: "inherit" }}>
-                Contact Us
-              </a>
+
+            {/* Right Side - Order Summary */}
+            <Grid item xs={12} md={6}>
+              <Paper
+                elevation={1}
+                sx={{
+                  borderRadius: 3,
+                  background: "linear-gradient(to bottom, #e7e9f1, #d2d6e6)",
+                  p: 3,
+                  height: "100%",
+                }}
+              >
+                <Typography variant="h6" fontWeight="bold" mb={2}>
+                  Order Summary
+                </Typography>
+
+                <Box mb={2}>
+                  <Grid container justifyContent="space-between" mb={1}>
+                    <Typography>Wedding hall</Typography>
+                    <Typography>Rs. 1000000</Typography>
+                  </Grid>
+                  <Grid container justifyContent="space-between" mb={1}>
+                    <Typography>Photographer</Typography>
+                    <Typography>Rs. 200000</Typography>
+                  </Grid>
+                  <Grid container justifyContent="space-between" mb={1}>
+                    <Typography>Discount</Typography>
+                    <Typography>5%</Typography>
+                  </Grid>
+                  <Divider sx={{ my: 2 }} />
+                  <Grid container justifyContent="space-between">
+                    <Typography fontWeight="bold">Total</Typography>
+                    <Typography fontWeight="bold" sx={{ color: "#1c2452" }}>
+                      Rs. 1200000
+                    </Typography>
+                  </Grid>
+                </Box>
+              </Paper>
             </Grid>
           </Grid>
-        </Box>
+        </Paper>
       </Container>
     </Box>
   );
