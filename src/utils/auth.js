@@ -2,7 +2,7 @@ import axios from "axios";
 
 export async function customerRegistration(customerRegistrationData) {
     try {
-        const apiURL = process.env.REACT_APP_AUTH_API_URL + "/customer/auth/register";
+        const apiURL = process.env.REACT_APP_AUTH_API_URL + "/auth/customer/register";
 
         const response = await axios.post(apiURL, customerRegistrationData, {
             headers: {
@@ -26,7 +26,7 @@ export async function customerRegistration(customerRegistrationData) {
 
 export async function vendorRegistration(vendorRegistrationData) {
     try {
-        const apiURL = process.env.REACT_APP_AUTH_API_URL + "/vendor/auth/register";
+        const apiURL = process.env.REACT_APP_AUTH_API_URL + "/auth/vendor/register";
 
         const response = await axios.post(apiURL, vendorRegistrationData, {
             headers: {
@@ -52,10 +52,10 @@ export async function otpVerification(data, type) {
     try {
         let apiURL;
         if(type === "vendor"){
-            apiURL = process.env.REACT_APP_AUTH_API_URL + "/vendor/auth/otp";
+            apiURL = process.env.REACT_APP_AUTH_API_URL + "/auth/vendor/otp";
         }
         if(type === "customer"){
-            apiURL = process.env.REACT_APP_AUTH_API_URL + "/customer/auth/otp";
+            apiURL = process.env.REACT_APP_AUTH_API_URL + "/auth/customer/otp";
         }
 
 
@@ -83,10 +83,10 @@ export async function otpRequest(email, type) {
     try {
         let apiURL;
         if(type === "vendor"){
-            apiURL = process.env.REACT_APP_AUTH_API_URL + "/vendor/auth/otp";
+            apiURL = process.env.REACT_APP_AUTH_API_URL + "/auth/vendor/otp";
         }
         if(type === "customer"){
-            apiURL = process.env.REACT_APP_AUTH_API_URL + "/customer/auth/otp";
+            apiURL = process.env.REACT_APP_AUTH_API_URL + "/auth/customer/otp";
         }
 
         const response = await axios.get(apiURL+`?email=${email}`);
@@ -109,9 +109,9 @@ export async function login({ email, password, type }) {
     try {
         let apiURL;
         if (type === "Event Planner") {
-            apiURL = process.env.REACT_APP_AUTH_API_URL + "/customer/auth/login";
+            apiURL = process.env.REACT_APP_AUTH_API_URL + "auth/customer/login";
         } else if (type === "Vendor") {
-            apiURL = process.env.REACT_APP_AUTH_API_URL + "/vendor/auth/login";
+            apiURL = process.env.REACT_APP_AUTH_API_URL + "auth/vendor/login";
         } else {
             throw new Error("Invalid login type");
         }
