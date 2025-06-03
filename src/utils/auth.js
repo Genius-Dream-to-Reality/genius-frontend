@@ -51,10 +51,10 @@ export async function vendorRegistration(vendorRegistrationData) {
 export async function otpVerification(data, type) {
     try {
         let apiURL;
-        if(type === "vendor"){
+        if (type === "vendor") {
             apiURL = process.env.REACT_APP_AUTH_API_URL + "/auth/vendor/otp";
         }
-        if(type === "customer"){
+        if (type === "customer") {
             apiURL = process.env.REACT_APP_AUTH_API_URL + "/auth/customer/otp";
         }
 
@@ -82,14 +82,14 @@ export async function otpVerification(data, type) {
 export async function otpRequest(email, type) {
     try {
         let apiURL;
-        if(type === "vendor"){
+        if (type === "vendor") {
             apiURL = process.env.REACT_APP_AUTH_API_URL + "/auth/vendor/otp";
         }
-        if(type === "customer"){
+        if (type === "customer") {
             apiURL = process.env.REACT_APP_AUTH_API_URL + "/auth/customer/otp";
         }
 
-        const response = await axios.get(apiURL+`?email=${email}`);
+        const response = await axios.get(apiURL + `?email=${email}`);
 
         console.log("Otp Data", response);
 
@@ -109,7 +109,7 @@ export async function login({ email, password, type }) {
     try {
         let apiURL;
         if (type === "Event Planner") {
-            apiURL = process.env.REACT_APP_AUTH_API_URL + "auth/customer/login";
+            apiURL = process.env.REACT_APP_AUTH_API_URL + "/auth/customer/login";
         } else if (type === "Vendor") {
             apiURL = process.env.REACT_APP_AUTH_API_URL + "auth/vendor/login";
         } else {
@@ -118,6 +118,7 @@ export async function login({ email, password, type }) {
 
         const response = await axios.post(apiURL, { email, password }, {
             headers: { "Content-Type": "application/json" },
+            withCredentials: true
         });
 
         return { type: "success", status: response.status, message: response.data };
@@ -134,4 +135,25 @@ function handleAuthError(error) {
         status: error.response?.status || 500,
         message: error.response?.data || "Something went wrong",
     };
+}
+
+
+// Function to refresh token
+export function scheduleTokenRefresh() {
+    const REFRESH_INTERVAL = 45 * 60 * 1000; 
+
+    setInterval(async () => {
+        try {
+            const apiURL = process.env.REACT_APP_AUTH_API_URL + "/auth/refresh-token";
+
+            const response = await axios.post(apiURL, null, {
+                withCredentials: true,
+            });
+
+            console.log("Token refreshed successfully:", response.data);
+        } catch (error) {
+            console.error("Token refresh failed:", error.response?.data || error.message);
+            window.location.href = "/login";
+        }
+    }, REFRESH_INTERVAL);
 }
