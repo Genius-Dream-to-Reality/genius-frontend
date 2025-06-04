@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { uploadProfilePicture } from "../../utils/customer-account";
+import { uploadProfilePicture } from "../../api/customer-account";
 
 const ProfileImageUploader = ({ userId, currentImageUrl, onImageChange }) => {
     const [localImage, setLocalImage] = useState(currentImageUrl || null);

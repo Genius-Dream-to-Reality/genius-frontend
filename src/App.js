@@ -18,7 +18,7 @@ import CustomerDashboard from "./components/customer-dashboard/CustomerDashboard
 import VendorDashboardIncompleted from "./components/vendor-dashboard/VendorDashboardIncompleted";
 import VendorDashboard from "./components/vendor-dashboard/VendorDashboard";
 import { AlertProvider } from "./contexts/AlertContext";
-import { scheduleTokenRefresh } from "./utils/auth";
+import { scheduleTokenRefresh } from "./api/auth";
 
 function App() {
 
