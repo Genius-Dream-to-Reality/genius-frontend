@@ -17,7 +17,7 @@ import googleCalendar from "../../assets/images/google-calendar.png";
 import useStyles from "../../assets/css/style";
 import { Checkbox } from "@mui/material";
 import SideNavBar from "../../layout/SideNavBar";
-import { customerRegistration, vendorRegistration } from "../../utils/auth";
+import { customerRegistration, vendorRegistration } from "../../api/auth";
 import { useNavigate } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
 

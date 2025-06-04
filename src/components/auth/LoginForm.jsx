@@ -20,7 +20,7 @@ import authServiceImage from "../../assets/images/authService.jpg";
 import useStyles from "../../assets/css/style";
 import SideNavBar from "../../layout/SideNavBar";
 import AppLogo from "../shared/AppLogo";
-import { login } from "../../utils/auth";
+import { login } from "../../api/auth";
 
 const LoginForm = () => {
   const classes = useStyles();

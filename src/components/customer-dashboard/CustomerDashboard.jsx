@@ -12,7 +12,7 @@ import {
 import { CalendarToday, LocationOn } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import DashboardHeader from "../../layout/DashboardHeader";
-import { deleteEventById, getCustomerDetails, getEventDataForCustomer } from "../../utils/customer-account";
+import { deleteEventById, getCustomerDetails, getEventDataForCustomer } from "../../api/customer-account";
 import Sidebar from "../../layout/DashboardSideBar";
 
 // --- Utility Functions ---
