@@ -1,5 +1,8 @@
 import axios from "axios";
 
+// Configure axios defaults
+axios.defaults.withCredentials = true;
+
 export async function customerRegistration(customerRegistrationData) {
     try {
         const apiURL = process.env.REACT_APP_AUTH_API_URL + "/auth/customer/register";
@@ -116,17 +119,31 @@ export async function login({ email, password, type }) {
             throw new Error("Invalid login type");
         }
 
-        const response = await axios.post(apiURL, { email, password }, {
-            headers: { "Content-Type": "application/json" },
-            withCredentials: true
-        });
-
+        const response = await axios.post(apiURL, { email, password });
         return { type: "success", status: response.status, message: response.data };
     } catch (error) {
         return handleAuthError(error);
     }
 }
 
+export async function refreshToken() {
+    try {
+        const apiURL = process.env.REACT_APP_AUTH_API_URL + "/auth/refresh-token";
+        
+        // The refresh token is automatically sent in cookies by axios
+        const response = await axios.post(apiURL, {}, {
+            withCredentials: true
+        });
+        return { 
+            type: "success", 
+            status: response.status, 
+            message: response.data 
+        };
+    } catch (error) {
+        console.error("Token refresh failed:", error.response?.data || error.message);
+        return handleAuthError(error);
+    }
+}
 
 function handleAuthError(error) {
     console.error("Auth Error:", error.response?.data || error.message);
@@ -138,22 +155,3 @@ function handleAuthError(error) {
 }
 
 
-// Function to refresh token
-export function scheduleTokenRefresh() {
-    const REFRESH_INTERVAL = 45 * 60 * 1000; 
-
-    setInterval(async () => {
-        try {
-            const apiURL = process.env.REACT_APP_AUTH_API_URL + "/auth/refresh-token";
-
-            const response = await axios.post(apiURL, null, {
-                withCredentials: true,
-            });
-
-            console.log("Token refreshed successfully:", response.data);
-        } catch (error) {
-            console.error("Token refresh failed:", error.response?.data || error.message);
-            window.location.href = "/login";
-        }
-    }, REFRESH_INTERVAL);
-}

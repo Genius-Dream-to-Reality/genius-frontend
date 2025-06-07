@@ -1,7 +1,6 @@
 import axios from "axios";
 
-// Ensure all requests carry credentials by default
-axios.defaults.withCredentials = true;
+
 
 const handleApiError = (error) => {
     console.error("API Error:", error.response?.data || error.message);

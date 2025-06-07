@@ -7,24 +7,26 @@ import SelectEventType from "./pages/SelectEventType";
 import RegisterComponent from "./components/auth/RegisterForm";
 import UserTypeSelection from "./components/auth/UserTypeSelection";
 import EventPlanningForm from "./components/event-planning/EventPlanningForm";
-import VendorAccountForm from "./components/vendor-account/VendorAccountForm";
 import RegisterOTP from "./components/auth/RegisterOTP";
 import RegisterCompleted from "./components/auth/RegisterCompleted";
 import EventPlanningCompletion from "./components/event-planning/EventPlanningCompletion";
 import ViewPlan from "./components/event-planning/ViewPlan";
 import LoginForm from "./components/auth/LoginForm";
 import Callback from "./components/auth/Callback";
+import VendorAccountForm   from "./components/vendor-account/VendorAccountForm";
 import CustomerDashboard from "./components/customer-dashboard/CustomerDashboard";
 import VendorDashboardIncompleted from "./components/vendor-dashboard/VendorDashboardIncompleted";
 import VendorDashboard from "./components/vendor-dashboard/VendorDashboard";
 import { AlertProvider } from "./contexts/AlertContext";
-import { scheduleTokenRefresh } from "./api/auth";
+import { authService } from './services/authService';
+import { useSelector } from 'react-redux';
 
 function App() {
+  const { user } = useSelector(state => state.auth);
 
   useEffect(() => {
-    scheduleTokenRefresh();
-  }, []);
+    authService.initializeAuth();
+  }, []); 
 
   return (
     <ThemeProvider theme={theme}>

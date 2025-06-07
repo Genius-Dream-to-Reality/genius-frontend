@@ -20,7 +20,8 @@ import authServiceImage from "../../assets/images/authService.jpg";
 import useStyles from "../../assets/css/style";
 import SideNavBar from "../../layout/SideNavBar";
 import AppLogo from "../shared/AppLogo";
-import { useAuth } from "../../contexts/AuthContext";
+import { useSelector } from 'react-redux';
+import { authService } from '../../services/authService';
 import { AlertContext} from "../../contexts/AlertContext";
 
 const LoginForm = () => {
@@ -30,11 +31,10 @@ const LoginForm = () => {
   const location = useLocation();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [loginError, setLoginError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
   const { isAuthenticated } = location.state || {};
-  const { login } = useAuth();
+  const { loading: isLoading, error } = useSelector(state => state.auth);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -84,26 +84,24 @@ const LoginForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
-      setIsLoading(true);
       setMessage("");
       setIsError(false);
-      const result = await login(formData);
+      const result = await authService.login(formData);
       if (result.type === "success") {
-
-        addAlert("Login Successfully!","success");
+        addAlert("Login Successfully!", "success");
 
         setTimeout(() => {
-          navigate("/", { state: result });
+          if (formData.type === "Vendor") {
+            navigate("/vendor-dashboard", { replace: true });
+          } else {
+            navigate("/customer-dashboard", { replace: true });
+          }
         }, 1000);
       } else {
-
-        addAlert(result.message?.message || result.message,"error");
-
+        addAlert(result.message?.message || result.message, "error");
       }
-      setIsLoading(false);
     } else {
-      addAlert("Please fill in all fields.","error");
-
+      addAlert("Please fill in all fields.", "error");
     }
   };
 
@@ -278,7 +276,7 @@ const LoginForm = () => {
             >
               <Grid item>
                 <Typography style={{ fontSize: "14px" }}>
-                  Don’t have an account?
+                  Don't have an account?
                 </Typography>
               </Grid>
               <Grid item>
