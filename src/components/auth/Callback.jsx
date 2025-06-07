@@ -7,7 +7,7 @@ const Callback = () =>{
 
     const navigate = useNavigate();
     const location = useLocation();
-    const apiURL = process.env.REACT_APP_AUTH_API_URL + "/vendor/auth/oauth2/callback"
+    const apiURL = process.env.REACT_APP_AUTH_API_URL + "/auth/vendor/oauth2/callback"
     const userType = "vendor"
 
     useEffect(()=> {

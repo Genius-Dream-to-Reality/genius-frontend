@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import DashboardHeader from "../../layout/DashboardHeader";
 import { deleteEventById, getCustomerDetails, getEventDataForCustomer } from "../../api/customer-account";
 import Sidebar from "../../layout/DashboardSideBar";
+import { useAuth } from "../../contexts/AuthContext";
 
 // --- Utility Functions ---
 const mapEventStatus = (status, services) => {
@@ -32,7 +33,7 @@ const getStatusColor = (status, services) => {
   if (status === "CANCELED") return "#dc2626";
   if (status === "COMPLETED") return "#16a34a";
   if (status === "PENDING_APPROVAL") {
-    return services.some((s) => !s.vendorApproved) ? "#dc2626" : "#22c55e";
+    return services.some((s) => !s.vendorApproved) ?  "#dc2626" : "#22c55e";
   }
   return "#6b7280";
 };
@@ -80,7 +81,9 @@ const CustomerDashboard = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [dialogMode, setDialogMode] = useState("confirm");
   const [dialogMessage, setDialogMessage] = useState("");
+  const {user} = useAuth();
 
+  console.log("logged user: ",user);
   useEffect(() => {
     const savedAuth = localStorage.getItem("isAuthenticated");
     const savedUser = localStorage.getItem("userInfo");
@@ -99,7 +102,7 @@ const CustomerDashboard = () => {
       }
 
       // Fetch Events for customer
-      getEventDataForCustomer("abc123").then((res) => {
+      getEventDataForCustomer(user.userId).then((res) => {
         if (res.type === "success") {
           const pending = [];
           const completed = [];

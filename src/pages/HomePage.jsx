@@ -21,9 +21,11 @@ import {eventCategoryApi} from "../api/event"
 import { AlertContext } from "../contexts/AlertContext";
 import "../assets/css/homePage.css"
 import {TextField} from "@mui/material";
+import { useAuth } from "../contexts/AuthContext";
 
 const Home = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const images = [backgroundImage, why, picking, finalized];
   const [currentIndex, setCurrentIndex] = useState(0);
   const [eventCategories, setEventCategories] = useState([]);
@@ -257,102 +259,104 @@ const Home = () => {
                 Event Planning!
               </motion.h1>
 
-              <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.8 }}
-                  className="flex flex-wrap gap-4"
-              >
-                {/* Category Dropdown */}
-                <div className="dropdown-container" ref={dropdownRef}>
-                  <button
-                      onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                      className="group relative px-6 py-3 bg-transparent border-2 border-white rounded-lg overflow-hidden"
-                  >
-                    <span className="absolute inset-0 w-0 bg-yellow-500 transition-all duration-[400ms] ease-out group-hover:w-full" />
-                    <span className="relative flex items-center gap-2 text-white font-semibold group-hover:text-black">
-                    {selectedCategory ? selectedCategory.id : "Select Event Category"}
-                      <FaArrowDown className={`group-hover:translate-y-1 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`} />
-                  </span>
-                  </button>
-
-                  {/* Dropdown Menu */}
-                  {isDropdownOpen && (
-                      <div className="dropdown-menu">
-                        {eventCategories.map((category, index) => (
-                            <button
-                                key={category.id || index}
-                                onClick={() => handleCategorySelect(category)}
-                                onMouseEnter={() => handleItemMouseEnter(category)}
-                                onMouseLeave={handleItemMouseLeave}
-                                className={`dropdown-item ${selectedCategory?.id === category.id ? 'selected' : ''}`}
-                            >
-                        <span style={{ fontWeight: '500', color: '#1f2937' }}>
-                          {category.id}
-                        </span>
-                              {selectedCategory?.id === category.id && (
-                                  <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span>
-                              )}
-                            </button>
-                        ))}
-                      </div>
-                  )}
-
-                  {/* Tooltip */}
-                  {showTooltip && hoveredCategory && (
-                      <div
-                          className="tooltip"
-                          style={{
-                            left: dropdownRef.current ? dropdownRef.current.getBoundingClientRect().right + 12 : 0,
-                            top: dropdownRef.current ? dropdownRef.current.getBoundingClientRect().top + 60 : 0,
-                          }}
-                          onMouseEnter={handleTooltipMouseEnter}
-                          onMouseLeave={handleTooltipMouseLeave}
-                      >
-                        <div className="tooltip-arrow left"></div>
-                        <h4 style={{
-                          fontWeight: 'bold',
-                          color: '#d97706',
-                          marginBottom: '8px',
-                          fontSize: '16px'
-                        }}>
-                          {hoveredCategory.id}
-                        </h4>
-                        <p style={{
-                          fontSize: '14px',
-                          color: '#4b5563',
-                          lineHeight: '1.5',
-                          margin: 0
-                        }}>
-                          {hoveredCategory.description}
-                        </p>
-                      </div>
-                  )}
-                </div>
-
-                <div className="relative group">
-                  <TextField
-                      type="date"
-                      label="Event Date"
-                      InputLabelProps={{ shrink: true }}
-                      value={selectedDate}
-                      onChange={(e) => setSelectedDate(e.target.value)}
-                      inputProps={{
-                        min: minDate.format('YYYY-MM-DD')
-                      }}
-                      fullWidth
-                  />
-                </div>
-
-                {/* Get Started Button */}
-                <button
-                    onClick={handleNavigation}
-                    className="group px-6 py-3 flex items-center gap-2 text-white font-semibold hover:text-yellow-500 transition-colors duration-300"
+              {user?.userType !== 'VENDOR' && (
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.8 }}
+                    className="flex flex-wrap gap-4"
                 >
-                  Get Started
-                  <FaArrowAltCircleRight className="group-hover:translate-x-1 transition-transform duration-300" />
-                </button>
-              </motion.div>
+                  {/* Category Dropdown */}
+                  <div className="dropdown-container" ref={dropdownRef}>
+                    <button
+                        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                        className="group relative px-6 py-3 bg-transparent border-2 border-white rounded-lg overflow-hidden"
+                    >
+                      <span className="absolute inset-0 w-0 bg-yellow-500 transition-all duration-[400ms] ease-out group-hover:w-full" />
+                      <span className="relative flex items-center gap-2 text-white font-semibold group-hover:text-black">
+                      {selectedCategory ? selectedCategory.id : "Select Event Category"}
+                        <FaArrowDown className={`group-hover:translate-y-1 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                      </span>
+                    </button>
+
+                    {/* Dropdown Menu */}
+                    {isDropdownOpen && (
+                        <div className="dropdown-menu">
+                          {eventCategories.map((category, index) => (
+                              <button
+                                  key={category.id || index}
+                                  onClick={() => handleCategorySelect(category)}
+                                  onMouseEnter={() => handleItemMouseEnter(category)}
+                                  onMouseLeave={handleItemMouseLeave}
+                                  className={`dropdown-item ${selectedCategory?.id === category.id ? 'selected' : ''}`}
+                              >
+                            <span style={{ fontWeight: '500', color: '#1f2937' }}>
+                              {category.id}
+                            </span>
+                                {selectedCategory?.id === category.id && (
+                                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span>
+                                )}
+                              </button>
+                          ))}
+                        </div>
+                    )}
+
+                    {/* Tooltip */}
+                    {showTooltip && hoveredCategory && (
+                        <div
+                            className="tooltip"
+                            style={{
+                              left: dropdownRef.current ? dropdownRef.current.getBoundingClientRect().right + 12 : 0,
+                              top: dropdownRef.current ? dropdownRef.current.getBoundingClientRect().top + 60 : 0,
+                            }}
+                            onMouseEnter={handleTooltipMouseEnter}
+                            onMouseLeave={handleTooltipMouseLeave}
+                        >
+                          <div className="tooltip-arrow left"></div>
+                          <h4 style={{
+                            fontWeight: 'bold',
+                            color: '#d97706',
+                            marginBottom: '8px',
+                            fontSize: '16px'
+                          }}>
+                            {hoveredCategory.id}
+                          </h4>
+                          <p style={{
+                            fontSize: '14px',
+                            color: '#4b5563',
+                            lineHeight: '1.5',
+                            margin: 0
+                          }}>
+                            {hoveredCategory.description}
+                          </p>
+                        </div>
+                    )}
+                  </div>
+
+                  <div className="relative group">
+                    <TextField
+                        type="date"
+                        label="Event Date"
+                        InputLabelProps={{ shrink: true }}
+                        value={selectedDate}
+                        onChange={(e) => setSelectedDate(e.target.value)}
+                        inputProps={{
+                          min: minDate.format('YYYY-MM-DD')
+                        }}
+                        fullWidth
+                    />
+                  </div>
+
+                  {/* Get Started Button */}
+                  <button
+                      onClick={handleNavigation}
+                      className="group px-6 py-3 flex items-center gap-2 text-white font-semibold hover:text-yellow-500 transition-colors duration-300"
+                  >
+                    Get Started
+                    <FaArrowAltCircleRight className="group-hover:translate-x-1 transition-transform duration-300" />
+                  </button>
+                </motion.div>
+              )}
             </motion.div>
           </div>
 

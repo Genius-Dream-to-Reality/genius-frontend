@@ -111,7 +111,7 @@ export async function login({ email, password, type }) {
         if (type === "Event Planner") {
             apiURL = process.env.REACT_APP_AUTH_API_URL + "/auth/customer/login";
         } else if (type === "Vendor") {
-            apiURL = process.env.REACT_APP_AUTH_API_URL + "auth/vendor/login";
+            apiURL = process.env.REACT_APP_AUTH_API_URL + "/auth/vendor/login";
         } else {
             throw new Error("Invalid login type");
         }
