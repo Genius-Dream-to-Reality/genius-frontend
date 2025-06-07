@@ -21,6 +21,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import LoginIcon from '@mui/icons-material/Login';
 import { useNavigate, useLocation } from "react-router-dom";
 import { Settings } from "lucide-react";
+import {useAuth} from "../contexts/AuthContext";
 
 import {
   DropdownMenu,
@@ -50,14 +51,11 @@ const Header = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
+  const { user, logout } = useAuth()
 
   useEffect(() => {
-    const savedAuth = localStorage.getItem("isAuthenticated");
-    const savedUser = localStorage.getItem("userInfo");
-
-    if (savedAuth === "true" && savedUser) {
+    if (user !== null) {
       setIsAuthenticated(true);
-      setUserInfo(JSON.parse(savedUser));
     }
   }, []);
 
@@ -72,8 +70,7 @@ const Header = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("userInfo");
-    localStorage.removeItem("isAuthenticated");
+    const res = logout();
     setIsAuthenticated(false);
     setUserInfo(null);
     navigate("/");
@@ -276,12 +273,12 @@ const Header = () => {
                       className="w-64 bg-[#1A103D] text-white rounded-xl shadow-lg p-5"
                     >
                       <div className="flex justify-between items-start mb-1">
-                        <p className="text-sm text-gray-300 ml-auto">{userInfo?.userType}</p>
+                        <p className="text-sm text-gray-300 ml-auto">{user?.userType}</p>
                       </div>
                       <div className="flex items-start space-x-4 mb-4">
                         <div>
-                          <p className="text-lg font-semibold">{userInfo?.username}</p>
-                          <p className="text-xs text-gray-500">{userInfo?.email}</p>
+                          <p className="text-lg font-semibold">{user?.username}</p>
+                          <p className="text-xs text-gray-500">{user?.email}</p>
                         </div>
                       </div>
                       <div className="space-y-3 mb-4 text-sm">
