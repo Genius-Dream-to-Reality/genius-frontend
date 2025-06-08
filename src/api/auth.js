@@ -145,6 +145,94 @@ export async function refreshToken() {
     }
 }
 
+export async function uploadVendorProfilePicture(vendorId, file) {
+    try {
+        const formData = new FormData();
+        formData.append("id", vendorId);
+        formData.append("file", file);
+
+        const apiURL = process.env.REACT_APP_AUTH_API_URL + "/vendor/profile-picture";
+
+        const response = await axios.post(apiURL, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+            withCredentials: true,
+        });
+
+        return {
+            type: "success",
+            status: response.status,
+            data: response.data,
+        };
+    } catch (error) {
+        console.error("Vendor profile picture upload failed:", error.response?.data || error.message);
+        return handleAuthError(error);
+    }
+}
+
+export async function uploadCustomerProfilePicture(customerId, file) {
+    try {
+        const formData = new FormData();
+        formData.append("id", customerId);
+        formData.append("file", file);
+
+        const apiURL = process.env.REACT_APP_AUTH_API_URL + "/customer/profile-picture";
+
+        const response = await axios.post(apiURL, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+            withCredentials: true,
+        });
+
+        return {
+            type: "success",
+            status: response.status,
+            data: response.data,
+        };
+    } catch (error) {
+        console.error("Customer profile picture upload failed:", error.response?.data || error.message);
+        return handleAuthError(error);
+    }
+}
+
+export async function getVendorDetails(vendorId) {
+    try {
+        const apiURL = process.env.REACT_APP_AUTH_API_URL + `/vendor/${vendorId}`;
+        const response = await axios.get(apiURL, {
+            withCredentials: true
+        });
+
+        return {
+            type: "success",
+            status: response.status,
+            data: response.data
+        };
+    } catch (error) {
+        console.error("Failed to fetch vendor details:", error.response?.data || error.message);
+        return handleAuthError(error);
+    }
+}
+
+export async function getCustomerDetails(customerId) {
+    try {
+        const apiURL = process.env.REACT_APP_AUTH_API_URL + `/customer/${customerId}`;
+        const response = await axios.get(apiURL, {
+            withCredentials: true
+        });
+
+        return {
+            type: "success",
+            status: response.status,
+            data: response.data
+        };
+    } catch (error) {
+        console.error("Failed to fetch customer details:", error.response?.data || error.message);
+        return handleAuthError(error);
+    }
+}
+
 function handleAuthError(error) {
     console.error("Auth Error:", error.response?.data || error.message);
     return {

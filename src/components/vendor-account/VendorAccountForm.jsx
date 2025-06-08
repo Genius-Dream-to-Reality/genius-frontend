@@ -45,35 +45,26 @@ const VendorAccountForm = () => {
     basic: {
       price: "",
       description: "",
-      packageItems: [],
       participants: "",
       staffs: "",
-      hasAC: false,
-      hasBuffet: false,
-      rooms: "",
       images: [],
+      other: {}  // For custom fields
     },
     standard: {
       price: "",
       description: "",
-      packageItems: [],
       participants: "",
       staffs: "",
-      hasAC: false,
-      hasBuffet: false,
-      rooms: "",
       images: [],
+      other: {}  // For custom fields
     },
     premium: {
       price: "",
       description: "",
-      packageItems: [],
       participants: "",
       staffs: "",
-      hasAC: false,
-      hasBuffet: false,
-      rooms: "",
       images: [],
+      other: {}  // For custom fields
     },
   });
 
@@ -207,43 +198,33 @@ const VendorAccountForm = () => {
       // Prepare the service data according to the API format
       const serviceData = {
         name: stepOneData.serviceName,
-        type: stepOneData.selectedServiceType,
+        type: stepOneData.selectedServiceTypeName,
         category: stepOneData.selectedServiceTypeName,
         vendorId: user?.userId,
         description: stepOneData.description,
         located: "Sri Lanka",
         districts: stepOneData.locations,
         eventTypes: stepOneData.eventTypes,
-        serviceStatus: "ACTIVE",
         basic: {
           name: `${stepOneData.serviceName} Basic`,
           description: packagesData.basic.description,
           price: Number(packagesData.basic.price),
           expectedParticipants: Number(packagesData.basic.participants),
-          other: {
-            photographers: packagesData.basic.staffs,
-            hours: packagesData.basic.rooms
-          }
+          other: packagesData.basic.other
         },
         standard: {
           name: `${stepOneData.serviceName} Standard`,
           description: packagesData.standard.description,
           price: Number(packagesData.standard.price),
           expectedParticipants: Number(packagesData.standard.participants),
-          other: {
-            photographers: packagesData.standard.staffs,
-            hours: packagesData.standard.rooms
-          }
+          other: packagesData.standard.other
         },
         premium: {
           name: `${stepOneData.serviceName} Premium`,
           description: packagesData.premium.description,
           price: Number(packagesData.premium.price),
           expectedParticipants: Number(packagesData.premium.participants),
-          other: {
-            photographers: packagesData.premium.staffs,
-            hours: packagesData.premium.rooms
-          }
+          other: packagesData.premium.other
         }
       };
 

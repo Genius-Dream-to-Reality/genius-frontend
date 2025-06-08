@@ -257,10 +257,9 @@ const StepOne = ({ formData, onFormUpdate }) => {
                 onChange={(e) => {
                   const selectedValue = e.target.value;
                   const selectedType = serviceTypes.find(type => type.id === selectedValue);
-
+                  console.log("Selected type:", selectedType);
                   
                   if (selectedType) {
-
                     onFormUpdate({
                       ...formData,
                       selectedServiceType: selectedType.id,

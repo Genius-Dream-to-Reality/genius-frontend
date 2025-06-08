@@ -138,7 +138,7 @@ const StepThree = ({ initialSetup, packages }) => {
           <Typography sx={{ color: "#fff", mb: 1 }}>Event Types:</Typography>
           <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
             {initialSetup.eventTypes.map((type) => (
-              <StyledChip key={type.name} label={type.name} />
+              <StyledChip key={type} label={type} />
             ))}
           </Box>
         </Box>
