@@ -1,5 +1,5 @@
-import React from "react";
-import { ThemeProvider,CssBaseline  } from "@mui/material";
+import React, { useEffect } from "react";
+import { ThemeProvider, CssBaseline } from "@mui/material";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import theme from './styles/theme';
 import Home from "./pages/HomePage";
@@ -17,39 +17,45 @@ import Callback from "./components/auth/Callback";
 import CustomerDashboard from "./components/customer-dashboard/CustomerDashboard";
 import VendorDashboardIncompleted from "./components/vendor-dashboard/VendorDashboardIncompleted";
 import VendorDashboard from "./components/vendor-dashboard/VendorDashboard";
-import {AlertProvider} from "./contexts/AlertContext";
-import PaymentSuccess from "./components/payments/PaymentSuccess.jsx";
-import Payment from "./components/payments/Payment.jsx";
-import PaymentProcessing from "./components/payments/PaymentProcessing.jsx";
+import { AlertProvider } from "./contexts/AlertContext";
+import { scheduleTokenRefresh } from "./api/auth";
+import Payment from "./components/payments/Payment";
+import PaymentProcessing from "./components/payments/PaymentProcessing";
+import PaymentSuccess from "./components/payments/PaymentSuccess";
 
 function App() {
+
+  useEffect(() => {
+    scheduleTokenRefresh();
+  }, []);
+
   return (
     <ThemeProvider theme={theme}>
-        <AlertProvider>
-          <CssBaseline />
-          <Router>
-            <Routes>
-                <Route index element={<Home />} />
-                <Route path="select-event" element={<SelectEventType />} />
-                <Route path="choose-type" element={<UserTypeSelection />} />
-                <Route path="login" element={<LoginForm />} />
-                <Route path="register" element={<RegisterComponent />} />
-                <Route path="auth/callback" element={<Callback />} />
-                <Route path="event-planning" element={<EventPlanningForm/>} />
-                <Route path="vendor-account" element={<VendorAccountForm/>} />
-                <Route path="register-otp" element={<RegisterOTP />} />
-                <Route path="register-completed" element={<RegisterCompleted />} />
-                <Route path="eventplaning-completed" element={<EventPlanningCompletion />} />
-                <Route path="view-plan" element={<ViewPlan />} />
-                <Route path="customer-dashboard" element={<CustomerDashboard/>} />
-                <Route path="vendor-dashboard-incompleted" element={<VendorDashboardIncompleted/>} />
-                <Route path="vendor-dashboard" element={<VendorDashboard/>} />
-                <Route path="payment-success" element={<PaymentSuccess />} />
-                <Route path="payment" element={<Payment />} />
-                <Route path="payment-processing" element={<PaymentProcessing />} />
-            </Routes>
-          </Router>
-        </AlertProvider>
+      <AlertProvider>
+        <CssBaseline />
+        <Router>
+          <Routes>
+            <Route index element={<Home />} />
+            <Route path="select-event" element={<SelectEventType />} />
+            <Route path="choose-type" element={<UserTypeSelection />} />
+            <Route path="login" element={<LoginForm />} />
+            <Route path="register" element={<RegisterComponent />} />
+            <Route path="auth/callback" element={<Callback />} />
+            <Route path="event-planning" element={<EventPlanningForm />} />
+            <Route path="vendor-account" element={<VendorAccountForm />} />
+            <Route path="register-otp" element={<RegisterOTP />} />
+            <Route path="register-completed" element={<RegisterCompleted />} />
+            <Route path="eventplaning-completed" element={<EventPlanningCompletion />} />
+            <Route path="view-plan" element={<ViewPlan />} />
+            <Route path="customer-dashboard" element={<CustomerDashboard />} />
+            <Route path="vendor-dashboard-incompleted" element={<VendorDashboardIncompleted />} />
+            <Route path="vendor-dashboard" element={<VendorDashboard />} />
+            <Route path="payment" element={<Payment />} />
+            <Route path="payment-processing" element={<PaymentProcessing />} />
+            <Route path="payment-success" element={<PaymentSuccess />} />
+          </Routes>
+        </Router>
+      </AlertProvider>
     </ThemeProvider>
   );
 }

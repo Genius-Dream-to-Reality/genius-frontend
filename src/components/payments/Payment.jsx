@@ -29,7 +29,7 @@ const Payment = () => {
 
   const onSubmit = (data) => {
     console.log("Payment Data", data);
-    navigate("/paymentprocess");
+    navigate("/payment-processing");
   };
 
   return (

@@ -16,7 +16,7 @@ import useStyles from "../../assets/css/style";
 import AppLogo from "../.././components/shared/AppLogo";
 import React, { useEffect, useState } from "react";
 import OtpInput from "react-otp-input";
-import { otpVerification, otpRequest } from "../../utils/auth";
+import { otpVerification, otpRequest } from "../../api/auth";
 import CircularProgress from "@mui/material/CircularProgress";
 
 const RegisterOTP = () => {

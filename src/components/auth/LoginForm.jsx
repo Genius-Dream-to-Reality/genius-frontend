@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useContext, useState} from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   ThemeProvider,
@@ -20,10 +20,12 @@ import authServiceImage from "../../assets/images/authService.jpg";
 import useStyles from "../../assets/css/style";
 import SideNavBar from "../../layout/SideNavBar";
 import AppLogo from "../shared/AppLogo";
-import { login } from "../../utils/auth";
+import { useAuth } from "../../contexts/AuthContext";
+import { AlertContext} from "../../contexts/AlertContext";
 
 const LoginForm = () => {
   const classes = useStyles();
+  const { addAlert } = useContext(AlertContext);
   const navigate = useNavigate();
   const location = useLocation();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -32,6 +34,7 @@ const LoginForm = () => {
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
   const { isAuthenticated } = location.state || {};
+  const { login } = useAuth();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -70,7 +73,7 @@ const LoginForm = () => {
 
     if (!formData.password) {
       newErrors.password = "Password is required.";
-    } else if (formData.password.length < 6) {
+    } else if (formData.password.length < 1) {
       newErrors.password = "Password must be at least 6 characters.";
     }
 
@@ -86,22 +89,21 @@ const LoginForm = () => {
       setIsError(false);
       const result = await login(formData);
       if (result.type === "success") {
-        const userInfo = { ...result.message };
-        localStorage.setItem("userInfo", JSON.stringify(userInfo));
-        localStorage.setItem("isAuthenticated", "true");
 
-        setMessage("Login successful!");
+        addAlert("Login Successfully!","success");
+
         setTimeout(() => {
           navigate("/", { state: result });
         }, 1000);
       } else {
-        setIsError(true);
-        setMessage(result.message?.message || result.message);
+
+        addAlert(result.message?.message || result.message,"error");
+
       }
       setIsLoading(false);
     } else {
-      setIsError(true);
-      setMessage("Please fill in all fields.");
+      addAlert("Please fill in all fields.","error");
+
     }
   };
 

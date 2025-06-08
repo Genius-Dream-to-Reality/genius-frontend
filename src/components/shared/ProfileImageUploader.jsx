@@ -1,59 +1,42 @@
 import React, { useEffect, useState } from "react";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import {
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    Button,
-} from "@mui/material";
+import { uploadProfilePicture } from "../../api/customer-account";
 
-const LOCAL_STORAGE_KEY = "userProfileImage";
-const MAX_FILE_SIZE_MB = 5;
-const MAX_BASE64_LENGTH = 6.5 * 1024 * 1024; // ~6.5MB base64 length
-
-const ProfileImageUploader = ({ onImageChange }) => {
-    const [localImage, setLocalImage] = useState(null);
-    const [dialogOpen, setDialogOpen] = useState(false);
+const ProfileImageUploader = ({ userId, currentImageUrl, onImageChange }) => {
+    const [localImage, setLocalImage] = useState(currentImageUrl || null);
+    const [uploadError, setUploadError] = useState(null);
 
     useEffect(() => {
-        const storedImage = localStorage.getItem(LOCAL_STORAGE_KEY);
-        if (storedImage) {
-            setLocalImage(storedImage);
-        }
-    }, []);
+        setLocalImage(currentImageUrl || null);
+    }, [currentImageUrl]);
 
-    const handleImageUpload = (event) => {
+    const handleImageUpload = async (event) => {
         const file = event.target.files[0];
         if (!file) return;
 
-        const fileSizeMB = file.size / (1024 * 1024);
-        if (fileSizeMB > MAX_FILE_SIZE_MB) {
-            setDialogOpen(true);
-            return;
-        }
+        try {
+            const result = await uploadProfilePicture(userId, file);
+            if (result.type === "success") {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    setLocalImage(reader.result);
+                };
+                reader.readAsDataURL(file);
 
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            const base64Image = reader.result;
-
-            if (base64Image.length > MAX_BASE64_LENGTH) {
-                setDialogOpen(true);
-                return;
+                setUploadError(null);
+                if (onImageChange) onImageChange(file);
+            } else {
+                setUploadError(result.message || "Upload failed");
             }
-
-            setLocalImage(base64Image);
-            localStorage.setItem(LOCAL_STORAGE_KEY, base64Image);
-            if (onImageChange) onImageChange(file);
-        };
-
-        reader.readAsDataURL(file);
+        } catch {
+            setUploadError("Unexpected error during upload");
+        }
     };
 
     const handleDeleteImage = () => {
         setLocalImage(null);
-        localStorage.removeItem(LOCAL_STORAGE_KEY);
+        // ToDo: call API to delete image from backend as well
     };
 
     return (
@@ -66,7 +49,6 @@ const ProfileImageUploader = ({ onImageChange }) => {
                     onChange={handleImageUpload}
                     className="hidden"
                 />
-
                 {localImage ? (
                     <img
                         src={localImage}
@@ -81,7 +63,6 @@ const ProfileImageUploader = ({ onImageChange }) => {
                         Upload Image
                     </label>
                 )}
-
                 {localImage && (
                     <div className="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                         <div className="flex space-x-4">
@@ -103,51 +84,6 @@ const ProfileImageUploader = ({ onImageChange }) => {
                     </div>
                 )}
             </div>
-
-            {/* Dialog for oversized image */}
-            <Dialog
-  open={dialogOpen}
-  onClose={() => setDialogOpen(false)}
-  PaperProps={{
-    style: {
-      backgroundColor: "#403557",
-      color: "#ffffff",
-      textAlign: "center",
-      padding: "24px",
-      borderRadius: "16px", 
-      border: "15px solid #201439", 
-      boxShadow: "0 4px 20px rgba(0,0,0,0.5)", 
-    },
-  }}
->
-  <DialogTitle style={{ fontWeight: "bold", fontSize: "1.4rem", marginBottom: "8px" }}>
-    Image is too Large
-  </DialogTitle>
-
-  <DialogContent>
-    <p style={{ fontSize: "1rem", margin: 0 }}>
-      Please upload an image smaller than 5MB.
-    </p>
-  </DialogContent>
-
-  <DialogActions style={{ justifyContent: "center", marginTop: "16px" }}>
-    <Button
-      onClick={() => setDialogOpen(false)}
-      style={{
-        color: "#ffffff",
-        borderColor: "#ffffff",
-        borderRadius: "8px",
-        padding: "6px 24px",
-        fontWeight: "bold",
-      }}
-      variant="outlined"
-    >
-      OK
-    </Button>
-  </DialogActions>
-</Dialog>
-
-
         </>
     );
 };
