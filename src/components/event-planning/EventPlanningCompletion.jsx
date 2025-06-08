@@ -9,8 +9,8 @@ const EventPlanningCompletion = ({}) => {
     const location = useLocation();
     const { stepOneData,totalPrice, addedServices } = location.state || {};
 
-    const handleDownload = () => {
-        console.log("handle download!") //todo
+    const handleReturn = () => {
+        navigate("/customer-dashboard");
     };
 
     const handleViewEvent = () => {
@@ -71,9 +71,9 @@ const EventPlanningCompletion = ({}) => {
                             <Button
                                 variant="contained"
                                 style={{ ...styles.button, ...styles.downloadButton }}
-                                onClick={() => handleDownload()}
+                                onClick={() => handleReturn()}
                             >
-                                Download
+                                Dashboard
                             </Button>
                         </Grid>
                         <Grid item xs={12} md={4} style={{ textAlign: "center" }}>
