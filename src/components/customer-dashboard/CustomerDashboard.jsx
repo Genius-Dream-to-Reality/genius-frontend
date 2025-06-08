@@ -80,6 +80,7 @@ const CustomerDashboard = () => {
   const [dialogMessage, setDialogMessage] = useState("");
   const { user } = useSelector(state => state.auth);
 
+  console.log("logged user: ",user);
   useEffect(() => {
     if (!user) {
       navigate('/login', { replace: true });

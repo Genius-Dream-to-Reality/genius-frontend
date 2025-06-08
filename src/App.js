@@ -20,6 +20,9 @@ import CustomerDashboard from "./components/customer-dashboard/CustomerDashboard
 import VendorDashboardIncompleted from "./components/vendor-dashboard/VendorDashboardIncompleted";
 import VendorDashboard from "./components/vendor-dashboard/VendorDashboard";
 import ServiceDetails from "./pages/vendor/ServiceDetails";
+import Payment  from "./components/payments/Payment";
+import PaymentProcessing  from "./components/payments/PaymentProcessing";
+import PaymentSuccess  from "./components/payments/PaymentSuccess";
 import { AlertProvider } from "./contexts/AlertContext";
 import { authService } from './services/authService';
 import { useSelector } from 'react-redux';
@@ -54,6 +57,9 @@ function App() {
               <Route path="vendor-dashboard-incompleted" element={<VendorDashboardIncompleted />} />
               <Route path="vendor-dashboard" element={<VendorDashboard />} />
               <Route path="vendor/service/:serviceId" element={<ServiceDetails />} />
+              <Route path="payment" element={<Payment />} />
+              <Route path="payment-processing" element={<PaymentProcessing />} />
+              <Route path="payment-success" element={<PaymentSuccess />} />
             </Routes>
           </Router>
         </AlertProvider>
