@@ -22,7 +22,7 @@ const mapEventStatus = (status, services) => {
   if (status === "CANCELED") return "Canceled";
   if (status === "PENDING_APPROVAL") {
     const anyDeclined = services.some((s) => !s.vendorApproved);
-    return anyDeclined ? "A vendor declined the event" : "Approved";
+    return anyDeclined ? "Waiting for Approval" : "Approved";
   }
   if (status === "COMPLETED") return "Successfully Completed";
   return status;
@@ -33,7 +33,7 @@ const getStatusColor = (status, services) => {
   if (status === "CANCELED") return "#dc2626";
   if (status === "COMPLETED") return "#16a34a";
   if (status === "PENDING_APPROVAL") {
-    return services.some((s) => !s.vendorApproved) ?  "#dc2626" : "#22c55e";
+    return services.some((s) => !s.vendorApproved) ? "#dc2626" : "#22c55e";
   }
   return "#6b7280";
 };
@@ -80,7 +80,7 @@ const CustomerDashboard = () => {
   const [dialogMessage, setDialogMessage] = useState("");
   const { user } = useSelector(state => state.auth);
 
-  console.log("logged user: ",user);
+  console.log("logged user: ", user);
   useEffect(() => {
     if (!user) {
       navigate('/login', { replace: true });
@@ -102,6 +102,7 @@ const CustomerDashboard = () => {
             location: event.location || "Unknown",
             status: mapEventStatus(event.status, event.services),
             statusColor: getStatusColor(event.status, event.services),
+            participationCount: event.participationCount,
             payVisible: event.paymentStatus === "PENDING_PAYMENT",
           };
 
@@ -154,6 +155,7 @@ const CustomerDashboard = () => {
             variant="contained"
             size="small"
             style={{ backgroundColor: "#22c55e", color: "#fff" }}
+            onClick={() => navigate("/payment")}
           >
             Pay
           </Button>
@@ -167,6 +169,11 @@ const CustomerDashboard = () => {
               state: {
                 customerId: event.customerId,
                 eventId: event.eventId,
+                eventType: event.type,
+                date: event.date,
+                location: event.location,
+                noOfParticipants: event.participationCount,
+                budgetRange: event.budgetRange,
               },
             })
           }
