@@ -1,7 +1,6 @@
 import axios from "axios";
 
-// Ensure all requests carry credentials by default
-axios.defaults.withCredentials = true;
+
 
 const handleApiError = (error) => {
     console.error("API Error:", error.response?.data || error.message);
@@ -126,6 +125,16 @@ export const eventApi = {
         try {
             const apiURL = process.env.REACT_APP_EVENT_API_URL + `/event/delete/${id}`;
             const response = await axiosDelete(apiURL);
+            return { type: "success", status: response.status, data: response.data };
+        } catch (error) {
+            return handleApiError(error);
+        }
+    },
+
+    getEventsByServiceId: async (serviceId) => {
+        try {
+            const apiURL = process.env.REACT_APP_EVENT_API_URL + `/event/service/${serviceId}`;
+            const response = await axiosGet(apiURL);
             return { type: "success", status: response.status, data: response.data };
         } catch (error) {
             return handleApiError(error);

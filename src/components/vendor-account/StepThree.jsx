@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Grid, Typography, Box, Chip } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { LocationOn } from "@mui/icons-material";
+import { vendorApi } from "../../api/vendor";
 
 const SectionCard = styled(Box)({
   backgroundColor: "rgba(255, 255, 255, 0.05)",
@@ -50,6 +51,29 @@ const ImageGrid = styled(Box)({
 });
 
 const StepThree = ({ initialSetup, packages }) => {
+  const [serviceTypes, setServiceTypes] = useState([]);
+  const [serviceTypeName, setServiceTypeName] = useState("");
+
+  useEffect(() => {
+    const fetchServiceTypes = async () => {
+      try {
+        const response = await vendorApi.getVendorServiceTypes();
+        if (response.type === "success") {
+          setServiceTypes(response.data);
+          // Find and set the service type name
+          const selectedType = response.data.find(type => type.id === initialSetup.selectedServiceType);
+          if (selectedType) {
+            setServiceTypeName(selectedType.name);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching service types:", error);
+      }
+    };
+
+    fetchServiceTypes();
+  }, [initialSetup.selectedServiceType]);
+
   const formatCurrency = (value) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -85,7 +109,7 @@ const StepThree = ({ initialSetup, packages }) => {
             <InfoRow>
               <Typography sx={{ color: "#fff" }}>Service Type:</Typography>
               <Typography sx={{ color: "#fff" }}>
-                {initialSetup.selectedServiceType}
+                {initialSetup.selectedServiceTypeName}
               </Typography>
             </InfoRow>
           </Grid>

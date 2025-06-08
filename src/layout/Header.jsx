@@ -21,7 +21,8 @@ import { ThemeProvider } from "@mui/material/styles";
 import LoginIcon from '@mui/icons-material/Login';
 import { useNavigate, useLocation } from "react-router-dom";
 import { Settings } from "lucide-react";
-import {useAuth} from "../contexts/AuthContext";
+import { useSelector } from 'react-redux';
+import { authService } from '../services/authService';
 
 import {
   DropdownMenu,
@@ -43,21 +44,10 @@ const Header = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const hideLogoRoutes = ["/register", "/choose-type"];
   const isHideLogoRoute = hideLogoRoutes.includes(location.pathname);
-
   const shouldShowLogo = !isHideLogoRoute || (isHideLogoRoute && isMobile);
-
   const links = ["Explore", "About Us", "Contact Us"];
-
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userInfo, setUserInfo] = useState(null);
-  const { user, logout } = useAuth()
-
-  useEffect(() => {
-    if (user !== null) {
-      setIsAuthenticated(true);
-    }
-  }, []);
+  const { user } = useSelector(state => state.auth);
 
   const handleRegisterClick = () => {
     navigate("/choose-type", { state: { userType: "vendor" } });
@@ -65,23 +55,17 @@ const Header = () => {
   };
 
   const handleLoginClick = () => {
-    navigate("/login")
+    navigate("/login");
     setDrawerOpen(false);
   };
 
   const handleLogout = () => {
-    const res = logout();
-    setIsAuthenticated(false);
-    setUserInfo(null);
-    navigate("/");
+    authService.logout();
     setDrawerOpen(false);
   };
 
   const toggleDrawer = (open) => (event) => {
-    if (
-      event.type === "keydown" &&
-      (event.key === "Tab" || event.key === "Shift")
-    ) {
+    if (event.type === "keydown" && (event.key === "Tab" || event.key === "Shift")) {
       return;
     }
     setDrawerOpen(open);
@@ -137,7 +121,7 @@ const Header = () => {
           ))}
         </List>
 
-        {!isAuthenticated && (
+        {!user && (
           <Box sx={{ padding: "0 20px", marginTop: "20px" }}>
             <Button
               fullWidth
@@ -172,7 +156,7 @@ const Header = () => {
           </Box>
         )}
 
-        {isAuthenticated && (
+        {user && (
           <Box sx={{ padding: "0 20px", marginTop: "20px" }}>
             <Button
               fullWidth
@@ -256,7 +240,7 @@ const Header = () => {
               </Grid>
 
               <Grid item>
-                {isAuthenticated ? (
+                {user && (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <IconButton>
@@ -284,7 +268,7 @@ const Header = () => {
                       <div className="space-y-3 mb-4 text-sm">
                         <div
                           onClick={() =>
-                            userInfo?.userType === "CUSTOMER"
+                            user?.userType === "CUSTOMER"
                               ? navigate("/customer-dashboard")
                               : navigate("/vendor-dashboard")
                           }
@@ -309,31 +293,6 @@ const Header = () => {
                       </button>
                     </DropdownMenuContent>
                   </DropdownMenu>
-                ) : (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <IconButton>
-                        <User
-                          style={{ color: "#FFFFFF" }}
-                          className="h-5 w-5"
-                        />
-                      </IconButton>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent
-                      align="end"
-                      alignOffset={-5}
-                      sideOffset={5}
-                      className="w-48 mt-2"
-                    >
-                      <DropdownMenuItem onClick={handleLoginClick}>
-                        Log in
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={handleRegisterClick}>
-                        Sign up
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
                 )}
               </Grid>
 
@@ -352,14 +311,10 @@ const Header = () => {
               {/* Sign Up Button - Only on Desktop */}
               {!isMobile && (
                 <Grid item>
-                  {!isAuthenticated ? (
+                  {!user && (
                     <Button className={classes.button} onClick={handleRegisterClick}>
                       Sign Up <LoginIcon />
                     </Button>
-                  ) : (
-                    <Typography className={classes.userText}>
-                      {userInfo?.username ? userInfo.username.split(" ")[0] : ""}
-                    </Typography>
                   )}
                 </Grid>
               )}

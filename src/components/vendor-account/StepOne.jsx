@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Grid,
   TextField,
@@ -10,9 +10,13 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  CircularProgress,
 } from "@mui/material";
 import { LocationOn, Upload, Create } from "@mui/icons-material";
 import { styled } from "@mui/material/styles";
+import { vendorApi } from "../../api/vendor";
+import { eventTypeApi } from "../../api/event";
+import { AlertContext } from "../../contexts/AlertContext";
 
 const StyledTextField = styled(TextField)({
   "& .MuiInputBase-input": {
@@ -78,28 +82,63 @@ const UploadBox = styled(Box)(({ theme }) => ({
 }));
 
 const StepOne = ({ formData, onFormUpdate }) => {
-  const serviceTypes = [
-    "Wedding",
-    "Birthday Party",
-    "Conference",
-    "Workshop",
-    "Seminar",
-    "Networking Event",
-    "Concert",
-    "Festival",
-    "Product Launch",
-    "Trade Show",
-    "Fundraiser",
-    "Corporate Meeting",
-    "Webinar",
-    "Team Building",
-    "Award Ceremony",
-    "Exhibition",
-    "Bridal Shower",
-    "Baby Shower",
-    "Charity Event",
-    "Sports Event",
-  ];
+  const [serviceTypes, setServiceTypes] = useState([]);
+  const [eventTypes, setEventTypes] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [eventTypesLoading, setEventTypesLoading] = useState(false);
+  const { addAlert } = useContext(AlertContext);
+
+  useEffect(() => {
+    const fetchServiceTypes = async () => {
+      try {
+        setLoading(true);
+        const response = await vendorApi.getVendorServiceTypes();
+        console.log("Fetching vendor types response:", response);
+        if (response?.type === "success" && Array.isArray(response.data)) {
+          console.log("Setting vendor types:", response.data);
+          setServiceTypes(response.data);
+        } else {
+          console.warn("Service types response format unexpected:", response);
+          setServiceTypes([]);
+          addAlert("Failed to load service types", "error");
+        }
+      } catch (error) {
+        console.error("Error fetching service types:", error);
+        setServiceTypes([]);
+        addAlert("Failed to load service types", "error");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const fetchEventTypes = async () => {
+      try {
+        setEventTypesLoading(true);
+        const response = await eventTypeApi.getAllEventTypes();
+        if (response?.type === "success" && Array.isArray(response.data)) {
+          setEventTypes(response.data);
+        } else {
+          console.warn("Event types response format unexpected:", response);
+          setEventTypes([]);
+          addAlert("Failed to load event types", "error");
+        }
+      } catch (error) {
+        console.error("Error fetching event types:", error);
+        setEventTypes([]);
+        addAlert("Failed to load event types", "error");
+      } finally {
+        setEventTypesLoading(false);
+      }
+    };
+
+    fetchServiceTypes();
+    fetchEventTypes();
+  }, []);
+
+  useEffect(() => {
+    console.log("Current service types:", serviceTypes);
+    console.log("Current form data:", formData);
+  }, [serviceTypes, formData]);
 
   const availableLocations = [
     "Colombo",
@@ -115,6 +154,7 @@ const StepOne = ({ formData, onFormUpdate }) => {
   ];
 
   const handleInputChange = (field, value) => {
+    console.log("Handling input change for field:", field, "with value:", value);
     onFormUpdate({
       ...formData,
       [field]: value,
@@ -128,10 +168,10 @@ const StepOne = ({ formData, onFormUpdate }) => {
     });
   };
 
-  const handleRemoveEventType = (eventType) => {
+  const handleRemoveEventType = (eventTypeToRemove) => {
     onFormUpdate({
       ...formData,
-      eventTypes: formData.eventTypes.filter((type) => type !== eventType),
+      eventTypes: formData.eventTypes.filter((type) => type !== eventTypeToRemove),
     });
   };
 
@@ -146,11 +186,12 @@ const StepOne = ({ formData, onFormUpdate }) => {
   };
 
   const handleAddEventType = (event) => {
-    const eventType = event.target.value;
-    if (!formData.eventTypes.includes(eventType)) {
+    const eventTypeId = event.target.value;
+    const selectedEventType = eventTypes.find(type => type.id === eventTypeId);
+    if (selectedEventType && !formData.eventTypes.includes(selectedEventType.name)) {
       onFormUpdate({
         ...formData,
-        eventTypes: [...formData.eventTypes, eventType],
+        eventTypes: [...formData.eventTypes, selectedEventType.name],
       });
     }
   };
@@ -206,38 +247,57 @@ const StepOne = ({ formData, onFormUpdate }) => {
             <InputLabel sx={{ color: "rgba(255, 255, 255, 0.7)" }}>
               Service Type
             </InputLabel>
-            <StyledSelect
-              value={formData.selectedServiceType}
-              onChange={(e) =>
-                handleInputChange("selectedServiceType", e.target.value)
-              }
-              label="Service Type"
-              MenuProps={{
-                PaperProps: {
-                  sx: {
-                    bgcolor: "#1a1a1a",
-                    "& .MuiMenuItem-root": {
-                      color: "#fff",
-                      "&:hover": {
-                        bgcolor: "rgba(255, 255, 255, 0.1)",
-                      },
-                      "&.Mui-selected": {
-                        bgcolor: "rgba(255, 255, 255, 0.2)",
+            {loading ? (
+              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '56px' }}>
+                <CircularProgress size={24} sx={{ color: 'white' }} />
+              </Box>
+            ) : (
+              <StyledSelect
+                value={formData.selectedServiceType || ''}
+                onChange={(e) => {
+                  const selectedValue = e.target.value;
+                  const selectedType = serviceTypes.find(type => type.id === selectedValue);
+                  console.log("Selected type:", selectedType);
+                  
+                  if (selectedType) {
+                    onFormUpdate({
+                      ...formData,
+                      selectedServiceType: selectedType.id,
+                      selectedServiceTypeName: selectedType.name
+                    });
+                  }
+                }}
+                label="Service Type"
+                MenuProps={{
+                  PaperProps: {
+                    sx: {
+                      bgcolor: "#1a1a1a",
+                      "& .MuiMenuItem-root": {
+                        color: "#fff",
                         "&:hover": {
+                          bgcolor: "rgba(255, 255, 255, 0.1)",
+                        },
+                        "&.Mui-selected": {
                           bgcolor: "rgba(255, 255, 255, 0.2)",
+                          "&:hover": {
+                            bgcolor: "rgba(255, 255, 255, 0.2)",
+                          },
                         },
                       },
                     },
                   },
-                },
-              }}
-            >
-              {serviceTypes.map((type) => (
-                <MenuItem key={type} value={type}>
-                  {type}
+                }}
+              >
+                <MenuItem value="">
+                  <em>Select a service type</em>
                 </MenuItem>
-              ))}
-            </StyledSelect>
+                {Array.isArray(serviceTypes) && serviceTypes.map((type) => (
+                  <MenuItem key={type.id} value={type.id}>
+                    {type.name}
+                  </MenuItem>
+                ))}
+              </StyledSelect>
+            )}
           </FormControl>
         </Grid>
       </Grid>
@@ -310,36 +370,42 @@ const StepOne = ({ formData, onFormUpdate }) => {
             <InputLabel sx={{ color: "rgba(255, 255, 255, 0.7)" }}>
               Add Event Type
             </InputLabel>
-            <StyledSelect
-              value=""
-              onChange={handleAddEventType}
-              label="Add Event Type"
-              MenuProps={{
-                PaperProps: {
-                  sx: {
-                    bgcolor: "#1a1a1a",
-                    "& .MuiMenuItem-root": {
-                      color: "#fff",
-                      "&:hover": {
-                        bgcolor: "rgba(255, 255, 255, 0.1)",
-                      },
-                      "&.Mui-selected": {
-                        bgcolor: "rgba(255, 255, 255, 0.2)",
+            {eventTypesLoading ? (
+              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '56px' }}>
+                <CircularProgress size={24} sx={{ color: 'white' }} />
+              </Box>
+            ) : (
+              <StyledSelect
+                value=""
+                onChange={handleAddEventType}
+                label="Add Event Type"
+                MenuProps={{
+                  PaperProps: {
+                    sx: {
+                      bgcolor: "#1a1a1a",
+                      "& .MuiMenuItem-root": {
+                        color: "#fff",
                         "&:hover": {
+                          bgcolor: "rgba(255, 255, 255, 0.1)",
+                        },
+                        "&.Mui-selected": {
                           bgcolor: "rgba(255, 255, 255, 0.2)",
+                          "&:hover": {
+                            bgcolor: "rgba(255, 255, 255, 0.2)",
+                          },
                         },
                       },
                     },
                   },
-                },
-              }}
-            >
-              {serviceTypes.map((type) => (
-                <MenuItem key={type} value={type}>
-                  {type}
-                </MenuItem>
-              ))}
-            </StyledSelect>
+                }}
+              >
+                {Array.isArray(eventTypes) && eventTypes.map((type) => (
+                  <MenuItem key={type.id} value={type.id}>
+                    {type.name}
+                  </MenuItem>
+                ))}
+              </StyledSelect>
+            )}
           </FormControl>
         </Grid>
 
@@ -354,7 +420,7 @@ const StepOne = ({ formData, onFormUpdate }) => {
               flexWrap: "wrap",
             }}
           >
-            {formData.eventTypes.map((type) => (
+            {Array.isArray(formData.eventTypes) && formData.eventTypes.map((type) => (
               <StyledChip
                 key={type}
                 label={type}

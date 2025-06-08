@@ -1,5 +1,8 @@
 import axios from "axios";
 
+// Configure axios defaults
+axios.defaults.withCredentials = true;
+
 export async function customerRegistration(customerRegistrationData) {
     try {
         const apiURL = process.env.REACT_APP_AUTH_API_URL + "/auth/customer/register";
@@ -116,17 +119,119 @@ export async function login({ email, password, type }) {
             throw new Error("Invalid login type");
         }
 
-        const response = await axios.post(apiURL, { email, password }, {
-            headers: { "Content-Type": "application/json" },
-            withCredentials: true
-        });
-
+        const response = await axios.post(apiURL, { email, password });
         return { type: "success", status: response.status, message: response.data };
     } catch (error) {
         return handleAuthError(error);
     }
 }
 
+export async function refreshToken() {
+    try {
+        const apiURL = process.env.REACT_APP_AUTH_API_URL + "/auth/refresh-token";
+        
+        // The refresh token is automatically sent in cookies by axios
+        const response = await axios.post(apiURL, {}, {
+            withCredentials: true
+        });
+        return { 
+            type: "success", 
+            status: response.status, 
+            message: response.data 
+        };
+    } catch (error) {
+        console.error("Token refresh failed:", error.response?.data || error.message);
+        return handleAuthError(error);
+    }
+}
+
+export async function uploadVendorProfilePicture(vendorId, file) {
+    try {
+        const formData = new FormData();
+        formData.append("id", vendorId);
+        formData.append("file", file);
+
+        const apiURL = process.env.REACT_APP_AUTH_API_URL + "/vendor/profile-picture";
+
+        const response = await axios.post(apiURL, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+            withCredentials: true,
+        });
+
+        return {
+            type: "success",
+            status: response.status,
+            data: response.data,
+        };
+    } catch (error) {
+        console.error("Vendor profile picture upload failed:", error.response?.data || error.message);
+        return handleAuthError(error);
+    }
+}
+
+export async function uploadCustomerProfilePicture(customerId, file) {
+    try {
+        const formData = new FormData();
+        formData.append("id", customerId);
+        formData.append("file", file);
+
+        const apiURL = process.env.REACT_APP_AUTH_API_URL + "/customer/profile-picture";
+
+        const response = await axios.post(apiURL, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+            withCredentials: true,
+        });
+
+        return {
+            type: "success",
+            status: response.status,
+            data: response.data,
+        };
+    } catch (error) {
+        console.error("Customer profile picture upload failed:", error.response?.data || error.message);
+        return handleAuthError(error);
+    }
+}
+
+export async function getVendorDetails(vendorId) {
+    try {
+        const apiURL = process.env.REACT_APP_AUTH_API_URL + `/vendor/${vendorId}`;
+        const response = await axios.get(apiURL, {
+            withCredentials: true
+        });
+
+        return {
+            type: "success",
+            status: response.status,
+            data: response.data
+        };
+    } catch (error) {
+        console.error("Failed to fetch vendor details:", error.response?.data || error.message);
+        return handleAuthError(error);
+    }
+}
+
+export async function getCustomerDetails(customerId) {
+    try {
+        const apiURL = process.env.REACT_APP_AUTH_API_URL + `/customer/${customerId}`;
+        const response = await axios.get(apiURL, {
+            withCredentials: true
+        });
+
+        return {
+            type: "success",
+            status: response.status,
+            data: response.data
+        };
+    } catch (error) {
+        console.error("Failed to fetch customer details:", error.response?.data || error.message);
+        return handleAuthError(error);
+    }
+}
 
 function handleAuthError(error) {
     console.error("Auth Error:", error.response?.data || error.message);
@@ -138,22 +243,3 @@ function handleAuthError(error) {
 }
 
 
-// Function to refresh token
-export function scheduleTokenRefresh() {
-    const REFRESH_INTERVAL = 45 * 60 * 1000; 
-
-    setInterval(async () => {
-        try {
-            const apiURL = process.env.REACT_APP_AUTH_API_URL + "/auth/refresh-token";
-
-            const response = await axios.post(apiURL, null, {
-                withCredentials: true,
-            });
-
-            console.log("Token refreshed successfully:", response.data);
-        } catch (error) {
-            console.error("Token refresh failed:", error.response?.data || error.message);
-            window.location.href = "/login";
-        }
-    }, REFRESH_INTERVAL);
-}
