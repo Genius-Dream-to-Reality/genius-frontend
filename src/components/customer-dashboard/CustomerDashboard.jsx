@@ -155,6 +155,7 @@ const CustomerDashboard = () => {
             variant="contained"
             size="small"
             style={{ backgroundColor: "#22c55e", color: "#fff" }}
+            onClick={() => navigate("/payment")}
           >
             Pay
           </Button>
@@ -168,7 +169,7 @@ const CustomerDashboard = () => {
               state: {
                 customerId: event.customerId,
                 eventId: event.eventId,
-                eventType: event.type,              
+                eventType: event.type,
                 date: event.date,
                 location: event.location,
                 noOfParticipants: event.participationCount,

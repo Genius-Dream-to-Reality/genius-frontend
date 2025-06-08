@@ -12,6 +12,7 @@ import { LocationOn, CalendarToday } from "@mui/icons-material";
 import useStyles from "../../assets/css/style";
 import Header from "../../layout/Header";
 import { useLocation } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 
 const DetailInput = ({ label, value, icon }) => (
   <Box
@@ -40,6 +41,7 @@ const DetailInput = ({ label, value, icon }) => (
 
 const ViewPlan = () => {
   const classes = useStyles();
+  const navigate = useNavigate();
   const theme = useTheme();
   const location = useLocation(); 
   const {
@@ -51,7 +53,7 @@ const ViewPlan = () => {
   } = location.state || {}; 
 
   const handlePayment = () => {
-    console.log("Go to payment page!"); 
+    navigate("/payment");
   };
 
   return (
