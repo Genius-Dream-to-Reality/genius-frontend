@@ -22,7 +22,7 @@ const mapEventStatus = (status, services) => {
   if (status === "CANCELED") return "Canceled";
   if (status === "PENDING_APPROVAL") {
     const anyDeclined = services.some((s) => !s.vendorApproved);
-    return anyDeclined ? "A vendor declined the event" : "Approved";
+    return anyDeclined ? "Waiting for Approval" : "Approved";
   }
   if (status === "COMPLETED") return "Successfully Completed";
   return status;
