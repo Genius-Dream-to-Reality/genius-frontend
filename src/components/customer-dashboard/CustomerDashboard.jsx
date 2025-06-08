@@ -14,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 import DashboardHeader from "../../layout/DashboardHeader";
 import { deleteEventById, getCustomerDetails, getEventDataForCustomer } from "../../api/customer-account";
 import Sidebar from "../../layout/DashboardSideBar";
-import { useAuth } from "../../contexts/AuthContext";
+import { useSelector } from 'react-redux';
 
 // --- Utility Functions ---
 const mapEventStatus = (status, services) => {
@@ -72,71 +72,53 @@ const dialogStyles = {
 const CustomerDashboard = () => {
   const theme = useTheme();
   const navigate = useNavigate();
-
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userInfo, setUserInfo] = useState(null);
   const [pendingEvents, setPendingEvents] = useState([]);
   const [completedEvents, setCompletedEvents] = useState([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [dialogMode, setDialogMode] = useState("confirm");
   const [dialogMessage, setDialogMessage] = useState("");
-  const {user} = useAuth();
+  const { user } = useSelector(state => state.auth);
 
   console.log("logged user: ",user);
   useEffect(() => {
-    const savedAuth = localStorage.getItem("isAuthenticated");
-    const savedUser = localStorage.getItem("userInfo");
-
-    if (savedAuth === "true" && savedUser) {
-      setIsAuthenticated(true);
-      const userId = JSON.parse(savedUser)?.userId;
-      if (userId) {
-        getCustomerDetails(userId)
-          .then((res) => {
-            setUserInfo(res.data);
-          })
-          .catch((err) => {
-            console.error("Error fetching customer details:", err);
-          });
-      }
-
-      // Fetch Events for customer
-      getEventDataForCustomer(user.userId).then((res) => {
-        if (res.type === "success") {
-          const pending = [];
-          const completed = [];
-
-          res.data.forEach((event) => {
-            const eventObj = {
-              ...event,
-              title: event.name,
-              date: event.eventDate?.split("T")[0],
-              fullDate: event.eventDate,
-              location: event.location || "Unknown",
-              status: mapEventStatus(event.status, event.services),
-              statusColor: getStatusColor(event.status, event.services),
-              payVisible: event.paymentStatus === "PENDING_PAYMENT",
-            };
-
-            if (
-              event.status === "PENDING_APPROVAL" ||
-              event.status === "PENDING_PAYMENT"
-            ) {
-              pending.push(eventObj);
-            } else {
-              completed.push(eventObj);
-            }
-          });
-
-          setPendingEvents(pending);
-          setCompletedEvents(completed);
-        } else {
-          console.error("Failed to load events:", res.message);
-        }
-      });
+    if (!user) {
+      navigate('/login', { replace: true });
+      return;
     }
-  }, []);
+
+    // Fetch Events for customer
+    getEventDataForCustomer(user.userId).then((res) => {
+      if (res.type === "success") {
+        const pending = [];
+        const completed = [];
+
+        res.data.forEach((event) => {
+          const eventObj = {
+            ...event,
+            title: event.name,
+            date: event.eventDate?.split("T")[0],
+            fullDate: event.eventDate,
+            location: event.location || "Unknown",
+            status: mapEventStatus(event.status, event.services),
+            statusColor: getStatusColor(event.status, event.services),
+            payVisible: event.paymentStatus === "PENDING_PAYMENT",
+          };
+
+          if (event.status === "PENDING_APPROVAL" || event.status === "PENDING_PAYMENT") {
+            pending.push(eventObj);
+          } else {
+            completed.push(eventObj);
+          }
+        });
+
+        setPendingEvents(pending);
+        setCompletedEvents(completed);
+      } else {
+        console.error("Failed to load events:", res.message);
+      }
+    });
+  }, [user, navigate]);
 
   const renderEventCard = (event, index, isPending = false) => (
     <div
@@ -267,8 +249,8 @@ const CustomerDashboard = () => {
       <Grid container spacing={4} style={{ padding: "40px 20px 0" }}>
         {/* Sidebar */}
         <Sidebar
-          isAuthenticated={isAuthenticated}
-          userInfo={userInfo}
+          isAuthenticated={!!user}
+          userInfo={user}
           onImageChange={handleImageChange}
         />
 

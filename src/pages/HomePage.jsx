@@ -21,11 +21,11 @@ import {eventCategoryApi} from "../api/event"
 import { AlertContext } from "../contexts/AlertContext";
 import "../assets/css/homePage.css"
 import {TextField} from "@mui/material";
-import { useAuth } from "../contexts/AuthContext";
+import { useSelector } from 'react-redux';
 
 const Home = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user } = useSelector(state => state.auth);
   const images = [backgroundImage, why, picking, finalized];
   const [currentIndex, setCurrentIndex] = useState(0);
   const [eventCategories, setEventCategories] = useState([]);
