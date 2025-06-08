@@ -229,14 +229,7 @@ const DashboardHeader = () => {
                                         <Typography
                                             component="a"
                                             href="#"
-                                            sx={{
-                                                color: "#000",
-                                                textDecoration: "none",
-                                                fontWeight: 500,
-                                                "&:hover": {
-                                                    color: theme.palette.primary.main,
-                                                },
-                                            }}
+                                            className={classes.typoLink}
                                         >
                                             {link}
                                         </Typography>
@@ -245,126 +238,26 @@ const DashboardHeader = () => {
                             </Grid>
                         )}
 
+                        {/* Actions Section */}
                         <Grid item xs={6} md={6} container justifyContent="flex-end" alignItems="center" spacing={2}>
-                            {user ? (
-                                <>
-                                    <Grid item>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                            <Avatar
-                                                onClick={handleProfileClick}
-                                                sx={{
-                                                    bgcolor: theme.palette.primary.main,
-                                                    cursor: 'pointer',
-                                                    width: 40,
-                                                    height: 40,
-                                                    '&:hover': {
-                                                        opacity: 0.8,
-                                                        transform: 'scale(1.05)',
-                                                        transition: 'all 0.2s ease-in-out'
-                                                    }
-                                                }}
-                                            >
-                                                {user.username?.[0]?.toUpperCase()}
-                                            </Avatar>
-                                            <Menu
-                                                anchorEl={anchorEl}
-                                                open={open}
-                                                onClose={handleProfileClose}
-                                                onClick={handleProfileClose}
-                                                PaperProps={{
-                                                    sx: {
-                                                        mt: 1.5,
-                                                        minWidth: 200,
-                                                        backgroundColor: '#403557',
-                                                        color: 'white',
-                                                        boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.2)',
-                                                        '& .MuiMenuItem-root': {
-                                                            px: 2,
-                                                            py: 1,
-                                                            borderRadius: 1,
-                                                            mx: 1,
-                                                            my: 0.5,
-                                                            color: 'white',
-                                                            '&:hover': {
-                                                                backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                                                            },
-                                                        },
-                                                        '& .MuiDivider-root': {
-                                                            borderColor: 'rgba(255, 255, 255, 0.1)',
-                                                        },
-                                                    },
-                                                }}
-                                                transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-                                                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-                                            >
-                                                <Box sx={{ px: 2, py: 1.5 }}>
-                                                    <Typography variant="subtitle1" sx={{ fontWeight: 600, color: 'white' }}>
-                                                        {user.username}
-                                                    </Typography>
-                                                    <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-                                                        {user.email}
-                                                    </Typography>
-                                                </Box>
-                                                <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.1)' }} />
-                                                <MenuItem onClick={handleProfileNavigate}>
-                                                    <PersonIcon sx={{ mr: 2, color: 'white' }} />
-                                                    Profile
-                                                </MenuItem>
-                                                <MenuItem onClick={handleLogout}>
-                                                    <LogoutIcon sx={{ mr: 2, color: 'white' }} />
-                                                    Logout
-                                                </MenuItem>
-                                            </Menu>
-                                        </Box>
-                                    </Grid>
-                                </>
-                            ) : (
-                                <>
-                                    <Grid item>
-                                        <Button
-                                            variant="contained"
-                                            onClick={handleLoginClick}
-                                            sx={{
-                                                backgroundColor: "#2e1d5a",
-                                                color: "#fff",
-                                                "&:hover": {
-                                                    backgroundColor: theme.palette.primary.dark,
-                                                },
-                                            }}
-                                        >
-                                            Login
-                                        </Button>
-                                    </Grid>
-                                    <Grid item>
-                                        <Button
-                                            variant="outlined"
-                                            onClick={handleRegisterClick}
-                                            sx={{
-                                                borderColor: "#2e1d5a",
-                                                color: "#2e1d5a",
-                                                "&:hover": {
-                                                    borderColor: theme.palette.primary.dark,
-                                                    backgroundColor: "rgba(0, 0, 0, 0.04)",
-                                                },
-                                            }}
-                                        >
-                                            Sign Up
-                                        </Button>
-                                    </Grid>
-                                </>
-                            )}
                             {isMobile && (
                                 <Grid item>
                                     <IconButton
-                                        edge="end"
-                                        color="inherit"
-                                        aria-label="menu"
                                         onClick={toggleDrawer(true)}
-                                        sx={{ color: "#000" }}
+                                        sx={{ color: "white" }}
                                     >
                                         <MenuIcon />
                                     </IconButton>
                                 </Grid>
+                            )}
+                            {!isMobile && (
+                                <Button
+                                    variant="contained"
+                                    onClick={handleLogout}
+                                    style={{ backgroundColor: '#b91c1c', color: '#fff' }}
+                                >
+                                    Log out
+                                </Button>
                             )}
                         </Grid>
                     </Grid>
